@@ -10,7 +10,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <VBox alignment="CENTER" prefHeight="450.0" prefWidth="753.0" spacing="25.0">
@@ -42,16 +41,25 @@
                      <font>
                         <Font size="16.0" />
                      </font>
+                     <padding>
+                        <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
+                     </padding>
                   </Button>
                   <Button fx:id="managerButton" alignment="CENTER" mnemonicParsing="false" onAction="#managerClicked" text="Manager">
                      <font>
                         <Font size="16.0" />
                      </font>
+                     <padding>
+                        <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
+                     </padding>
                   </Button>
                   <Button fx:id="tellerButton" alignment="CENTER" mnemonicParsing="false" onAction="#tellerClicked" text="Teller">
                      <font>
                         <Font size="16.0" />
                      </font>
+                     <padding>
+                        <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
+                     </padding>
                   </Button>
                </children>
             </HBox>
@@ -60,16 +68,19 @@
    </center>
    <top>
       <BorderPane prefHeight="60.0" prefWidth="753.0" BorderPane.alignment="CENTER">
-         <right>
+         <left>
             <Button fx:id="exitButton" mnemonicParsing="false" onAction="#exitClicked" text="Exit" BorderPane.alignment="CENTER">
                <font>
                   <Font size="16.0" />
                </font>
                <BorderPane.margin>
-                  <Insets right="20.0" />
+                  <Insets left="20.0" />
                </BorderPane.margin>
+               <padding>
+                  <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
+               </padding>
             </Button>
-         </right>
+         </left>
       </BorderPane>
    </top>
    <bottom>

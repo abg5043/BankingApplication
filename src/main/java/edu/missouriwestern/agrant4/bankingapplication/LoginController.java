@@ -2,26 +2,15 @@ package edu.missouriwestern.agrant4.bankingapplication;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
-import java.io.IOException;
-
-public class LoginController {
-
-  // Holds this controller's Stage
-  private final Stage currentStage;
+public class LoginController extends Controller {
 
   @FXML
   private Button customerButton;
-
-  @FXML
-  private Button exitButton;
 
   @FXML
   private Button managerButton;
@@ -40,12 +29,20 @@ public class LoginController {
 
   @FXML
   void customerClicked(ActionEvent event) {
+    String user = userNameField.getText();
+    String pass = passwordField.getText();
 
-  }
+    if (loginIsValid(user, pass)) {
+      // Create the second controller, which loads its own FXML file. We can pass arguments to this controller.
+      // In fact, with "this", we could pass the whole controller
+      CustomerOpeningController customerOpeningController = new CustomerOpeningController(
+          getCurrentStage(),
+          this
+      );
 
-  @FXML
-  void exitClicked(ActionEvent event) {
-
+      // Show the new stage/window
+      customerOpeningController.showStage();
+    }
   }
 
   @FXML
@@ -56,13 +53,13 @@ public class LoginController {
     if (loginIsValid(user, pass)) {
       // Create the second controller, which loads its own FXML file. We can pass arguments to this controller.
       // In fact, with "this", we could pass the whole controller
-      TestController testController = new TestController(
-          user,
-          currentStage
+      ManagerOpeningController managerOpeningController = new ManagerOpeningController(
+          getCurrentStage(),
+          this
       );
 
       // Show the new stage/window
-      testController.showStage();
+      managerOpeningController.showStage();
     }
     
     
@@ -91,36 +88,33 @@ public class LoginController {
 
   @FXML
   void tellerClicked(ActionEvent event) {
+    String user = userNameField.getText();
+    String pass = passwordField.getText();
 
+    if (loginIsValid(user, pass)) {
+      // Create the second controller, which loads its own FXML file. We can pass arguments to this controller.
+      // In fact, with "this", we could pass the whole controller
+      TellerOpeningController tellerOpeningController = new TellerOpeningController(
+          getCurrentStage(),
+          this
+      );
+
+      // Show the new stage/window
+      tellerOpeningController.showStage();
+    }
   }
 
   public LoginController() {
-    // Create the new stage since this is the first window
-    currentStage = new Stage();
-
-    // Load the FXML file
-    try {
-      FXMLLoader loader = new FXMLLoader(getClass().getResource("login-view.fxml"));
-
-      // Set this class as the controller
-      loader.setController(this);
-
-      // Load the scene
-      currentStage.setScene(new Scene(loader.load()));
-
-      // Setup the window/stage
-      currentStage.setTitle("Login Window");
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    setCurrentView("login-view.fxml");
+    setCurrentTitle("Login");
+    setNewScene(this, getCurrentView(), getCurrentTitle());
   }
 
   /**
    * Show the stage that was loaded in the constructor
    */
   public void showStage() {
-    currentStage.show();
+    getCurrentStage().show();
   }
 
 
