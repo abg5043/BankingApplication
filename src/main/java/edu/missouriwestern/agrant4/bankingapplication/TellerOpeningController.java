@@ -1,5 +1,6 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
+import edu.missouriwestern.agrant4.bankingapplication.classes.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -25,6 +26,8 @@ public class TellerOpeningController extends Controller {
   @FXML
   private Label welcomeLabel;
 
+  private User currentUser;
+
   @FXML
   void accountClicked(ActionEvent event) {
 
@@ -41,10 +44,12 @@ public class TellerOpeningController extends Controller {
   }
 
 
-  public TellerOpeningController(Stage previousStage, LoginController previousController) {
+  public TellerOpeningController(Stage previousStage, LoginController previousController, User currentUser) {
     super(previousStage, previousController);
+    this.currentUser = currentUser;
     setCurrentView("teller-opening-view.fxml");
     setCurrentTitle("Teller");
     setNewScene(this, getCurrentView(), getCurrentTitle());
+    this.welcomeLabel.setText("Hello, " + currentUser.getFirstName() + "!");
   }
 }

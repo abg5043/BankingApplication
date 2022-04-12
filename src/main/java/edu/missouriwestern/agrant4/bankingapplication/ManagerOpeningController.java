@@ -1,5 +1,6 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
+import edu.missouriwestern.agrant4.bankingapplication.classes.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -24,6 +25,8 @@ public class ManagerOpeningController extends Controller {
   @FXML
   private Label welcomeLabel;
 
+  private User currentUser;
+
   @FXML
   void creditClicked(ActionEvent event) {
 
@@ -41,11 +44,13 @@ public class ManagerOpeningController extends Controller {
 
 
 
-  public ManagerOpeningController(Stage previousStage, LoginController previousController) {
+  public ManagerOpeningController(Stage previousStage, LoginController previousController, User currentUser) {
     super(previousStage, previousController);
+    this.currentUser = currentUser;
     setCurrentView("manager-opening-view.fxml");
     setCurrentTitle("Manager");
     setNewScene(this, getCurrentView(), getCurrentTitle());
+    this.welcomeLabel.setText("Hello, " + currentUser.getFirstName() + "!");
   }
 
 }

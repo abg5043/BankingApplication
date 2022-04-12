@@ -11,7 +11,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <VBox alignment="CENTER" prefHeight="446.0" prefWidth="753.0" spacing="25.0">
+      <VBox alignment="CENTER" prefHeight="433.0" prefWidth="753.0" spacing="25.0">
          <children>
             <TextArea fx:id="mainTextBox" editable="false" prefHeight="386.0" prefWidth="200.0">
                <VBox.margin>
@@ -22,7 +22,7 @@
       </VBox>
    </center>
    <top>
-      <BorderPane prefHeight="60.0" prefWidth="753.0" BorderPane.alignment="CENTER">
+      <BorderPane prefHeight="60.0" prefWidth="953.0" BorderPane.alignment="CENTER">
          <center>
             <HBox alignment="CENTER" BorderPane.alignment="CENTER">
                <children>
