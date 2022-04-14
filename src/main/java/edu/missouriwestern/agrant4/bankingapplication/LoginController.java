@@ -34,7 +34,18 @@ public class LoginController extends Controller {
 
   private ArrayList<User> users;
 
+  // TODO: add fields for ArrayLists of each type of csv file.
+  // Because we are going to pass this controller to every controller, we can just use that as a way to have access to
+  // all of the files rather than passing every object through every constructor
+
+
   private User currentUser;
+
+  @Override
+  @FXML
+  void exitClicked(ActionEvent event) {
+    System.exit(0);
+  }
 
   @FXML
   void customerClicked(ActionEvent event) {
@@ -42,28 +53,48 @@ public class LoginController extends Controller {
     String pass = passwordField.getText();
 
     if (loginIsValid(username, pass)) {
+      loadBankData();
+
       //embedded if so that we can differentiate alerts. This will only cause a user type alert now
       if (currentUser.getCustomer() == true) {
         // Create the second controller, which loads its own FXML file. We can pass arguments to this controller.
         // In fact, with "this", we could pass the whole controller
         CustomerOpeningController customerOpeningController = new CustomerOpeningController(
             getCurrentStage(),
-            this,
-            currentUser
+            this
         );
 
         // Show the new stage/window
         customerOpeningController.showStage();
       } else {
-        // create an alert
-        Alert a = new Alert(Alert.AlertType.WARNING);
-        a.setTitle("Invalid User Type");
-        a.setHeaderText("Invalid User Type");
-        a.setContentText("You are not a valid customer. Please try another account type");
-
-        // show the dialog
-        a.show();
+        createUserTypeAlert("customer");
       }
+    }
+  }
+
+  @FXML
+  void tellerClicked(ActionEvent event) {
+    String username = userNameField.getText();
+    String pass = passwordField.getText();
+
+    if (loginIsValid(username, pass)) {
+      loadBankData();
+
+      //embedded if so that we can differentiate alerts. This will only cause a user type alert now
+      if (currentUser.getTeller() == true) {
+        // Create the second controller, which loads its own FXML file. We can pass arguments to this controller.
+        // In fact, with "this", we could pass the whole controller
+        TellerOpeningController tellerOpeningController = new TellerOpeningController(
+            getCurrentStage(),
+            this
+        );
+
+        // Show the new stage/window
+        tellerOpeningController.showStage();
+      } else {
+        createUserTypeAlert("teller");
+      }
+
     }
   }
 
@@ -73,29 +104,46 @@ public class LoginController extends Controller {
     String pass = passwordField.getText();
 
     if (loginIsValid(username, pass)) {
+      loadBankData();
+
       //embedded if so that we can differentiate alerts. This will only cause a user type alert now
       if (currentUser.getManager() == true) {
         // Create the second controller, which loads its own FXML file. We can pass arguments to this controller.
         // In fact, with "this", we could pass the whole controller
         ManagerOpeningController managerOpeningController = new ManagerOpeningController(
             getCurrentStage(),
-            this,
-            currentUser
+            this
         );
 
         // Show the new stage/window
         managerOpeningController.showStage();
       } else {
-        // create an alert
-        Alert a = new Alert(Alert.AlertType.WARNING);
-        a.setTitle("Invalid User Type");
-        a.setHeaderText("Invalid User Type");
-        a.setContentText("You are not a valid manager. Please try another account type");
-
-        // show the dialog
-        a.show();
+        createUserTypeAlert("manager");
       }
     }
+  }
+
+  /**
+   * Creates an alert that the wrong type of user is trying to log in.
+   *
+   * @param userType - a type of user for the bank program
+   */
+  private void createUserTypeAlert(String userType) {
+    // create an alert
+    Alert a = new Alert(Alert.AlertType.WARNING);
+    a.setTitle("Invalid User Type");
+    a.setHeaderText("Invalid User Type");
+    a.setContentText("You are not a valid " + userType + ". Please try another account type");
+
+    // show the dialog
+    a.show();
+  }
+
+  /**
+   * Loads bank data from csv files to ArrayLists in the object's fields
+   */
+  public void loadBankData() {
+    //TODO: this should load all the data to the fields
   }
 
   /*
@@ -126,58 +174,37 @@ public class LoginController extends Controller {
     return isValid;
   }
 
-  @FXML
-  void tellerClicked(ActionEvent event) {
-    String username = userNameField.getText();
-    String pass = passwordField.getText();
-
-    if (loginIsValid(username, pass)) {
-      //embedded if so that we can differentiate alerts. This will only cause a user type alert now
-      if (currentUser.getTeller() == true) {
-        // Create the second controller, which loads its own FXML file. We can pass arguments to this controller.
-        // In fact, with "this", we could pass the whole controller
-        TellerOpeningController tellerOpeningController = new TellerOpeningController(
-            getCurrentStage(),
-            this,
-            currentUser
-        );
-
-        // Show the new stage/window
-        tellerOpeningController.showStage();
-      } else {
-        // create an alert
-        Alert a = new Alert(Alert.AlertType.WARNING);
-        a.setTitle("Invalid User Type");
-        a.setHeaderText("Invalid User Type");
-        a.setContentText("You are not a valid teller. Please try another account type");
-
-        // show the dialog
-        a.show();
-      }
-
-    }
-  }
-
-  public LoginController() {
-    //sets current user to null since there isn't one logged in yet.
-    this.currentUser = null;
-    setCurrentView("login-view.fxml");
-    setCurrentTitle("Login");
-    setNewScene(this, getCurrentView(), getCurrentTitle());
-
-    // parse users from csv file as objects and store them in an ArrayList
-    try {
-      users = (ArrayList<User>) new CsvToBeanBuilder(new FileReader("customers.csv")).withType(User.class).build().parse();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
   /**
    * Show the stage that was loaded in the constructor
    */
   public void showStage() {
     getCurrentStage().show();
+  }
+
+  /**
+   * Constructor for LoginController
+   */
+  public LoginController() {
+    //sets current user to null since there isn't one logged in yet.
+    this.currentUser = null;
+    setCurrentViewFile("login-view.fxml");
+    setCurrentViewTitle("Login");
+    setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
+
+    // parse users from csv file as objects and store them in an ArrayList
+    try {
+      users = (ArrayList<User>) new CsvToBeanBuilder(new FileReader("users.csv")).withType(User.class).build().parse();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public ArrayList<User> getUsers() {
+    return users;
+  }
+
+  public User getCurrentUser() {
+    return currentUser;
   }
 
 

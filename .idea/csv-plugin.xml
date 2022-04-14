@@ -3,14 +3,7 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="$PROJECT_DIR$/../../../../My Mac (PH-AARON-GRANT)/Downloads/customers.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/clients.csv">
+        <entry key="/users.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

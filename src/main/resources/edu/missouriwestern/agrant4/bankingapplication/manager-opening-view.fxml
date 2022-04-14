@@ -17,6 +17,9 @@
                <VBox.margin>
                   <Insets left="30.0" right="30.0" />
                </VBox.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
             </TextArea>
          </children>
       </VBox>
@@ -38,7 +41,7 @@
             <Insets top="30.0" />
          </padding>
          <right>
-            <Button fx:id="exitButton" mnemonicParsing="false" onAction="#exitClicked" text="Exit" BorderPane.alignment="CENTER">
+            <Button fx:id="exitButton" mnemonicParsing="false" onAction="#exitClicked" text="Save and Exit" BorderPane.alignment="CENTER">
                <font>
                   <Font size="16.0" />
                </font>
@@ -51,7 +54,7 @@
             </Button>
          </right>
          <left>
-            <Button fx:id="backButton" mnemonicParsing="false" onAction="#backClicked" text="Back" textAlignment="CENTER" BorderPane.alignment="CENTER">
+            <Button fx:id="mainPageButton" mnemonicParsing="false" onAction="#mainPageClicked" text="Back to Main" textAlignment="CENTER" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets left="30.0" />
                </BorderPane.margin>

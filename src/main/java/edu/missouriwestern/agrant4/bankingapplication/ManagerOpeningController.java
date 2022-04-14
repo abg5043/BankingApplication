@@ -44,13 +44,14 @@ public class ManagerOpeningController extends Controller {
 
 
 
-  public ManagerOpeningController(Stage previousStage, LoginController previousController, User currentUser) {
-    super(previousStage, previousController);
-    this.currentUser = currentUser;
-    setCurrentView("manager-opening-view.fxml");
-    setCurrentTitle("Manager");
-    setNewScene(this, getCurrentView(), getCurrentTitle());
-    this.welcomeLabel.setText("Hello, " + currentUser.getFirstName() + "!");
+  public ManagerOpeningController(Stage currentStage, LoginController loginController) {
+    super(currentStage, loginController, loginController);
+    setCurrentViewFile("manager-opening-view.fxml");
+    setCurrentViewTitle("Manager");
+    setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
+    this.welcomeLabel.setText("Hello, " + loginController.getCurrentUser().getFirstName() + "!");
+    this.mainTextBox.setText("Hello, " + loginController.getCurrentUser().getFirstName() + "!"
+        + "\n\nPlease select your next action.");
   }
 
 }

@@ -35,21 +35,23 @@ public class TellerOpeningController extends Controller {
 
   @FXML
   void creditAccountClicked(ActionEvent event) {
-
   }
 
   @FXML
   void transferClicked(ActionEvent event) {
-
   }
 
 
-  public TellerOpeningController(Stage previousStage, LoginController previousController, User currentUser) {
-    super(previousStage, previousController);
-    this.currentUser = currentUser;
-    setCurrentView("teller-opening-view.fxml");
-    setCurrentTitle("Teller");
-    setNewScene(this, getCurrentView(), getCurrentTitle());
-    this.welcomeLabel.setText("Hello, " + currentUser.getFirstName() + "!");
+  public TellerOpeningController(Stage currentStage, LoginController loginController) {
+    super(currentStage, loginController, loginController);
+    setCurrentViewFile("teller-opening-view.fxml");
+    setCurrentViewTitle("Teller");
+    setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
+    this.welcomeLabel.setText("Hello, " + loginController.getCurrentUser().getFirstName() + "!");
+    this.mainTextBox.setText("Hello, " + loginController.getCurrentUser().getFirstName() + "!"
+        + "\n\nPlease select your next action.");
+
+    //TODO: DELETE THIS LINE; It is a test
+    getLoginController().getUsers().add(new User("test", "test", "test", "test", "test", "test", "test", true, true, true, "test", "test"));
   }
 }

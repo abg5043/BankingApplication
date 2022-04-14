@@ -25,13 +25,10 @@ public class CustomerOpeningController extends Controller {
   @FXML
   private Button withdrawButton;
 
-  private User currentUser;
-
   @FXML
   void balanceClicked(ActionEvent event) {
 
   }
-
 
   @FXML
   void depositClicked(ActionEvent event) {
@@ -43,13 +40,14 @@ public class CustomerOpeningController extends Controller {
 
   }
 
-  public CustomerOpeningController(Stage previousStage, LoginController previousController, User currentUser) {
-    super(previousStage, previousController);
-    this.currentUser = currentUser;
-    setCurrentView("customer-opening-view.fxml");
-    setCurrentTitle("Customer");
-    setNewScene(this, getCurrentView(), getCurrentTitle());
-    this.welcomeLabel.setText("Hello, " + currentUser.getFirstName() + "!");
+  public CustomerOpeningController(Stage currentStage, LoginController loginController) {
+    super(currentStage, loginController, loginController);
+    setCurrentViewFile("customer-opening-view.fxml");
+    setCurrentViewTitle("Customer");
+    setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
+    this.welcomeLabel.setText("Hello, " + loginController.getCurrentUser().getFirstName() + "!");
+    this.mainTextBox.setText("Hello, " + loginController.getCurrentUser().getFirstName() + "!"
+    + "\n\nPlease select your next action.");
   }
 }
 

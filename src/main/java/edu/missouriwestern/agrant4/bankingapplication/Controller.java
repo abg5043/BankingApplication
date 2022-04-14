@@ -1,62 +1,84 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import edu.missouriwestern.agrant4.bankingapplication.classes.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
 
 /** This is the base class for all controllers. */
 public class Controller {
 
   // holds this program's Stage
   private Stage currentStage;
-  // holds a reference to the previous controller for back button
-  private Controller previousController;
+  // holds a reference to the system home page
+  private LoginController loginController;
+  // holds a reference to the current user type's home page
+  private Controller mainPage;
   // holds the view's title
-  private String currentTitle;
-  // holds a reference to the current view
-  private String currentView;
+  private String currentViewTitle;
+  // holds a reference to the current view file
+  private String currentViewFile;
 
+  //TODO: Refactor to "return to main screen"
   @FXML
   private Button exitButton;
 
   @FXML
-  private Button backButton;
-
-  @FXML
-  void backClicked(ActionEvent event) {
-    setNewScene(previousController,  previousController.getCurrentView(), previousController.getCurrentTitle() );
-  }
+  private Button mainPageButton;
 
   @FXML
   void exitClicked(ActionEvent event) {
+    //TODO: FLUSH THIS OUT
+    writeBankData(loginController.getUsers());
     System.exit(0);
+  }
+
+  @FXML
+  void mainPageClicked(ActionEvent event) {
+    setNewScene(mainPage,  mainPage.getCurrentViewFile(), mainPage.getCurrentViewTitle());
   }
 
 
   /**
    * Constructor for controller class
    *
-   * @param previousStage - the Stage object from the previous class
-   * @param previousController - a pointer to the previous controller
+   * @param currentStage - the Stage object for the program
+   * @param loginController - a pointer to the system login page
+   * @param mainPage - a pointer to the user type's main page
    */
-  public Controller(Stage previousStage,Controller previousController) {
-    this.currentStage = previousStage;
-    this.previousController = previousController;
+  public Controller(Stage currentStage, LoginController loginController, Controller mainPage) {
+    this.loginController = loginController;
+    this.currentStage = currentStage;
+    this.mainPage = mainPage;
   }
 
+  public LoginController getLoginController() {
+    return loginController;
+  }
 
   /**
    * Default no-arg controller; used for new stages.
    * constructs a new stage and sets previous controller
    * to null since there is no view to go back to.
+   *
+   * Similarly, the only constructor to use a no-arg constructor
+   * should be the LoginController, which doesn't need
+   * a reference to itself.
    */
   public Controller() {
     this.currentStage = new Stage();
-    this.previousController = null;
+    this.loginController = null;
+    this.mainPage = null;
   }
 
   public Stage getCurrentStage() {
@@ -67,12 +89,20 @@ public class Controller {
     this.currentStage = currentStage;
   }
 
-  public Controller getPreviousController() {
-    return previousController;
+  public String getCurrentViewTitle() {
+    return currentViewTitle;
   }
 
-  public void setPreviousController(Controller previousController) {
-    this.previousController = previousController;
+  public void setCurrentViewTitle(String currentViewTitle) {
+    this.currentViewTitle = currentViewTitle;
+  }
+
+  public String getCurrentViewFile() {
+    return currentViewFile;
+  }
+
+  public void setCurrentViewFile(String currentViewFile) {
+    this.currentViewFile = currentViewFile;
   }
 
   public void setNewScene(Object scene, String view, String title) {
@@ -95,27 +125,26 @@ public class Controller {
     }
   }
 
-  public String getCurrentTitle() {
-    return currentTitle;
-  }
-
-  public void setCurrentTitle(String currentTitle) {
-    this.currentTitle = currentTitle;
-  }
-
-  public String getCurrentView() {
-    return currentView;
-  }
-
-  public void setCurrentView(String currentView) {
-    this.currentView = currentView;
-  }
-
   /**
    * Show the stage that was loaded in the constructor
    */
   public void showStage() {
     currentStage.show();
+  }
+
+  //TODO: Need to flush out this writeBankData method for updating the bank's CSV files
+  public void writeBankData(ArrayList<User> users) {
+    Writer writer = null;
+    try {
+      //writes users toa users.csv file
+      writer = new FileWriter("users.csv");
+      StatefulBeanToCsv beanToCsv = new StatefulBeanToCsvBuilder(writer).build();
+      beanToCsv.write(users);
+      writer.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
   }
 
 }
