@@ -3,8 +3,8 @@ package edu.missouriwestern.agrant4.bankingapplication.classes;
 import com.opencsv.bean.CsvBindByName;
 
 public class CheckingAccount {
-  @CsvBindByName(column = "customer_id")
-  private String id;
+  @CsvBindByName(column = "SSN")
+  private String SSN;
 
   @CsvBindByName(column = "account_type")
   private String accountType;

@@ -29,7 +29,6 @@ public class Controller {
   // holds a reference to the current view file
   private String currentViewFile;
 
-  //TODO: Refactor to "return to main screen"
   @FXML
   private Button exitButton;
 
@@ -103,6 +102,10 @@ public class Controller {
 
   public void setCurrentViewFile(String currentViewFile) {
     this.currentViewFile = currentViewFile;
+  }
+
+  public Controller getMainPage() {
+    return mainPage;
   }
 
   public void setNewScene(Object scene, String view, String title) {

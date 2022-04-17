@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -11,21 +11,44 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <VBox alignment="CENTER" prefHeight="433.0" prefWidth="753.0" spacing="25.0">
+      <VBox alignment="CENTER" prefHeight="433.0" prefWidth="953.0" spacing="25.0">
          <children>
-            <TextArea fx:id="mainTextBox" editable="false" prefHeight="386.0" prefWidth="200.0">
-               <VBox.margin>
-                  <Insets left="30.0" right="30.0" />
-               </VBox.margin>
+            <Label text="Change Account Interest Rate Below">
                <font>
-                  <Font size="14.0" />
+                  <Font name="System Bold" size="20.0" />
                </font>
-            </TextArea>
+            </Label>
+            <Label text="Account Number">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <TextField fx:id="accountField" prefHeight="29.0" prefWidth="312.0" promptText="9 Characters">
+               <font>
+                  <Font size="16.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="250.0" right="250.0" />
+               </VBox.margin>
+            </TextField>
+            <Label text="New Interest Rate">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <TextField fx:id="interestRateField" promptText="E.g., 1.2">
+               <font>
+                  <Font size="16.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="250.0" right="250.0" />
+               </VBox.margin>
+            </TextField>
          </children>
       </VBox>
    </center>
    <top>
-      <BorderPane prefHeight="60.0" prefWidth="953.0" BorderPane.alignment="CENTER">
+      <BorderPane prefHeight="60.0" prefWidth="753.0" BorderPane.alignment="CENTER">
          <center>
             <HBox alignment="CENTER" BorderPane.alignment="CENTER">
                <children>
@@ -54,16 +77,16 @@
             </Button>
          </right>
          <left>
-            <Button fx:id="mainPageButton" mnemonicParsing="false" onAction="#mainPageClicked" text="Back to Login" BorderPane.alignment="CENTER">
+            <Button fx:id="mainPageButton" mnemonicParsing="false" onAction="#mainPageClicked" text="Back to Main" textAlignment="CENTER" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets left="30.0" />
                </BorderPane.margin>
-               <padding>
-                  <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
-               </padding>
                <font>
                   <Font size="16.0" />
                </font>
+               <padding>
+                  <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
+               </padding>
             </Button>
          </left>
       </BorderPane>
@@ -71,29 +94,13 @@
    <bottom>
       <HBox alignment="CENTER" spacing="50.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="accountButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#accountClicked" text="Account Info" textAlignment="CENTER">
-               <font>
-                  <Font size="16.0" />
-               </font>
+            <Button fx:id="interestButton" layoutX="605.0" layoutY="10.0" mnemonicParsing="false" onAction="#interestClicked" text="Set Interest Rate">
                <padding>
                   <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
                </padding>
-            </Button>
-            <Button fx:id="transferButton" alignment="CENTER" mnemonicParsing="false" onAction="#transferClicked" text="Transfer Funds" textAlignment="CENTER">
                <font>
                   <Font size="16.0" />
                </font>
-               <padding>
-                  <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
-               </padding>
-            </Button>
-            <Button fx:id="creditAccountButton" alignment="CENTER" mnemonicParsing="false" onAction="#creditAccountClicked" text="Credit/Debit Account" textAlignment="CENTER">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
-               </padding>
             </Button>
          </children>
          <opaqueInsets>

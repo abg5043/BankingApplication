@@ -46,6 +46,13 @@
             <artifactId>opencsv</artifactId>
             <version>5.5</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.datafx/flow -->
+        <dependency>
+            <groupId>io.datafx</groupId>
+            <artifactId>flow</artifactId>
+            <version>8.0.7</version>
+        </dependency>
+
     </dependencies>
 
     <build>

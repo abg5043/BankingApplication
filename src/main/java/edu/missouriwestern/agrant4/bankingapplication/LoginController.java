@@ -53,6 +53,7 @@ public class LoginController extends Controller {
     String pass = passwordField.getText();
 
     if (loginIsValid(username, pass)) {
+
       loadBankData();
 
       //embedded if so that we can differentiate alerts. This will only cause a user type alert now
@@ -154,7 +155,7 @@ public class LoginController extends Controller {
     //checks if entered username and password match a record in the system.
     for(User user : users) {
       if(user.getUser().equals(username) && user.getPass().equals(pass)) {
-        currentUser = user;
+        this.currentUser = user;
         break;
       }
     }

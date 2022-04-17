@@ -26,7 +26,6 @@ public class TellerOpeningController extends Controller {
   @FXML
   private Label welcomeLabel;
 
-  private User currentUser;
 
   @FXML
   void accountClicked(ActionEvent event) {
@@ -47,11 +46,15 @@ public class TellerOpeningController extends Controller {
     setCurrentViewFile("teller-opening-view.fxml");
     setCurrentViewTitle("Teller");
     setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
-    this.welcomeLabel.setText("Hello, " + loginController.getCurrentUser().getFirstName() + "!");
-    this.mainTextBox.setText("Hello, " + loginController.getCurrentUser().getFirstName() + "!"
-        + "\n\nPlease select your next action.");
+  }
 
-    //TODO: DELETE THIS LINE; It is a test
-    getLoginController().getUsers().add(new User("test", "test", "test", "test", "test", "test", "test", true, true, true, "test", "test"));
+  /**
+   * The initialize() method allows you set setup your scene, adding actions, configuring nodes, etc.
+   */
+  @FXML
+  private void initialize() {
+    this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
+    this.mainTextBox.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!"
+        + "\n\nPlease select your next action.");
   }
 }

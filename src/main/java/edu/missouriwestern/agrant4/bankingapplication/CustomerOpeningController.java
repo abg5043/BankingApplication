@@ -45,9 +45,16 @@ public class CustomerOpeningController extends Controller {
     setCurrentViewFile("customer-opening-view.fxml");
     setCurrentViewTitle("Customer");
     setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
-    this.welcomeLabel.setText("Hello, " + loginController.getCurrentUser().getFirstName() + "!");
-    this.mainTextBox.setText("Hello, " + loginController.getCurrentUser().getFirstName() + "!"
-    + "\n\nPlease select your next action.");
+  }
+
+  /**
+   * The initialize() method allows you set setup your scene, adding actions, configuring nodes, etc.
+   */
+  @FXML
+  private void initialize() {
+    this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
+    this.mainTextBox.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!"
+        + "\n\nPlease select your next action.");
   }
 }
 
