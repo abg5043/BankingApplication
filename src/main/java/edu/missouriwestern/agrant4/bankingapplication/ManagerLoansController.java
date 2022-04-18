@@ -34,7 +34,7 @@ public class ManagerLoansController extends Controller{
 
         //Check that the text is not blank and matches an account
         //TODO: ADD IN THE LATTER LOGIC
-        if(!loanAcc.equals("")) {
+        if(loanAcc.length() == 9) {
             // create a confirmation screen
             ConfirmationController confirmationController = new ConfirmationController(
                 getCurrentStage(),
