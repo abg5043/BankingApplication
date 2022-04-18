@@ -1,6 +1,9 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
 import com.opencsv.bean.CsvToBeanBuilder;
+import edu.missouriwestern.agrant4.bankingapplication.classes.Checking;
+import edu.missouriwestern.agrant4.bankingapplication.classes.Loans;
+import edu.missouriwestern.agrant4.bankingapplication.classes.Savings;
 import edu.missouriwestern.agrant4.bankingapplication.classes.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -33,6 +36,12 @@ public class LoginController extends Controller {
   private TextField userNameField;
 
   private ArrayList<User> users;
+  private ArrayList<Savings> savings;
+  private ArrayList<Loans> loans;
+  private ArrayList<Checking> checking;
+
+  //TODO: MAKE LOG OF CHECKS (and checks object)
+  //TODO: Make log of transactions (and transactions object with account num, date, transaction type, and memo)
 
   // TODO: add fields for ArrayLists of each type of csv file.
   // Because we are going to pass this controller to every controller, we can just use that as a way to have access to
@@ -194,7 +203,25 @@ public class LoginController extends Controller {
 
     // parse users from csv file as objects and store them in an ArrayList
     try {
-      users = (ArrayList<User>) new CsvToBeanBuilder(new FileReader("users.csv")).withType(User.class).build().parse();
+      this.users = (ArrayList<User>) new CsvToBeanBuilder(new FileReader("users.csv"))
+          .withType(User.class)
+          .build()
+          .parse();
+      this.savings = (ArrayList<Savings>) new CsvToBeanBuilder(new FileReader("savings.csv"))
+          .withType(Savings.class)
+          .build()
+          .parse();
+      this.checking = (ArrayList<Checking>) new CsvToBeanBuilder(new FileReader("checking.csv"))
+          .withType(Checking.class)
+          .build()
+          .parse();
+
+      this.loans = (ArrayList<Loans>) new CsvToBeanBuilder(new FileReader("loans.csv"))
+          .withType(Loans.class)
+          .build()
+          .parse();
+
+
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -208,5 +235,15 @@ public class LoginController extends Controller {
     return currentUser;
   }
 
+  public ArrayList<Savings> getSavings() {
+    return savings;
+  }
 
+  public ArrayList<Loans> getLoans() {
+    return loans;
+  }
+
+  public ArrayList<Checking> getChecking() {
+    return checking;
+  }
 }

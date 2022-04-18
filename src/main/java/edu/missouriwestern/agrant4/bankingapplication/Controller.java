@@ -136,7 +136,9 @@ public class Controller {
   }
 
   //TODO: Need to flush out this writeBankData method for updating the bank's CSV files
-  public void writeBankData(ArrayList<User> users) {
+  public void writeBankData(
+      ArrayList<User> users
+  ) {
     Writer writer = null;
     try {
       //writes users toa users.csv file
