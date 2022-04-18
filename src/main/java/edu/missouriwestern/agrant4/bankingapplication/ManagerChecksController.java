@@ -1,99 +1,85 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
+import edu.missouriwestern.agrant4.bankingapplication.Controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
-public class ManagerLoansController extends Controller{
-
-    @FXML
-    private TextField accountNumber;
+public class ManagerChecksController extends Controller {
 
     @FXML
     private TableColumn<?, ?> accountNumberCol;
 
     @FXML
-    private Button approveButton;
+    private TableView<?> checkData;
 
     @FXML
-    private Button denyButton;
+    private TextField checkNumber;
 
     @FXML
     private TableColumn<?, ?> firstNameCol;
 
     @FXML
-    private TableView<?> loanData;
+    private Button processButton;
+
+    @FXML
+    private Button stopButton;
 
     @FXML
     private Label welcomeLabel;
 
     @FXML
-    void approveClicked(ActionEvent event) {
-        String loanAcc = accountNumber.getText();
+    void processClicked(ActionEvent event) {
+        //TODO: IMPLEMENT LOGIC TO CREATE CD. SHOULD BE SUPER EASY, but make sure to write to CSV *AND* object
 
-        //Check that the text is not blank and matches an account
-        //TODO: ADD IN THE LATTER LOGIC
-        if(!loanAcc.equals("")) {
-            // create a confirmation screen
-            ConfirmationController confirmationController = new ConfirmationController(
-                getCurrentStage(),
-                getLoginController(),
-                getMainPage(),
-                //TODO: PUT IN NAME INSTEAD OF ACCOUNT NUMBER
-                "Loan approved for account number " + loanAcc + "."
-            );
-
-            confirmationController.showStage();
-        } else {
-            // create an alert
-            Alert a = new Alert(Alert.AlertType.WARNING);
-            a.setTitle("Invalid Account Number");
-            a.setHeaderText("Loan not approved");
-            a.setContentText("Invalid account number. Please try again.");
-
-            // show the dialog
-            a.show();
-        }
+        // create a confirmation screen
+        ConfirmationController confirmationController = new ConfirmationController(
+            getCurrentStage(),
+            getLoginController(),
+            getMainPage(),
+            "Congratulations, you processed all the checks!"
+        );
     }
 
     @FXML
-    void denyClicked(ActionEvent event) {
-        String loanAcc = accountNumber.getText();
+    void stopClicked(ActionEvent event) {
+        String checkNumberText = checkNumber.getText();
 
-        //Check that the text is not blank and matches an account
+        //Check that the text is not blank and matches a check
         //TODO: ADD IN THE LATTER LOGIC
-        if(loanAcc.length() == 9) {
+        if(checkNumberText.length() == 9) {
             // create a confirmation screen
             ConfirmationController confirmationController = new ConfirmationController(
                 getCurrentStage(),
                 getLoginController(),
                 getMainPage(),
                 //TODO: PUT IN NAME INSTEAD OF ACCOUNT NUMBER
-                "Loan for account number " + loanAcc + " was not approved."
+                "Check number " + checkNumberText + " was stopped."
             );
 
             confirmationController.showStage();
         } else {
             // create an alert
             Alert a = new Alert(Alert.AlertType.WARNING);
-            a.setTitle("Invalid Account Number");
-            a.setHeaderText("Loan not denied");
-            a.setContentText("Invalid account number. Please try again.");
+            a.setTitle("Invalid Check Number");
+            a.setHeaderText("Check not stopped");
+            a.setContentText("Invalid check number. Please try again.");
 
             // show the dialog
             a.show();
         }
+
     }
 
-    public ManagerLoansController(
+    public ManagerChecksController(
         Stage currentStage,
         LoginController loginController,
         ManagerOpeningController managerOpeningController
     ) {
         super(currentStage, loginController, managerOpeningController);
-        setCurrentViewFile("manager-loans.fxml");
-        setCurrentViewTitle("Manage Loan Applications");
+        setCurrentViewFile("manager-checks.fxml");
+        setCurrentViewTitle("Manage Checks");
         setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
     }
 

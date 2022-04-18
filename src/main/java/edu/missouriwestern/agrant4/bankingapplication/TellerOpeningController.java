@@ -29,15 +29,35 @@ public class TellerOpeningController extends Controller {
 
   @FXML
   void accountClicked(ActionEvent event) {
+    TellerAccountInfoStartController controller = new TellerAccountInfoStartController(
+        getCurrentStage(),
+        getLoginController(),
+        this
+    );
 
+    controller.showStage();
   }
 
   @FXML
   void creditAccountClicked(ActionEvent event) {
+    TellerCreditController controller = new TellerCreditController(
+        getCurrentStage(),
+        getLoginController(),
+        this
+    );
+
+    controller.showStage();
   }
 
   @FXML
   void transferClicked(ActionEvent event) {
+    TellerTransferController tellerTransferController = new TellerTransferController(
+        getCurrentStage(),
+        getLoginController(),
+        this
+    );
+
+    tellerTransferController.showStage();
   }
 
 

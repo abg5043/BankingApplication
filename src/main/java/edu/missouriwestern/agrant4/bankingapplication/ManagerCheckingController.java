@@ -19,6 +19,9 @@ public class ManagerCheckingController extends Controller {
     private TextArea mainTextBox;
 
     @FXML
+    private Button checksButton;
+
+    @FXML
     private Button savingsButton;
 
     @FXML
@@ -29,6 +32,18 @@ public class ManagerCheckingController extends Controller {
 
     @FXML
     private Label welcomeLabel;
+
+    @FXML
+    void checksClicked(ActionEvent event) {
+        ManagerChecksController controller = new ManagerChecksController(
+            getCurrentStage(),
+            getLoginController(),
+            (ManagerOpeningController) getMainPage()
+        );
+
+        // Show the new stage/window
+        controller.showStage();
+    }
 
     @FXML
     void checkingClicked(ActionEvent event) {
