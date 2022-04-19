@@ -47,30 +47,53 @@ public class ManagerCreateSavingsController extends Controller {
             String openDate = date.format(formatters);
 
             //Check that the text is not blank and matches an account
-            //TODO: separate out the alert messages to have better error
-            if( customerSSN.length() == 9 && isValidUser(customerSSN)) {
+            if( customerSSN.length() == 9) {
+                if (getLoginController().isValidUser(customerSSN)) {
+                    if(!getLoginController().hasValidSavingsAccount(customerSSN + "_s")) {
+                        Savings newSavings = new Savings(
+                            customerSSN + "_s",
+                            balance,
+                            interestRate,
+                            openDate,
+                            "n/a"
+                        );
 
-                Savings newSavings = new Savings(
-                    customerSSN + "_s",
-                    balance,
-                    interestRate,
-                    openDate,
-                    "N/A"
-                );
+                        //update data and write to csv
+                        getLoginController().getSavingsData().add(newSavings);
+                        getLoginController().writeBankData();
 
-                //update data and write to csv
-                getLoginController().getSavingsData().add(newSavings);
-                getLoginController().writeBankData();
+                        // create a confirmation screen
+                        ConfirmationController confirmationController = new ConfirmationController(
+                            getCurrentStage(),
+                            getLoginController(),
+                            getMainPage(),
+                            "Congratulations, you created a savings account!"
+                        );
 
-                // create a confirmation screen
-                ConfirmationController confirmationController = new ConfirmationController(
-                    getCurrentStage(),
-                    getLoginController(),
-                    getMainPage(),
-                    "Congratulations, you created a savings account!"
-                );
+                        confirmationController.showStage();
+                    } else {
+                        // create an alert
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.setTitle("Savings Not Created");
+                        a.setHeaderText("User already has account");
+                        a.setContentText("Sorry. Users are only allowed one account.");
 
-                confirmationController.showStage();
+                        // show the dialog
+                        a.show();
+                    }
+
+                } else {
+                    // create an alert
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.setTitle("Savings Not Created");
+                    a.setHeaderText("Invalid user SSN");
+                    a.setContentText("Please ensure you enter in a valid SSN.");
+
+                    // show the dialog
+                    a.show();
+                }
+
+
             } else {
                 // create an alert
                 Alert a = new Alert(Alert.AlertType.WARNING);
@@ -110,15 +133,6 @@ public class ManagerCreateSavingsController extends Controller {
     @FXML
     private void initialize() {
         this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
-    }
-
-    private boolean isValidUser(String SSN) {
-        for (User user : getLoginController().getUsersData()) {
-            if (user.getSSN().equals(SSN)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 

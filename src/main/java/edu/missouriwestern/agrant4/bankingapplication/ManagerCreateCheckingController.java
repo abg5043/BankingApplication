@@ -1,5 +1,8 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
+import edu.missouriwestern.agrant4.bankingapplication.classes.Checking;
+import edu.missouriwestern.agrant4.bankingapplication.classes.Savings;
+import edu.missouriwestern.agrant4.bankingapplication.classes.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -30,7 +33,7 @@ public class ManagerCreateCheckingController extends Controller {
 
     @FXML
     void checkingClicked(ActionEvent event) {
-        String ID = acctIDField.getText();
+        String SSN = acctIDField.getText();
         String acctType = acctTypeField.getText();
 
         try {
@@ -42,28 +45,63 @@ public class ManagerCreateCheckingController extends Controller {
             String openDate = date.format(formatters);
 
             //Check that the text is not blank and matches an account
-            //TODO: ADD IN THE LATTER LOGIC
-            if( ID.length() != 9 || !(acctType.equals("Regular") || acctType.equals("Gold"))) {
+            if(
+                SSN.length() == 9 &&
+                (acctType.equals("Regular") || acctType.equals("Gold"))
+            ) {
+                if (getLoginController().isValidUser(SSN) ) {
+                    if (!getLoginController().hasValidCheckingAccount(SSN + "_c")) {
+                        Checking newChecking = new Checking(
+                            SSN + "_c",
+                            acctType,
+                            balance,
+                            "n/a",
+                            0,
+                            openDate
+                        );
+
+                        //update data and write to csv
+                        getLoginController().getCheckingData().add(newChecking);
+                        getLoginController().writeBankData();
+
+                        // create a confirmation screen
+                        ConfirmationController confirmationController = new ConfirmationController(
+                            getCurrentStage(),
+                            getLoginController(),
+                            getMainPage(),
+                            "Congratulations, you created a checking account!"
+                        );
+
+                        confirmationController.showStage();
+                    } else {
+                        // create an alert
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.setTitle("Checking Not Created");
+                        a.setHeaderText("User already has account");
+                        a.setContentText("Sorry. Users are only allowed one account.");
+
+                        // show the dialog
+                        a.show();
+                    }
+                } else {
+                    // create an alert
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.setTitle("Checking Not Created");
+                    a.setHeaderText("Invalid SSN");
+                    a.setContentText("Please ensure you enter a valid SSN.");
+
+                    // show the dialog
+                    a.show();
+                }
+            } else {
                 // create an alert
                 Alert a = new Alert(Alert.AlertType.WARNING);
-                a.setTitle("Checking Not Crated");
+                a.setTitle("Checking Not Created");
                 a.setHeaderText("Invalid formatting");
                 a.setContentText("Please ensure you follow the suggested formatting.");
 
                 // show the dialog
                 a.show();
-            } else {
-                //TODO: IMPLEMENT LOGIC TO CREATE CHECKING. SHOULD BE SUPER EASY, but make sure to write to CSV *AND* object
-
-                // create a confirmation screen
-                ConfirmationController confirmationController = new ConfirmationController(
-                    getCurrentStage(),
-                    getLoginController(),
-                    getMainPage(),
-                    "Congratulations, you created a checking account!"
-                );
-
-                confirmationController.showStage();
             }
 
         } catch(NumberFormatException e) {

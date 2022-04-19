@@ -1,8 +1,6 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
-import com.opencsv.bean.CsvBindByName;
 import edu.missouriwestern.agrant4.bankingapplication.classes.Loans;
-import edu.missouriwestern.agrant4.bankingapplication.classes.User;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -71,7 +69,7 @@ public class ManagerSendBillsController extends Controller {
   void sendBillClicked(ActionEvent event) {
     String billedAcc = accountNumber.getText();
     //Check that the text is not blank and matches an account
-    if(billedAcc.length() == 11 && hasValidAccount(billedAcc)) {
+    if(billedAcc.length() == 11 && getLoginController().hasValidLoanAccount(billedAcc)) {
 
       //get current date
       LocalDate date = LocalDate.now();
@@ -79,7 +77,7 @@ public class ManagerSendBillsController extends Controller {
       String currentDate = date.format(formatters);
 
       //update date bill sent
-      Loans currentLoan = findLoan(billedAcc);
+      Loans currentLoan = getLoginController().findLoanByID(billedAcc);
       currentLoan.setDateBillSent(currentDate);
 
       //write the data
@@ -105,24 +103,6 @@ public class ManagerSendBillsController extends Controller {
       a.show();
     }
 
-  }
-
-  private boolean hasValidAccount(String accNum) {
-      for (Loans loan : getLoginController().getLoansData()) {
-        if (loan.getAccountId().equals(accNum)) {
-          return true;
-        }
-      }
-      return false;
-  }
-
-  private Loans findLoan(String accNum) {
-    for (Loans loan : getLoginController().getLoansData()) {
-      if (loan.getAccountId().equals(accNum)) {
-        return loan;
-      }
-    }
-    return null;
   }
 
 

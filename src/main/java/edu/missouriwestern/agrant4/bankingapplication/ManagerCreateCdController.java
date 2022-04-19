@@ -51,33 +51,55 @@ public class ManagerCreateCdController extends Controller {
             //calculate due date
             LocalDate dueDateObject = date.plusYears(yearsUntilComplete);
             String dueDateString = dueDateObject.format(formatters);
-            //TODO: separate out the alert messages to have better error
-            if( customerSSN.length() == 9 && isValidUser(customerSSN)) {
-                Savings newCD = new Savings(
-                    customerSSN + "_s",
-                    balance,
-                    interest,
-                    currentDate,
-                    dueDateString
-                );
+            if( customerSSN.length() == 9 ) {
+                if (getLoginController().isValidUser(customerSSN)) {
+                    if (!getLoginController().hasValidCDAccount(customerSSN  + "_s")) {
+                        Savings newCD = new Savings(
+                            customerSSN + "_s",
+                            balance,
+                            interest,
+                            currentDate,
+                            dueDateString
+                        );
 
-                //update data and write to csv
-                getLoginController().getSavingsData().add(newCD);
-                getLoginController().writeBankData();
+                        //update data and write to csv
+                        getLoginController().getSavingsData().add(newCD);
+                        getLoginController().writeBankData();
 
-                // create a confirmation screen
-                ConfirmationController confirmationController = new ConfirmationController(
-                    getCurrentStage(),
-                    getLoginController(),
-                    getMainPage(),
-                    "Congratulations, you created a CD!"
-                );
+                        // create a confirmation screen
+                        ConfirmationController confirmationController = new ConfirmationController(
+                            getCurrentStage(),
+                            getLoginController(),
+                            getMainPage(),
+                            "Congratulations, you created a CD!"
+                        );
 
-                confirmationController.showStage();
+                        confirmationController.showStage();
+                    } else {
+                        // create an alert
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.setTitle("CD Not Created");
+                        a.setHeaderText("User already has account");
+                        a.setContentText("Sorry. Users are only allowed one account.");
+
+                        // show the dialog
+                        a.show();
+                    }
+                } else {
+                    // create an alert
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.setTitle("CD Not Created");
+                    a.setHeaderText("Invalid SSN");
+                    a.setContentText("Please ensure you enter in a valid SSN.");
+
+                    // show the dialog
+                    a.show();
+                }
+
             } else {
                 // create an alert
                 Alert a = new Alert(Alert.AlertType.WARNING);
-                a.setTitle("CD Not Crated");
+                a.setTitle("CD Not Created");
                 a.setHeaderText("Invalid formatting");
                 a.setContentText("Please ensure you follow the suggested formatting.");
 
@@ -108,14 +130,5 @@ public class ManagerCreateCdController extends Controller {
     @FXML
     private void initialize() {
         this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
-    }
-
-    private boolean isValidUser(String SSN) {
-        for (User user : getLoginController().getUsersData()) {
-            if (user.getSSN().equals(SSN)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

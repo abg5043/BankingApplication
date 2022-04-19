@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
@@ -47,6 +48,7 @@ public class LoginController extends Controller {
   private ArrayList<Savings> savingsData;
   private ArrayList<Loans> loansData;
   private ArrayList<Checking> checkingData;
+  private ArrayList<Loans> loanApplications;
 
   //TODO: MAKE LOG OF CHECKS (and checks object)
   //TODO: Make log of transactions (and transactions object with account num, date, transaction type, and memo)
@@ -224,6 +226,15 @@ public class LoginController extends Controller {
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    try {
+      setLoanApplications( (ArrayList<Loans>) new CsvToBeanBuilder(new FileReader("loanApplications.csv"))
+          .withType(Loans.class)
+          .build()
+          .parse());
+    } catch (FileNotFoundException ex) {
+      ex.printStackTrace();
+    }
   }
 
   public User getCurrentUser() {
@@ -263,36 +274,51 @@ public class LoginController extends Controller {
     this.checkingData = checkingData;
   }
 
+  public ArrayList<Loans> getLoanApplications() {
+    return loanApplications;
+  }
+
+  public void setLoanApplications(ArrayList<Loans> loanApplications) {
+    this.loanApplications = loanApplications;
+  }
+
   //TODO: Need to flush out this writeBankData method for updating the bank's CSV files
   public void writeBankData() {
-    Writer writer1 = null;
-    Writer writer2 = null;
-    Writer writer3 = null;
-    Writer writer4 = null;
+    Writer userWriter = null;
+    Writer savingsWriter = null;
+    Writer checkingWriter = null;
+    Writer loansWriter = null;
+    Writer loanApplicationWriter = null;
     try {
       //writes users to a users.csv file
-      writer1 = new FileWriter("users.csv");
-      StatefulBeanToCsv beanToCsv1 = new StatefulBeanToCsvBuilder(writer1).build();
+      userWriter = new FileWriter("users.csv");
+      StatefulBeanToCsv beanToCsv1 = new StatefulBeanToCsvBuilder(userWriter).build();
       beanToCsv1.write(usersData);
-      writer1.close();
+      userWriter.close();
 
       //writes savings data to a savings.csv file
-      writer2 = new FileWriter("savings.csv");
-      StatefulBeanToCsv beanToCsv2 = new StatefulBeanToCsvBuilder(writer2).build();
+      savingsWriter = new FileWriter("savings.csv");
+      StatefulBeanToCsv beanToCsv2 = new StatefulBeanToCsvBuilder(savingsWriter).build();
       beanToCsv2.write(savingsData);
-      writer2.close();
+      savingsWriter.close();
 
       //writes checking data to a checking.csv file
-      writer3 = new FileWriter("checking.csv");
-      StatefulBeanToCsv beanToCsv3 = new StatefulBeanToCsvBuilder(writer3).build();
+      checkingWriter = new FileWriter("checking.csv");
+      StatefulBeanToCsv beanToCsv3 = new StatefulBeanToCsvBuilder(checkingWriter).build();
       beanToCsv3.write(checkingData);
-      writer3.close();
+      checkingWriter.close();
 
       //writes loans data to a loans.csv file
-      writer4 = new FileWriter("loans.csv");
-      StatefulBeanToCsv beanToCsv4 = new StatefulBeanToCsvBuilder(writer4).build();
+      loansWriter = new FileWriter("loans.csv");
+      StatefulBeanToCsv beanToCsv4 = new StatefulBeanToCsvBuilder(loansWriter).build();
       beanToCsv4.write(loansData);
-      writer4.close();
+      loansWriter.close();
+
+      //writes loans application data to a loans.csv file
+      loanApplicationWriter = new FileWriter("loanApplications.csv");
+      StatefulBeanToCsv beanToCsv5 = new StatefulBeanToCsvBuilder(loanApplicationWriter).build();
+      beanToCsv4.write(loanApplications);
+      loansWriter.close();
 
 
     } catch (Exception e) {
@@ -301,5 +327,85 @@ public class LoginController extends Controller {
 
   }
 
+  public boolean isValidUser(String SSN) {
+    for (User user : this.getUsersData()) {
+      if (user.getSSN().equals(SSN)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
+  public boolean hasValidLoanAccount(String accNum) {
+    for (Loans loan : this.getLoansData()) {
+      if (loan.getAccountId().equals(accNum)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  public boolean hasValidCheckingAccount(String checkingID) {
+    for (Checking checking : this.getCheckingData()) {
+      if (checking.getAccountId().equals(checkingID)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean hasValidSavingsAccount(String savingsID) {
+    for (Savings savings : this.getSavingsData()) {
+      if (savings.getAccountId().equals(savingsID) && savings.getDueDate().equals("n/a")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean hasValidCDAccount(String savingsID) {
+    for (Savings savings : this.getSavingsData()) {
+      if (savings.getAccountId().equals(savingsID) && !savings.getDueDate().equals("n/a")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public Loans findLoanByID(String accNum) {
+    for (Loans loan : this.getLoansData()) {
+      if (loan.getAccountId().equals(accNum)) {
+        return loan;
+      }
+    }
+    return null;
+  }
+
+  public Savings findSavingsByID(String accNum) {
+    for (Savings savings : this.getSavingsData()) {
+      if (savings.getAccountId().equals(accNum) && savings.getDueDate().equals("n/a")) {
+        return savings;
+      }
+    }
+    return null;
+  }
+
+  public Savings findCDByID(String accNum) {
+    for (Savings savings : this.getSavingsData()) {
+      if (savings.getAccountId().equals(accNum) && !savings.getDueDate().equals("n/a")) {
+        return savings;
+      }
+    }
+    return null;
+  }
+
+  public Checking findCheckingByID(String accNum) {
+    for (Checking checking : this.getCheckingData()) {
+      if (checking.getAccountId().equals(accNum)) {
+        return checking;
+      }
+    }
+    return null;
+  }
 }

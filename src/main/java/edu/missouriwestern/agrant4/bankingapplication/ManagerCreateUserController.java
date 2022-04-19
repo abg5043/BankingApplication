@@ -77,41 +77,53 @@ public class ManagerCreateUserController extends Controller {
             (role.equals("c") || role.equals("m") || role.equals("t")) &&
             password.length() > 0
         ) {
-            Boolean manager = role.equals("m");
-            Boolean teller = role.equals("t");
-            Boolean customer = role.equals("c");
+            if(!getLoginController().isValidUser(ssn)) {
+                Boolean manager = role.equals("m");
+                Boolean teller = role.equals("t");
+                Boolean customer = role.equals("c");
 
-            //Create user
-            User newUser = new User(
-                username,
-                password,
-                ssn,
-                address,
-                city,
-                state,
-                zip,
-                manager,
-                customer,
-                teller,
-                fName,
-                lName
-            );
+                //Create user
+                User newUser = new User(
+                    username,
+                    password,
+                    ssn,
+                    address,
+                    city,
+                    state,
+                    zip,
+                    manager,
+                    customer,
+                    teller,
+                    fName,
+                    lName
+                );
 
-            //update user data
-            getLoginController().getUsersData().add(newUser);
+                //update user data
+                getLoginController().getUsersData().add(newUser);
 
-            //write the data
-            getLoginController().writeBankData();
+                //write the data
+                getLoginController().writeBankData();
 
-            // create a confirmation screen
-            ConfirmationController confirmationController = new ConfirmationController(
-                getCurrentStage(),
-                getLoginController(),
-                getMainPage(),
-                "Congratulations! You created a new user!"
-            );
+                // create a confirmation screen
+                ConfirmationController confirmationController = new ConfirmationController(
+                    getCurrentStage(),
+                    getLoginController(),
+                    getMainPage(),
+                    "Congratulations! You created a new user!"
+                );
 
-            confirmationController.showStage();
+                confirmationController.showStage();
+            } else {
+                // create an alert
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setTitle("User note created");
+                a.setHeaderText("User already exists");
+                a.setContentText("Please check SSN and try again.");
+
+                // show the dialog
+                a.show();
+            }
+
         } else {
             // create an alert
             Alert a = new Alert(Alert.AlertType.WARNING);
