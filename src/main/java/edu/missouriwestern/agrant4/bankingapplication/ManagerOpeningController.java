@@ -14,6 +14,9 @@ public class ManagerOpeningController extends Controller {
   private Button billsButton;
 
   @FXML
+  private Button userButton;
+
+  @FXML
   private Button loanButton;
 
   @FXML
@@ -42,6 +45,20 @@ public class ManagerOpeningController extends Controller {
 
     // Show the new stage/window
     managerSendBillsController.showStage();
+
+  }
+
+  @FXML
+  void userClicked(ActionEvent event) {
+
+    ManagerCreateUserController managerCreateUserController = new ManagerCreateUserController(
+        getCurrentStage(),
+        getLoginController(),
+        this
+    );
+
+    // Show the new stage/window
+    managerCreateUserController.showStage();
 
   }
 

@@ -1,6 +1,8 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
 import edu.missouriwestern.agrant4.bankingapplication.Controller;
+import edu.missouriwestern.agrant4.bankingapplication.classes.Savings;
+import edu.missouriwestern.agrant4.bankingapplication.classes.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -16,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 public class ManagerCreateSavingsController extends Controller {
 
     @FXML
-    private TextField acctIDField;
+    private TextField ssnField;
 
     @FXML
     private Button savingsButton;
@@ -33,7 +35,7 @@ public class ManagerCreateSavingsController extends Controller {
 
     @FXML
     void savingsClicked(ActionEvent event) {
-        String ID = acctIDField.getText();
+        String customerSSN = ssnField.getText();
 
         try {
             double balance = Double.parseDouble(startingBalanceField.getText());
@@ -45,9 +47,20 @@ public class ManagerCreateSavingsController extends Controller {
             String openDate = date.format(formatters);
 
             //Check that the text is not blank and matches an account
-            //TODO: ADD IN THE LATTER LOGIC
-            if( ID.length() == 11) {
-                //TODO: IMPLEMENT LOGIC TO CREATE SAVINGS. SHOULD BE SUPER EASY, but make sure to write to CSV *AND* object
+            //TODO: separate out the alert messages to have better error
+            if( customerSSN.length() == 9 && isValidUser(customerSSN)) {
+
+                Savings newSavings = new Savings(
+                    customerSSN + "_s",
+                    balance,
+                    interestRate,
+                    openDate,
+                    "N/A"
+                );
+
+                //update data and write to csv
+                getLoginController().getSavingsData().add(newSavings);
+                getLoginController().writeBankData();
 
                 // create a confirmation screen
                 ConfirmationController confirmationController = new ConfirmationController(
@@ -61,7 +74,7 @@ public class ManagerCreateSavingsController extends Controller {
             } else {
                 // create an alert
                 Alert a = new Alert(Alert.AlertType.WARNING);
-                a.setTitle("Savings Not Crated");
+                a.setTitle("Savings Not Created");
                 a.setHeaderText("Invalid formatting");
                 a.setContentText("Please ensure you follow the suggested formatting.");
 
@@ -99,6 +112,14 @@ public class ManagerCreateSavingsController extends Controller {
         this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
     }
 
+    private boolean isValidUser(String SSN) {
+        for (User user : getLoginController().getUsersData()) {
+            if (user.getSSN().equals(SSN)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
 }

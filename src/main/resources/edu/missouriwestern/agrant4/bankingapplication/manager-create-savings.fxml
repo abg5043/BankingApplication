@@ -18,12 +18,12 @@
                   <Font name="System Bold" size="20.0" />
                </font>
             </Label>
-            <Label text="Account ID">
+            <Label text="Customer SSN">
                <font>
                   <Font size="16.0" />
                </font>
             </Label>
-            <TextField fx:id="acctIDField" promptText="9 Integers">
+            <TextField fx:id="ssnField" promptText="9 Integers">
                <VBox.margin>
                   <Insets left="250.0" right="250.0" />
                </VBox.margin>

@@ -1,5 +1,8 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
+import edu.missouriwestern.agrant4.bankingapplication.classes.Loans;
+import edu.missouriwestern.agrant4.bankingapplication.classes.Savings;
+import edu.missouriwestern.agrant4.bankingapplication.classes.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -23,7 +26,7 @@ public class ManagerCreateCdController extends Controller {
     private TextField currentInterest;
 
     @FXML
-    private TextField custID;
+    private TextField ssnField;
 
     @FXML
     private TextField dueDate;
@@ -33,7 +36,7 @@ public class ManagerCreateCdController extends Controller {
 
     @FXML
     void createCDClicked(ActionEvent event) {
-        String ID = custID.getText();
+        String customerSSN = ssnField.getText();
 
         try {
             double balance = Double.parseDouble(accBal.getText());
@@ -45,14 +48,22 @@ public class ManagerCreateCdController extends Controller {
             DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
             String currentDate = date.format(formatters);
 
+            //calculate due date
             LocalDate dueDateObject = date.plusYears(yearsUntilComplete);
             String dueDateString = dueDateObject.format(formatters);
+            //TODO: separate out the alert messages to have better error
+            if( customerSSN.length() == 9 && isValidUser(customerSSN)) {
+                Savings newCD = new Savings(
+                    customerSSN + "_s",
+                    balance,
+                    interest,
+                    currentDate,
+                    dueDateString
+                );
 
-            //Check that the text is not blank and matches an account
-            //TODO: ADD IN THE LATTER LOGIC
-            if( ID.length() == 11) {
-                //TODO: IMPLEMENT LOGIC TO CREATE CD. SHOULD BE SUPER EASY, but make sure to write to CSV *AND* object
-
+                //update data and write to csv
+                getLoginController().getSavingsData().add(newCD);
+                getLoginController().writeBankData();
 
                 // create a confirmation screen
                 ConfirmationController confirmationController = new ConfirmationController(
@@ -97,5 +108,14 @@ public class ManagerCreateCdController extends Controller {
     @FXML
     private void initialize() {
         this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
+    }
+
+    private boolean isValidUser(String SSN) {
+        for (User user : getLoginController().getUsersData()) {
+            if (user.getSSN().equals(SSN)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
