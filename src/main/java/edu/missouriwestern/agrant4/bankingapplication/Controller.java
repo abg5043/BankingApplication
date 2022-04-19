@@ -2,6 +2,9 @@ package edu.missouriwestern.agrant4.bankingapplication;
 
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import edu.missouriwestern.agrant4.bankingapplication.classes.Checking;
+import edu.missouriwestern.agrant4.bankingapplication.classes.Loans;
+import edu.missouriwestern.agrant4.bankingapplication.classes.Savings;
 import edu.missouriwestern.agrant4.bankingapplication.classes.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -37,8 +40,7 @@ public class Controller {
 
   @FXML
   void exitClicked(ActionEvent event) {
-    //TODO: FLUSH THIS OUT
-    writeBankData(loginController.getUsers());
+    loginController.writeBankData();
     System.exit(0);
   }
 
@@ -133,23 +135,6 @@ public class Controller {
    */
   public void showStage() {
     currentStage.show();
-  }
-
-  //TODO: Need to flush out this writeBankData method for updating the bank's CSV files
-  public void writeBankData(
-      ArrayList<User> users
-  ) {
-    Writer writer = null;
-    try {
-      //writes users toa users.csv file
-      writer = new FileWriter("users.csv");
-      StatefulBeanToCsv beanToCsv = new StatefulBeanToCsvBuilder(writer).build();
-      beanToCsv.write(users);
-      writer.close();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
   }
 
 }

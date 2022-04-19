@@ -63,12 +63,10 @@ public class Savings {
 
     @Override
     public String toString() {
-    return "Savings{" +
-        "accountId='" + accountId + '\'' +
-        ", accountBalance='" + accountBalance + '\'' +
-        ", interestRate='" + interestRate + '\'' +
-        ", accountOpenDate='" + accountOpenDate + '\'' +
-        ", dueDate='" + dueDate + '\'' +
-        '}';
+    return "account ID='" + accountId + '\'' +
+        ", account balance='" + accountBalance + '\'' +
+        ", interest rate='" + interestRate + '\'' +
+        ", account open date='" + accountOpenDate + '\'' +
+        ", due date='" + dueDate;
   }
 }

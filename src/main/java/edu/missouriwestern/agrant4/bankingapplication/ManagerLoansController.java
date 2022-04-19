@@ -34,7 +34,7 @@ public class ManagerLoansController extends Controller{
 
         //Check that the text is not blank and matches an account
         //TODO: ADD IN THE LATTER LOGIC
-        if(loanAcc.length() == 9) {
+        if(loanAcc.length() == 11) {
             // create a confirmation screen
             ConfirmationController confirmationController = new ConfirmationController(
                 getCurrentStage(),
@@ -63,7 +63,7 @@ public class ManagerLoansController extends Controller{
 
         //Check that the text is not blank and matches an account
         //TODO: ADD IN THE LATTER LOGIC
-        if(loanAcc.length() == 9) {
+        if(loanAcc.length() == 11) {
             // create a confirmation screen
             ConfirmationController confirmationController = new ConfirmationController(
                 getCurrentStage(),

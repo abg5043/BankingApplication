@@ -17,7 +17,7 @@ public class Checking {
 
     //overdrafts this month
     @CsvBindByName(column = "overdrafts")
-    private int overDrafts;
+    private int overdrafts;
 
     @CsvBindByName(column = "open_date")
     private String openDate;
@@ -27,7 +27,7 @@ public class Checking {
         this.accountType = accountType;
         this.currentBalance = currentBalance;
         this.backupAccountId = backupAccountId;
-        this.overDrafts = overDrafts;
+        this.overdrafts = overDrafts;
         this.openDate = openDate;
     }
 
@@ -47,8 +47,8 @@ public class Checking {
     public String getBackupAccountId() {
         return backupAccountId;
     }
-    public int getOverDrafts() {
-        return overDrafts;
+    public int getOverdrafts() {
+        return overdrafts;
     }
     public String getOpenDate() {
         return openDate;
@@ -67,8 +67,8 @@ public class Checking {
     public void setBackupAccountId(String backupAccountId) {
         this.backupAccountId = backupAccountId;
     }
-    public void setOverDrafts(int overDrafts) {
-        this.overDrafts = overDrafts;
+    public void setOverdrafts(int overdrafts) {
+        this.overdrafts = overdrafts;
     }
     public void setOpenDate(String openDate) {
         this.openDate = openDate;
@@ -76,13 +76,11 @@ public class Checking {
 
     @Override
     public String toString() {
-    return "Checking{" +
-        "accountId='" + accountId + '\'' +
-        ", accountType='" + accountType + '\'' +
-        ", currentBalance='" + currentBalance + '\'' +
-        ", backupAccountId='" + backupAccountId + '\'' +
-        ", overDrafts='" + overDrafts + '\'' +
-        ", openDate='" + openDate + '\'' +
-        '}';
+    return "account ID='" + accountId + '\'' +
+        ", account type='" + accountType + '\'' +
+        ", current balance='" + currentBalance + '\'' +
+        ", backup account id='" + backupAccountId + '\'' +
+        ", overdrafts='" + overdrafts + '\'' +
+        ", open date='" + openDate;
   }
 }   

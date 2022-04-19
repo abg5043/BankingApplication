@@ -34,7 +34,7 @@ public class ManagerInterestController extends Controller {
             double checkingInterest = Double.parseDouble(interestRateField.getText());
             String ID = accountField.getText();
 
-            if( ID.length() == 9) {
+            if( ID.length() == 11) {
                 //TODO: IMPLEMENT LOGIC. SHOULD BE SUPER EASY, but make sure to write to CSV *AND* object
 
                 // create a confirmation screen

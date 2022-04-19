@@ -1,6 +1,8 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
 import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import edu.missouriwestern.agrant4.bankingapplication.classes.Checking;
 import edu.missouriwestern.agrant4.bankingapplication.classes.Loans;
 import edu.missouriwestern.agrant4.bankingapplication.classes.Savings;
@@ -13,6 +15,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 
 public class LoginController extends Controller {
@@ -35,20 +39,17 @@ public class LoginController extends Controller {
   @FXML
   private TextField userNameField;
 
-  private ArrayList<User> users;
-  private ArrayList<Savings> savings;
-  private ArrayList<Loans> loans;
-  private ArrayList<Checking> checking;
+  private User currentUser;
+
+  // Because we are going to pass this controller to every controller, we can just use that as a way to have access to
+  // all of the files rather than passing every object through every constructor
+  private ArrayList<User> usersData;
+  private ArrayList<Savings> savingsData;
+  private ArrayList<Loans> loansData;
+  private ArrayList<Checking> checkingData;
 
   //TODO: MAKE LOG OF CHECKS (and checks object)
   //TODO: Make log of transactions (and transactions object with account num, date, transaction type, and memo)
-
-  // TODO: add fields for ArrayLists of each type of csv file.
-  // Because we are going to pass this controller to every controller, we can just use that as a way to have access to
-  // all of the files rather than passing every object through every constructor
-
-
-  private User currentUser;
 
   @Override
   @FXML
@@ -162,7 +163,7 @@ public class LoginController extends Controller {
   private boolean loginIsValid(String username, String pass) {
 
     //checks if entered username and password match a record in the system.
-    for(User user : users) {
+    for(User user : getUsersData()) {
       if(user.getUser().equals(username) && user.getPass().equals(pass)) {
         this.currentUser = user;
         break;
@@ -203,47 +204,102 @@ public class LoginController extends Controller {
 
     // parse users from csv file as objects and store them in an ArrayList
     try {
-      this.users = (ArrayList<User>) new CsvToBeanBuilder(new FileReader("users.csv"))
+      setUsersData((ArrayList<User>) new CsvToBeanBuilder(new FileReader("users.csv"))
           .withType(User.class)
           .build()
-          .parse();
-      this.savings = (ArrayList<Savings>) new CsvToBeanBuilder(new FileReader("savings.csv"))
+          .parse());
+      setSavingsData((ArrayList<Savings>) new CsvToBeanBuilder(new FileReader("savings.csv"))
           .withType(Savings.class)
           .build()
-          .parse();
-      this.checking = (ArrayList<Checking>) new CsvToBeanBuilder(new FileReader("checking.csv"))
+          .parse());
+      setCheckingData((ArrayList<Checking>) new CsvToBeanBuilder(new FileReader("checking.csv"))
           .withType(Checking.class)
           .build()
-          .parse();
+          .parse());
 
-      this.loans = (ArrayList<Loans>) new CsvToBeanBuilder(new FileReader("loans.csv"))
+      setLoansData( (ArrayList<Loans>) new CsvToBeanBuilder(new FileReader("loans.csv"))
           .withType(Loans.class)
           .build()
-          .parse();
-
-
+          .parse());
     } catch (Exception e) {
       e.printStackTrace();
     }
-  }
-
-  public ArrayList<User> getUsers() {
-    return users;
   }
 
   public User getCurrentUser() {
     return currentUser;
   }
 
-  public ArrayList<Savings> getSavings() {
-    return savings;
+
+  public ArrayList<User> getUsersData() {
+    return usersData;
   }
 
-  public ArrayList<Loans> getLoans() {
-    return loans;
+  public void setUsersData(ArrayList<User> usersData) {
+    this.usersData = usersData;
   }
 
-  public ArrayList<Checking> getChecking() {
-    return checking;
+  public ArrayList<Savings> getSavingsData() {
+    return savingsData;
   }
+
+  public void setSavingsData(ArrayList<Savings> savingsData) {
+    this.savingsData = savingsData;
+  }
+
+  public ArrayList<Loans> getLoansData() {
+    return loansData;
+  }
+
+  public void setLoansData(ArrayList<Loans> loansData) {
+    this.loansData = loansData;
+  }
+
+  public ArrayList<Checking> getCheckingData() {
+    return checkingData;
+  }
+
+  public void setCheckingData(ArrayList<Checking> checkingData) {
+    this.checkingData = checkingData;
+  }
+
+  //TODO: Need to flush out this writeBankData method for updating the bank's CSV files
+  public void writeBankData() {
+    Writer writer1 = null;
+    Writer writer2 = null;
+    Writer writer3 = null;
+    Writer writer4 = null;
+    try {
+      //writes users to a users.csv file
+      writer1 = new FileWriter("users.csv");
+      StatefulBeanToCsv beanToCsv1 = new StatefulBeanToCsvBuilder(writer1).build();
+      beanToCsv1.write(usersData);
+      writer1.close();
+
+      //writes savings data to a savings.csv file
+      writer2 = new FileWriter("savings.csv");
+      StatefulBeanToCsv beanToCsv2 = new StatefulBeanToCsvBuilder(writer2).build();
+      beanToCsv2.write(savingsData);
+      writer2.close();
+
+      //writes checking data to a checking.csv file
+      writer3 = new FileWriter("checking.csv");
+      StatefulBeanToCsv beanToCsv3 = new StatefulBeanToCsvBuilder(writer3).build();
+      beanToCsv3.write(checkingData);
+      writer3.close();
+
+      //writes loans data to a loans.csv file
+      writer4 = new FileWriter("loans.csv");
+      StatefulBeanToCsv beanToCsv4 = new StatefulBeanToCsvBuilder(writer4).build();
+      beanToCsv4.write(loansData);
+      writer4.close();
+
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
+
+
 }

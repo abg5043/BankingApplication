@@ -41,7 +41,7 @@ public class TellerCreditController extends Controller {
 
 
 
-            if( accID.length() == 9 ) {
+            if( accID.length() == 11 ) {
                 //TODO: IMPLEMENT LOGIC. SHOULD BE SUPER EASY, but make sure to write to CSV *AND* object
 
                 // create a confirmation screen
@@ -88,7 +88,7 @@ public class TellerCreditController extends Controller {
 
 
 
-            if( accID.length() == 9 ) {
+            if( accID.length() == 11 ) {
                 //TODO: IMPLEMENT LOGIC. SHOULD BE SUPER EASY, but make sure to write to CSV *AND* object
 
                 // create a confirmation screen

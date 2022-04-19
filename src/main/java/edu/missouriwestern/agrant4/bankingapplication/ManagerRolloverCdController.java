@@ -31,7 +31,7 @@ public class ManagerRolloverCdController extends Controller {
 
         //Check that the text is not blank and matches an account
         //TODO: ADD IN THE LATTER LOGIC
-        if(billedAcc.length() == 9) {
+        if(billedAcc.length() == 11) {
             // create a confirmation screen
             ConfirmationController confirmationController = new ConfirmationController(
                 getCurrentStage(),

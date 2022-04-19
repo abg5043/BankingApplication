@@ -1,5 +1,7 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
+import com.opencsv.bean.CsvBindByName;
+import edu.missouriwestern.agrant4.bankingapplication.classes.Loans;
 import edu.missouriwestern.agrant4.bankingapplication.classes.User;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -8,13 +10,16 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class ManagerSendBillsController extends Controller {
 
   @FXML
   private TextField accountNumber;
 
   @FXML
-  private TableView<User> creditData;
+  private TableView<Loans> creditData;
 
   @FXML
   private Button exitButton;
@@ -30,33 +35,70 @@ public class ManagerSendBillsController extends Controller {
 
 
   @FXML
-  private TableColumn<User, String> accountNumberCol;
+  private TableColumn<Loans, String> accountNumberCol;
 
   @FXML
-  private TableColumn<User, String> firstNameCol;
+  private TableColumn<Loans, Double> currentBalanceCol;
+
+  @FXML
+  private TableColumn<Loans, Double> interestRateCol;
+
+  @FXML
+  private TableColumn<Loans, String> nextPaymentDueCol;
+
+  @FXML
+  private TableColumn<Loans, String> dateBillSentCol;
+
+  @FXML
+  private TableColumn<Loans, Double> currentPaymentCol;
+
+  @FXML
+  private TableColumn<Loans, String> lastPaymentMadeCol;
+
+  @FXML
+  private TableColumn<Loans, Integer> missedPaymentFlagCol;
+
+  @FXML
+  private TableColumn<Loans, String> loanTypeCol;
+
+  @FXML
+  private TableColumn<Loans, Integer> creditLimitCol;
+
+  @FXML
+  private TableColumn<Loans, Integer> monthLeftCol;
 
   @FXML
   void sendBillClicked(ActionEvent event) {
     String billedAcc = accountNumber.getText();
-
     //Check that the text is not blank and matches an account
-    //TODO: ADD IN THE LATTER LOGIC
-    if(billedAcc.length() == 9) {
+    if(billedAcc.length() == 11 && hasValidAccount(billedAcc)) {
+
+      //get current date
+      LocalDate date = LocalDate.now();
+      DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+      String currentDate = date.format(formatters);
+
+      //update date bill sent
+      Loans currentLoan = findLoan(billedAcc);
+      currentLoan.setDateBillSent(currentDate);
+
+      //write the data
+      getLoginController().writeBankData();
+
       // create a confirmation screen
       ConfirmationController confirmationController = new ConfirmationController(
           getCurrentStage(),
           getLoginController(),
           getMainPage(),
-          //TODO: PUT IN NAME INSTEAD OF ACCOUNT NUMBER
-          "Congratulations! Bills sent to " + billedAcc + "."
+          "Congratulations! Bill sent to account " + billedAcc + "."
       );
 
       confirmationController.showStage();
     } else {
       // create an alert
       Alert a = new Alert(Alert.AlertType.WARNING);
-      a.setTitle("Bills not sent");
-      a.setHeaderText("Bills not sent");
+      a.setTitle("Bill not sent");
+      a.setHeaderText("Bill not sent");
       a.setContentText("Invalid account number. Please try again.");
 
       // show the dialog
@@ -65,11 +107,29 @@ public class ManagerSendBillsController extends Controller {
 
   }
 
+  private boolean hasValidAccount(String accNum) {
+      for (Loans loan : getLoginController().getLoansData()) {
+        if (loan.getAccountId().equals(accNum)) {
+          return true;
+        }
+      }
+      return false;
+  }
+
+  private Loans findLoan(String accNum) {
+    for (Loans loan : getLoginController().getLoansData()) {
+      if (loan.getAccountId().equals(accNum)) {
+        return loan;
+      }
+    }
+    return null;
+  }
+
 
   public ManagerSendBillsController(Stage currentStage, LoginController loginController, ManagerOpeningController managerOpeningController) {
     super(currentStage, loginController, managerOpeningController);
     setCurrentViewFile("manager-send-bills.fxml");
-    setCurrentViewTitle("Send Credit Card Bills");
+    setCurrentViewTitle("Send Loan Bills");
     setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
   }
 
@@ -79,13 +139,24 @@ public class ManagerSendBillsController extends Controller {
   @FXML
   private void initialize() {
     this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
-    //TODO: THIS IS CODE FOR FILLING IN THE TABLE. ADJUST WITH NEW DATA STRUCTURES
-    /*
-    accountNumberCol.setCellValueFactory(new PropertyValueFactory<User, String>("SSN"));
-    firstNameCol.setCellValueFactory(new PropertyValueFactory<User, String>("firstName"));
+
+    accountNumberCol.setCellValueFactory(new PropertyValueFactory<Loans, String>("accountId"));
+    currentBalanceCol.setCellValueFactory(new PropertyValueFactory<Loans, Double>("currentBalance"));
+    interestRateCol.setCellValueFactory(new PropertyValueFactory<Loans, Double>("interestRate"));
+    nextPaymentDueCol.setCellValueFactory(new PropertyValueFactory<Loans, String>("nextPaymentDueDate"));
+    dateBillSentCol.setCellValueFactory(new PropertyValueFactory<Loans, String>("dateBillSent"));
+    currentPaymentCol.setCellValueFactory(new PropertyValueFactory<Loans, Double>("currentPaymentAmount"));
+    lastPaymentMadeCol.setCellValueFactory(new PropertyValueFactory<Loans, String>("lastPaymentMade"));
+    missedPaymentFlagCol.setCellValueFactory(new PropertyValueFactory<Loans, Integer>("missedPaymentFlag"));
+    loanTypeCol.setCellValueFactory(new PropertyValueFactory<Loans, String>("loanType"));
+    creditLimitCol.setCellValueFactory(new PropertyValueFactory<Loans, Integer>("creditLimit"));
+    monthLeftCol.setCellValueFactory(new PropertyValueFactory<Loans, Integer>("monthsLeft"));
+
+
+
     //bind list into the table
-    creditData.setItems(FXCollections.observableArrayList(getLoginController().getUsers()));
-    */
+    creditData.setItems(FXCollections.observableArrayList(getLoginController().getLoansData()));
+
   }
 
 }

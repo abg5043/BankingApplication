@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 public class ManagerOpeningController extends Controller {
 
   @FXML
-  private Button creditButton;
+  private Button billsButton;
 
   @FXML
   private Button loanButton;
@@ -32,7 +32,7 @@ public class ManagerOpeningController extends Controller {
   private Label welcomeLabel;
 
   @FXML
-  void creditClicked(ActionEvent event) {
+  void billsClicked(ActionEvent event) {
 
     ManagerSendBillsController managerSendBillsController = new ManagerSendBillsController(
         getCurrentStage(),

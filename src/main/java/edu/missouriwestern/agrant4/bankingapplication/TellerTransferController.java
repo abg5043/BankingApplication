@@ -41,7 +41,7 @@ public class TellerTransferController extends Controller {
 
 
 
-            if( fromID.length() == 9 && toID.length() == 9) {
+            if( fromID.length() == 11 && toID.length() == 11) {
                 //TODO: IMPLEMENT LOGIC. SHOULD BE SUPER EASY, but make sure to write to CSV *AND* object
 
                 // create a confirmation screen

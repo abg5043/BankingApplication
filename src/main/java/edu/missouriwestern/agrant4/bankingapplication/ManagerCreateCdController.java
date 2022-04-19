@@ -50,7 +50,7 @@ public class ManagerCreateCdController extends Controller {
 
             //Check that the text is not blank and matches an account
             //TODO: ADD IN THE LATTER LOGIC
-            if( ID.length() == 9) {
+            if( ID.length() == 11) {
                 //TODO: IMPLEMENT LOGIC TO CREATE CD. SHOULD BE SUPER EASY, but make sure to write to CSV *AND* object
 
 

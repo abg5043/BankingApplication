@@ -82,7 +82,7 @@
                   <Insets />
                </HBox.margin>
             </Button>
-            <Button fx:id="loanButton" alignment="CENTER" mnemonicParsing="false" onAction="#loanClicked" text="Manage Loans" textAlignment="CENTER">
+            <Button fx:id="loanButton" alignment="CENTER" mnemonicParsing="false" onAction="#loanClicked" text="Manage Loan Applications" textAlignment="CENTER">
                <font>
                   <Font size="16.0" />
                </font>
@@ -90,7 +90,7 @@
                   <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
                </padding>
             </Button>
-            <Button fx:id="creditButton" alignment="CENTER" mnemonicParsing="false" onAction="#creditClicked" text="Manage Credit Cards" textAlignment="CENTER">
+            <Button fx:id="billsButton" alignment="CENTER" mnemonicParsing="false" onAction="#billsClicked" text="Send Bills" textAlignment="CENTER">
                <font>
                   <Font size="16.0" />
                </font>

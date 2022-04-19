@@ -22,18 +22,21 @@ public class TellerAccountInfoStartController extends Controller {
     @FXML
     private Label welcomeLabel;
 
+    private String currentAccountID;
+
     @FXML
     void infoClicked(ActionEvent event) {
 
-        String accountID = accountField.getText();
+        this.currentAccountID = accountField.getText();
 
-        if( accountID.length() == 9 ) {
+        if( currentAccountID.length() == 11 ) {
 
             // Go to the next screen
             TellerAccountInfoDisplayController controller = new TellerAccountInfoDisplayController(
                 getCurrentStage(),
                 getLoginController(),
-                (TellerOpeningController) getMainPage()
+                (TellerOpeningController) getMainPage(),
+                currentAccountID
             );
 
             controller.showStage();

@@ -165,8 +165,7 @@ public class User {
 
   @Override
   public String toString() {
-    return "User{" +
-        "user='" + user + '\'' +
+    return "user='" + user + '\'' +
         ", pass='" + pass + '\'' +
         ", SSN='" + SSN + '\'' +
         ", address='" + address + '\'' +
@@ -177,7 +176,6 @@ public class User {
         ", customer=" + customer +
         ", teller='" + teller + '\'' +
         ", firstName='" + firstName + '\'' +
-        ", lastName='" + lastName + '\'' +
-        '}';
+        ", lastName='" + lastName;
   }
 }

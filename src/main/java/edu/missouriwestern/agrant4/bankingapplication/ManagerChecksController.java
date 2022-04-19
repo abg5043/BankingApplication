@@ -48,7 +48,7 @@ public class ManagerChecksController extends Controller {
 
         //Check that the text is not blank and matches a check
         //TODO: ADD IN THE LATTER LOGIC
-        if(checkNumberText.length() == 9) {
+        if(checkNumberText.length() == 11) {
             // create a confirmation screen
             ConfirmationController confirmationController = new ConfirmationController(
                 getCurrentStage(),

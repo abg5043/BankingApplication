@@ -123,18 +123,16 @@ public class Loans {
 
     @Override
     public String toString() {
-    return "Loans{" +
-        "ID='" + accountId + '\'' +
-        ", currentBalance='" + currentBalance + '\'' +
-        ", interestRate='" + interestRate + '\'' +
-        ", nextPaymentDueDate='" + nextPaymentDueDate + '\'' +
-        ", dateNotifiedOfPayment='" + currentPaymentAmount + '\'' +
-        ", currentPaymentDue='" + dateBillSent + '\'' +
-        ", lastPaymentMade=" + lastPaymentMade +
-        ", missedPaymentFlag=" + missedPaymentFlag +
-        ", loanType='" + loanType + '\'' +
-        ", creditLimit='" + creditLimit + '\'' +
-        ", monthsLeft='" + monthsLeft + '\'' +
-        '}';
+    return "account ID='" + accountId + '\'' +
+        ", current balance='" + currentBalance + '\'' +
+        ", interest rate='" + interestRate + '\'' +
+        ", next payment due date='" + nextPaymentDueDate + '\'' +
+        ", date notified of payment='" + currentPaymentAmount + '\'' +
+        ", current payment due='" + dateBillSent + '\'' +
+        ", last payment made=" + lastPaymentMade +
+        ", missed payment flag=" + missedPaymentFlag +
+        ", loan type='" + loanType + '\'' +
+        ", credit limit='" + creditLimit + '\'' +
+        ", months left='" + monthsLeft;
   }
 }
