@@ -3,21 +3,14 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="$PROJECT_DIR$/../../../../My Mac (PH-AARON-GRANT)/Downloads/Transactions and Checks/checks.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/../../../../My Mac (PH-AARON-GRANT)/Downloads/Transactions and Checks/transactions.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="/checking.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/checks.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -39,6 +32,13 @@
           </value>
         </entry>
         <entry key="/savings.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/transactions.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

@@ -90,7 +90,7 @@ public class ManagerCreateCdController extends Controller {
                     Alert a = new Alert(Alert.AlertType.WARNING);
                     a.setTitle("CD Not Created");
                     a.setHeaderText("Invalid SSN");
-                    a.setContentText("Please ensure you enter in a valid SSN.");
+                    a.setContentText("Please ensure you enter in a valid SSN for a valid customer.");
 
                     // show the dialog
                     a.show();

@@ -87,7 +87,7 @@ public class ManagerCreateSavingsController extends Controller {
                     Alert a = new Alert(Alert.AlertType.WARNING);
                     a.setTitle("Savings Not Created");
                     a.setHeaderText("Invalid user SSN");
-                    a.setContentText("Please ensure you enter in a valid SSN.");
+                    a.setContentText("Please ensure you enter in a valid SSN for a valid customer");
 
                     // show the dialog
                     a.show();

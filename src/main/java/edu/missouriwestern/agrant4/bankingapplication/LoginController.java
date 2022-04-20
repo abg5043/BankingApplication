@@ -64,8 +64,8 @@ public class LoginController extends Controller {
 
       loadBankData();
 
-      //embedded if so that we can differentiate alerts. This will only cause a user type alert now
-      if (currentUser.getCustomer() == true) {
+      //embedded so that we can differentiate alerts. This will only cause a user type alert now
+      if (currentUser.getCustomer()) {
         // Create the second controller, which loads its own FXML file. We can pass arguments to this controller.
         // In fact, with "this", we could pass the whole controller
         CustomerOpeningController customerOpeningController = new CustomerOpeningController(
@@ -89,8 +89,8 @@ public class LoginController extends Controller {
     if (loginIsValid(username, pass)) {
       loadBankData();
 
-      //embedded if so that we can differentiate alerts. This will only cause a user type alert now
-      if (currentUser.getTeller() == true) {
+      //embedded so that we can differentiate alerts. This will only cause a user type alert now
+      if (currentUser.getTeller()) {
         // Create the second controller, which loads its own FXML file. We can pass arguments to this controller.
         // In fact, with "this", we could pass the whole controller
         TellerOpeningController tellerOpeningController = new TellerOpeningController(
@@ -115,8 +115,8 @@ public class LoginController extends Controller {
     if (loginIsValid(username, pass)) {
       loadBankData();
 
-      //embedded if so that we can differentiate alerts. This will only cause a user type alert now
-      if (currentUser.getManager() == true) {
+      //embedded so that we can differentiate alerts. This will only cause a user type alert now
+      if (currentUser.getManager()) {
         // Create the second controller, which loads its own FXML file. We can pass arguments to this controller.
         // In fact, with "this", we could pass the whole controller
         ManagerOpeningController managerOpeningController = new ManagerOpeningController(
@@ -380,6 +380,15 @@ public class LoginController extends Controller {
     return false;
   }
 
+  public boolean hasValidLoanApplication(String accNum) {
+    for (Loans loan : this.getLoanApplications()) {
+      if (loan.getAccountId().equals(accNum)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 
   public boolean hasValidCheckingAccount(String checkingID) {
     for (Checking checking : this.getCheckingData()) {
@@ -410,6 +419,15 @@ public class LoginController extends Controller {
 
   public Loans findLoanByID(String accNum) {
     for (Loans loan : this.getLoansData()) {
+      if (loan.getAccountId().equals(accNum)) {
+        return loan;
+      }
+    }
+    return null;
+  }
+
+  public Loans findLoanApplicationByID(String accNum) {
+    for (Loans loan : this.getLoanApplications()) {
       if (loan.getAccountId().equals(accNum)) {
         return loan;
       }

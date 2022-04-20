@@ -13,7 +13,7 @@
    <center>
       <VBox alignment="CENTER" prefHeight="433.0" prefWidth="953.0" spacing="25.0">
          <children>
-            <Label text="Please enter account number">
+            <Label text="Please enter a checking or savings account number">
                <font>
                   <Font size="16.0" />
                </font>

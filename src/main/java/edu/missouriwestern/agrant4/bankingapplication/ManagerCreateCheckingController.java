@@ -88,7 +88,7 @@ public class ManagerCreateCheckingController extends Controller {
                     Alert a = new Alert(Alert.AlertType.WARNING);
                     a.setTitle("Checking Not Created");
                     a.setHeaderText("Invalid SSN");
-                    a.setContentText("Please ensure you enter a valid SSN.");
+                    a.setContentText("Please ensure you enter a SSN for a valid user.");
 
                     // show the dialog
                     a.show();
@@ -103,7 +103,6 @@ public class ManagerCreateCheckingController extends Controller {
                 // show the dialog
                 a.show();
             }
-
         } catch(NumberFormatException e) {
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setTitle("Checking Not Created");

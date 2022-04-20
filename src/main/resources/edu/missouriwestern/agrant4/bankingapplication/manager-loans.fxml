@@ -15,11 +15,20 @@
    <center>
       <VBox alignment="CENTER" prefHeight="433.0" prefWidth="953.0" spacing="25.0">
          <children>
-            <TableView fx:id="loanData" prefHeight="386.0" prefWidth="893.0">
-              <columns>
-                <TableColumn fx:id="accountNumberCol" prefWidth="109.0" text="Account Num" />
-                <TableColumn fx:id="firstNameCol" prefWidth="90.0" text="First Name" />
-              </columns>
+            <TableView fx:id="loansData" prefHeight="386.0" prefWidth="893.0">
+               <columns>
+                  <TableColumn fx:id="accountNumberCol" prefWidth="84.0" text="Account Num" />
+                  <TableColumn fx:id="currentBalanceCol" prefWidth="72.0" text="Current Bal" />
+                  <TableColumn fx:id="interestRateCol" prefWidth="39.0" text="Rate" />
+                  <TableColumn fx:id="nextPaymentDueCol" prefWidth="85.0" text="Next Payment" />
+                  <TableColumn fx:id="dateBillSentCol" prefWidth="94.0" text="Date Bill Sent" />
+                  <TableColumn fx:id="currentPaymentCol" prefWidth="100.0" text="Current Payment" />
+                  <TableColumn fx:id="lastPaymentMadeCol" prefWidth="96.0" text="Last Payment" />
+                  <TableColumn fx:id="missedPaymentFlagCol" prefWidth="67.0" text="Delinquent" />
+                  <TableColumn fx:id="loanTypeCol" prefWidth="106.985595703125" text="Loan Type" />
+                  <TableColumn fx:id="creditLimitCol" prefWidth="64.0" text="Limit" />
+                  <TableColumn fx:id="monthLeftCol" prefWidth="87.5" text="Months Left" />
+               </columns>
                <VBox.margin>
                   <Insets left="30.0" right="30.0" />
                </VBox.margin>

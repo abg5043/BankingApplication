@@ -18,8 +18,11 @@
          <children>
             <TableView fx:id="checkData" prefHeight="386.0" prefWidth="893.0">
               <columns>
-                <TableColumn fx:id="accountNumberCol" prefWidth="109.0" text="Account Num" />
-                <TableColumn fx:id="firstNameCol" prefWidth="90.0" text="First Name" />
+                <TableColumn fx:id="accountNumberCol" prefWidth="148.8962688446045" text="Account Num" />
+                <TableColumn fx:id="amountCashCol" prefWidth="171.6036834716797" text="Amount of Cash" />
+                  <TableColumn fx:id="withdrawOrDepositCol" prefWidth="155.51309204101562" text="Withdraw or Deposit" />
+                  <TableColumn fx:id="checkNumberCol" prefWidth="184.74371337890625" text="Check Number" />
+                  <TableColumn fx:id="dateCol" prefWidth="231.9588623046875" text="Check Date" />
               </columns>
                <VBox.margin>
                   <Insets left="30.0" right="30.0" />

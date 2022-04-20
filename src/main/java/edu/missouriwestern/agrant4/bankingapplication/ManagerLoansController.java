@@ -1,8 +1,11 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
+import edu.missouriwestern.agrant4.bankingapplication.classes.Loans;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 public class ManagerLoansController extends Controller{
@@ -11,19 +14,46 @@ public class ManagerLoansController extends Controller{
     private TextField accountNumber;
 
     @FXML
-    private TableColumn<?, ?> accountNumberCol;
-
-    @FXML
     private Button approveButton;
 
     @FXML
     private Button denyButton;
 
     @FXML
-    private TableColumn<?, ?> firstNameCol;
+    private TableColumn<Loans, String> accountNumberCol;
 
     @FXML
-    private TableView<?> loanData;
+    private TableColumn<Loans, Double> currentBalanceCol;
+
+    @FXML
+    private TableColumn<Loans, Double> interestRateCol;
+
+    @FXML
+    private TableColumn<Loans, String> nextPaymentDueCol;
+
+    @FXML
+    private TableColumn<Loans, String> dateBillSentCol;
+
+    @FXML
+    private TableColumn<Loans, Double> currentPaymentCol;
+
+    @FXML
+    private TableColumn<Loans, String> lastPaymentMadeCol;
+
+    @FXML
+    private TableColumn<Loans, Integer> missedPaymentFlagCol;
+
+    @FXML
+    private TableColumn<Loans, String> loanTypeCol;
+
+    @FXML
+    private TableColumn<Loans, Integer> creditLimitCol;
+
+    @FXML
+    private TableColumn<Loans, Integer> monthLeftCol;
+
+    @FXML
+    private TableView<Loans> loansData;
 
     @FXML
     private Label welcomeLabel;
@@ -32,15 +62,27 @@ public class ManagerLoansController extends Controller{
     void approveClicked(ActionEvent event) {
         String loanAcc = accountNumber.getText();
 
-        //Check that the text is not blank and matches an account
-        //TODO: ADD IN THE LATTER LOGIC
-        if(loanAcc.length() == 11) {
+        //Check that the text is not blank and matches an application
+        if(loanAcc.length() == 11 && getLoginController().hasValidLoanApplication(loanAcc)) {
+
+            //create pointer to chosen loan application
+            Loans newLoan = getLoginController().findLoanApplicationByID(loanAcc);
+
+            //add loan application to loans data arraylist
+            getLoginController().getLoansData().add(newLoan);
+
+            //remove loan application
+            getLoginController().getLoanApplications().remove(newLoan);
+
+            //write new data to csv
+            getLoginController().writeBankData();
+
+
             // create a confirmation screen
             ConfirmationController confirmationController = new ConfirmationController(
                 getCurrentStage(),
                 getLoginController(),
                 getMainPage(),
-                //TODO: PUT IN NAME INSTEAD OF ACCOUNT NUMBER
                 "Loan approved for account number " + loanAcc + "."
             );
 
@@ -61,16 +103,24 @@ public class ManagerLoansController extends Controller{
     void denyClicked(ActionEvent event) {
         String loanAcc = accountNumber.getText();
 
-        //Check that the text is not blank and matches an account
-        //TODO: ADD IN THE LATTER LOGIC
-        if(loanAcc.length() == 11) {
+        //Check that the text is not blank and matches a loan application
+        if(loanAcc.length() == 11 && getLoginController().hasValidLoanApplication(loanAcc)) {
+
+            //create pointer to chosen loan application
+            Loans newLoan = getLoginController().findLoanApplicationByID(loanAcc);
+
+            //remove loan application
+            getLoginController().getLoanApplications().remove(newLoan);
+
+            //write new data to csv
+            getLoginController().writeBankData();
+
             // create a confirmation screen
             ConfirmationController confirmationController = new ConfirmationController(
                 getCurrentStage(),
                 getLoginController(),
                 getMainPage(),
-                //TODO: PUT IN NAME INSTEAD OF ACCOUNT NUMBER
-                "Loan for account number " + loanAcc + " was not approved."
+                "Loan for account number " + loanAcc + " was denied."
             );
 
             confirmationController.showStage();
@@ -103,13 +153,21 @@ public class ManagerLoansController extends Controller{
     @FXML
     private void initialize() {
         this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
-        //TODO: THIS IS CODE FOR FILLING IN THE TABLE. ADJUST WITH NEW DATA STRUCTURES
-    /*
-    accountNumberCol.setCellValueFactory(new PropertyValueFactory<User, String>("SSN"));
-    firstNameCol.setCellValueFactory(new PropertyValueFactory<User, String>("firstName"));
-    //bind list into the table
-    creditData.setItems(FXCollections.observableArrayList(getLoginController().getUsers()));
-    */
+
+        accountNumberCol.setCellValueFactory(new PropertyValueFactory<Loans, String>("accountId"));
+        currentBalanceCol.setCellValueFactory(new PropertyValueFactory<Loans, Double>("currentBalance"));
+        interestRateCol.setCellValueFactory(new PropertyValueFactory<Loans, Double>("interestRate"));
+        nextPaymentDueCol.setCellValueFactory(new PropertyValueFactory<Loans, String>("nextPaymentDueDate"));
+        dateBillSentCol.setCellValueFactory(new PropertyValueFactory<Loans, String>("dateBillSent"));
+        currentPaymentCol.setCellValueFactory(new PropertyValueFactory<Loans, Double>("currentPaymentAmount"));
+        lastPaymentMadeCol.setCellValueFactory(new PropertyValueFactory<Loans, String>("lastPaymentMade"));
+        missedPaymentFlagCol.setCellValueFactory(new PropertyValueFactory<Loans, Integer>("missedPaymentFlag"));
+        loanTypeCol.setCellValueFactory(new PropertyValueFactory<Loans, String>("loanType"));
+        creditLimitCol.setCellValueFactory(new PropertyValueFactory<Loans, Integer>("creditLimit"));
+        monthLeftCol.setCellValueFactory(new PropertyValueFactory<Loans, Integer>("monthsLeft"));
+
+        //bind list into the table
+        loansData.setItems(FXCollections.observableArrayList(getLoginController().getLoanApplications()));
     }
 
 }
