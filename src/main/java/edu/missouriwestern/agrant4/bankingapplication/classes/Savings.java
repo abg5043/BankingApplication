@@ -1,6 +1,7 @@
 package edu.missouriwestern.agrant4.bankingapplication.classes;
 
 import com.opencsv.bean.CsvBindByName;
+import javafx.scene.control.Alert;
 
 public class Savings {
     @CsvBindByName(column = "account_id")
@@ -59,6 +60,28 @@ public class Savings {
     }
     public void setDueDate(String dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public void deposit(double cashAmount) {
+        this.accountBalance += cashAmount;
+    }
+
+    public Boolean withdraw(double cashAmount) {
+        if(this.accountBalance >= cashAmount) {
+            this.accountBalance -= cashAmount;
+            return true;
+        } else {
+            // create an alert
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setTitle("Not enough money.");
+            a.setHeaderText("Withdraw not processed.");
+            a.setContentText("Not enough money in account.");
+
+            // show the dialog
+            a.show();
+
+            return false;
+        }
     }
 
     @Override

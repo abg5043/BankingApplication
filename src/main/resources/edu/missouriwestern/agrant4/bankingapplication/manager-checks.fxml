@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
@@ -76,9 +75,9 @@
       </BorderPane>
    </top>
    <bottom>
-      <HBox alignment="CENTER" spacing="50.0" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="processButton" layoutX="605.0" layoutY="10.0" mnemonicParsing="false" onAction="#processClicked" text="Process All Checks">
+            <Button fx:id="processButton" layoutX="605.0" layoutY="10.0" mnemonicParsing="false" onAction="#processClicked" text="Process Check">
                <padding>
                   <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
                </padding>
@@ -86,8 +85,12 @@
                   <Font size="16.0" />
                </font>
             </Button>
-            <Line endY="-20.0" startY="20.0" />
-            <TextField fx:id="checkNumber" prefHeight="29.0" prefWidth="312.0" promptText="Enter Check Number">
+            <TextField fx:id="checkNumber" prefHeight="29.0" prefWidth="200.0" promptText="Enter Check Number">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </TextField>
+            <TextField fx:id="acctNumField" layoutX="342.0" layoutY="15.0" prefHeight="29.0" prefWidth="200.0" promptText="Enter Account Number">
                <font>
                   <Font size="16.0" />
                </font>
@@ -105,7 +108,7 @@
             <Insets />
          </opaqueInsets>
          <BorderPane.margin>
-            <Insets />
+            <Insets left="30.0" right="30.0" />
          </BorderPane.margin>
          <padding>
             <Insets bottom="30.0" />

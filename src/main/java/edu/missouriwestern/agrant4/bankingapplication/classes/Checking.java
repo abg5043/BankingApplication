@@ -1,6 +1,7 @@
 package edu.missouriwestern.agrant4.bankingapplication.classes;
 
 import com.opencsv.bean.CsvBindByName;
+import javafx.scene.control.Alert;
 
 public class Checking {
     @CsvBindByName(column = "account_id")
@@ -72,6 +73,27 @@ public class Checking {
     }
     public void setOpenDate(String openDate) {
         this.openDate = openDate;
+    }
+
+    public void deposit(double cashAmount) {
+        this.currentBalance += cashAmount;
+    }
+
+    public Boolean withdraw(double cashAmount) {
+        if(this.currentBalance >= cashAmount) {
+            this.currentBalance -= cashAmount;
+            return true;
+        } else {
+            // create an alert
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setTitle("Not enough money.");
+            a.setHeaderText("Withdraw not processed.");
+            a.setContentText("Not enough money in account.");
+
+            // show the dialog
+            a.show();
+            return false;
+        }
     }
 
     @Override

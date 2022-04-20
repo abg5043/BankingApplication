@@ -380,6 +380,15 @@ public class LoginController extends Controller {
     return false;
   }
 
+  public boolean hasValidPendingCheck(String checkNum) {
+    for (Checks check : this.getPendingChecks()) {
+      if (check.getCheckNumber().equals(checkNum)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public boolean hasValidLoanApplication(String accNum) {
     for (Loans loan : this.getLoanApplications()) {
       if (loan.getAccountId().equals(accNum)) {
@@ -457,6 +466,15 @@ public class LoginController extends Controller {
     for (Checking checking : this.getCheckingData()) {
       if (checking.getAccountId().equals(accNum)) {
         return checking;
+      }
+    }
+    return null;
+  }
+
+  public Checks findChecksByCheckNum(String checkNum) {
+    for (Checks check : this.getPendingChecks()) {
+      if (check.getCheckNumber().equals(checkNum)) {
+        return check;
       }
     }
     return null;

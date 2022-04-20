@@ -12,126 +12,237 @@ import javafx.stage.Stage;
 
 public class ManagerChecksController extends Controller {
 
-    @FXML
-    private TableColumn<Checks, String> accountNumberCol;
+  @FXML
+  private TableColumn<Checks, String> accountNumberCol;
 
-    @FXML
-    private TableColumn<Checks, Double> amountCashCol;
+  @FXML
+  private TableColumn<Checks, Double> amountCashCol;
 
-    @FXML
-    private TableView<Checks> checkData;
+  @FXML
+  private TableView<Checks> checkData;
 
-    @FXML
-    private TextField checkNumber;
+  @FXML
+  private TextField checkNumber;
 
-    @FXML
-    private TableColumn<Checks, String> checkNumberCol;
+  @FXML
+  private TableColumn<Checks, String> checkNumberCol;
 
-    @FXML
-    private TableColumn<Checks, String> dateCol;
+  @FXML
+  private TableColumn<Checks, String> dateCol;
 
-    @FXML
-    private Button processButton;
+  @FXML
+  private Button processButton;
 
-    @FXML
-    private Button stopButton;
+  @FXML
+  private Button stopButton;
 
-    @FXML
-    private Label welcomeLabel;
+  @FXML
+  private Label welcomeLabel;
 
-    @FXML
-    private TableColumn<Checks, String> withdrawOrDepositCol;
+  @FXML
+  private TableColumn<Checks, String> withdrawOrDepositCol;
+
+  @FXML
+  private TextField acctNumField;
 
 
-    @FXML
-    void processClicked(ActionEvent event) {
+  @FXML
+  void processClicked(ActionEvent event) {
+    String checkNumberText = checkNumber.getText();
+    String accNum = acctNumField.getText();
 
-        if(getLoginController().getPendingChecks().size() != 0) {
+    if (
+        checkNumberText.length() != 0 &&
+            getLoginController().hasValidPendingCheck(checkNumberText)
+    ) {
+      if (
+          accNum.length() != 0 &&
+          (getLoginController().hasValidSavingsAccount(accNum) || getLoginController().hasValidCheckingAccount(accNum))
+      ) {
 
-            //TODO: IMPLEMENT LOGIC TO process checks. SHOULD BE SUPER EASY, but make sure to write to CSV *AND* object
+        //find the specific check
+        Checks processingCheck = getLoginController().findChecksByCheckNum(checkNumberText);
+
+        if (processingCheck.getWithdrawOrDeposit().equals("deposit")) {
+          String typeOfAccount = processingCheck.getAccountID().substring(9, 11);
+          if (typeOfAccount.equals("_c")) {
+
+            getLoginController().findCheckingByID(processingCheck.getAccountID()).deposit(processingCheck.getAmountCash());
+
+            //transaction is done. remove check from list
+            getLoginController().getPendingChecks().remove(processingCheck);
+
+            getLoginController().writeBankData();
+
 
             // create a confirmation screen
             ConfirmationController confirmationController = new ConfirmationController(
                 getCurrentStage(),
                 getLoginController(),
                 getMainPage(),
-                "Congratulations, you processed all the checks!"
+                "Congratulations, you processed check number " + checkNumberText
             );
 
             confirmationController.showStage();
-        } else {
+          } else {
+            //this is not a valid account type for a check
             // create an alert
             Alert a = new Alert(Alert.AlertType.WARNING);
-            a.setTitle("No Checks to Process");
+            a.setTitle("Invalid Account Type");
             a.setHeaderText("Check not processed");
-            a.setContentText("No checks to process. Please try again.");
+            a.setContentText("Checks can only be used with checking accounts.");
 
             // show the dialog
             a.show();
-        }
+          }
+        } else if (processingCheck.getWithdrawOrDeposit().equals("withdraw")) {
+          String typeOfAccount = processingCheck.getAccountID().substring(9, 11);
+          if (typeOfAccount.equals("_c")) {
+            //withdraw returns true or false depending on if there is money in the account
+            if (getLoginController().findCheckingByID(processingCheck.getAccountID()).withdraw(processingCheck.getAmountCash())) {
+              //transaction is done. remove check from list
+              getLoginController().getPendingChecks().remove(processingCheck);
 
-    }
+              getLoginController().writeBankData();
 
-    @FXML
-    void stopClicked(ActionEvent event) {
-        String checkNumberText = checkNumber.getText();
 
-        //Check that the text is not blank and matches a check
-        //TODO: ADD IN THE LATTER LOGIC
-        if(checkNumberText.length() != 0) {
+              // create a confirmation screen
+              ConfirmationController confirmationController = new ConfirmationController(
+                  getCurrentStage(),
+                  getLoginController(),
+                  getMainPage(),
+                  "Congratulations, you processed check number " + checkNumberText
+              );
 
-          //TODO: Add in logic here
-
-          // create a confirmation screen
-          ConfirmationController confirmationController = new ConfirmationController(
-              getCurrentStage(),
-              getLoginController(),
-              getMainPage(),
-              //TODO: PUT IN NAME INSTEAD OF ACCOUNT NUMBER
-              "Check number " + checkNumberText + " was stopped."
-          );
-
-            confirmationController.showStage();
-        } else {
+              confirmationController.showStage();
+            }
+            ;
+          } else {
+            //this is not a valid account type for a check
             // create an alert
             Alert a = new Alert(Alert.AlertType.WARNING);
-            a.setTitle("Invalid Check Number");
-            a.setHeaderText("Check not stopped");
-            a.setContentText("Invalid check number. Please try again.");
+            a.setTitle("Invalid Account Type");
+            a.setHeaderText("Check not processed");
+            a.setContentText("Checks can only be used with checking accounts.");
 
             // show the dialog
             a.show();
+          }
+        } else {
+          //this is not a valid procedure
+          // create an alert
+          Alert a = new Alert(Alert.AlertType.WARNING);
+          a.setTitle("Invalid Transaction Type");
+          a.setHeaderText("Check not processed");
+          a.setContentText("Checks can only be used to withdraw or deposit.");
+
+          // show the dialog
+          a.show();
         }
+      } else {
+        // create an alert
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        a.setTitle("Invalid input");
+        a.setHeaderText("Check not processed");
+        a.setContentText("Account number does not link to current account. Please stop check.");
 
+        // show the dialog
+        a.show();
+      }
+
+    } else {
+      // create an alert
+      Alert a = new Alert(Alert.AlertType.WARNING);
+      a.setTitle("Invalid input");
+      a.setHeaderText("Check not processed");
+      a.setContentText("Please enter valid check number.");
+
+      // show the dialog
+      a.show();
     }
 
-    public ManagerChecksController(
-        Stage currentStage,
-        LoginController loginController,
-        ManagerOpeningController managerOpeningController
-    ) {
-        super(currentStage, loginController, managerOpeningController);
-        setCurrentViewFile("manager-checks.fxml");
-        setCurrentViewTitle("Manage Checks");
-        setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
+  }
 
+  @FXML
+  void stopClicked(ActionEvent event) {
+    String checkNumberText = checkNumber.getText();
+    String accNum = acctNumField.getText();
+
+
+    //Check that the text is not blank and matches a check
+    if (checkNumberText.length() != 0 && getLoginController().hasValidPendingCheck(checkNumberText)) {
+      if (
+          accNum.length() != 0 &&
+              (getLoginController().hasValidSavingsAccount(accNum) || getLoginController().hasValidCheckingAccount(accNum))
+      ) {
+
+        //find the specific check
+        Checks stoppedCheck = getLoginController().findChecksByCheckNum(checkNumberText);
+
+        //remove check from pending
+        getLoginController().getPendingChecks().remove(stoppedCheck);
+
+        getLoginController().writeBankData();
+
+        // create a confirmation screen
+        ConfirmationController confirmationController = new ConfirmationController(
+            getCurrentStage(),
+            getLoginController(),
+            getMainPage(),
+            "Check number " + checkNumberText + " was stopped."
+        );
+
+        confirmationController.showStage();
+      } else {
+        // create an alert
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        a.setTitle("Invalid input");
+        a.setHeaderText("Check not processed");
+        a.setContentText("Account number does not link to current account. Please stop check.");
+
+        // show the dialog
+        a.show();
+      }
+    } else {
+      // create an alert
+      Alert a = new Alert(Alert.AlertType.WARNING);
+      a.setTitle("Invalid Check Number");
+      a.setHeaderText("Check not stopped");
+      a.setContentText("Invalid check number. Please try again.");
+
+      // show the dialog
+      a.show();
     }
 
-    /**
-     * The initialize() method allows you set setup your scene, adding actions, configuring nodes, etc.
-     */
-    @FXML
-    private void initialize() {
-        this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
+  }
 
-        accountNumberCol.setCellValueFactory(new PropertyValueFactory<Checks, String>("accountID"));
-        amountCashCol.setCellValueFactory(new PropertyValueFactory<Checks, Double>("amountCash"));
-        withdrawOrDepositCol.setCellValueFactory(new PropertyValueFactory<Checks, String>("withdrawOrDeposit"));
-        checkNumberCol.setCellValueFactory(new PropertyValueFactory<Checks, String>("checkNumber"));
-        dateCol.setCellValueFactory(new PropertyValueFactory<Checks, String>("date"));
+  public ManagerChecksController(
+      Stage currentStage,
+      LoginController loginController,
+      ManagerOpeningController managerOpeningController
+  ) {
+    super(currentStage, loginController, managerOpeningController);
+    setCurrentViewFile("manager-checks.fxml");
+    setCurrentViewTitle("Manage Checks");
+    setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
 
-        //bind list into the table
-        checkData.setItems(FXCollections.observableArrayList(getLoginController().getPendingChecks()));
-    }
+  }
+
+  /**
+   * The initialize() method allows you set setup your scene, adding actions, configuring nodes, etc.
+   */
+  @FXML
+  private void initialize() {
+    this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
+
+    accountNumberCol.setCellValueFactory(new PropertyValueFactory<Checks, String>("accountID"));
+    amountCashCol.setCellValueFactory(new PropertyValueFactory<Checks, Double>("amountCash"));
+    withdrawOrDepositCol.setCellValueFactory(new PropertyValueFactory<Checks, String>("withdrawOrDeposit"));
+    checkNumberCol.setCellValueFactory(new PropertyValueFactory<Checks, String>("checkNumber"));
+    dateCol.setCellValueFactory(new PropertyValueFactory<Checks, String>("date"));
+
+    //bind list into the table
+    checkData.setItems(FXCollections.observableArrayList(getLoginController().getPendingChecks()));
+  }
 
 }
