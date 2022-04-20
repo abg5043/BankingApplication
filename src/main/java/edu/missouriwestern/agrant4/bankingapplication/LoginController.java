@@ -3,10 +3,7 @@ package edu.missouriwestern.agrant4.bankingapplication;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
-import edu.missouriwestern.agrant4.bankingapplication.classes.Checking;
-import edu.missouriwestern.agrant4.bankingapplication.classes.Loans;
-import edu.missouriwestern.agrant4.bankingapplication.classes.Savings;
-import edu.missouriwestern.agrant4.bankingapplication.classes.User;
+import edu.missouriwestern.agrant4.bankingapplication.classes.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -49,9 +46,8 @@ public class LoginController extends Controller {
   private ArrayList<Loans> loansData;
   private ArrayList<Checking> checkingData;
   private ArrayList<Loans> loanApplications;
-
-  //TODO: MAKE LOG OF CHECKS (and checks object)
-  //TODO: Make log of transactions (and transactions object with account num, date, transaction type, and memo)
+  private ArrayList<Checks> pendingChecks;
+  private ArrayList<Transactions> transactionLog;
 
   @Override
   @FXML
@@ -223,18 +219,26 @@ public class LoginController extends Controller {
           .withType(Loans.class)
           .build()
           .parse());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
 
-    try {
       setLoanApplications( (ArrayList<Loans>) new CsvToBeanBuilder(new FileReader("loanApplications.csv"))
           .withType(Loans.class)
           .build()
           .parse());
-    } catch (FileNotFoundException ex) {
-      ex.printStackTrace();
+      setPendingChecks((ArrayList<Checks>) new CsvToBeanBuilder(new FileReader("checks.csv"))
+          .withType(Checks.class)
+          .build()
+          .parse());
+
+      setTransactionLog((ArrayList<Transactions>) new CsvToBeanBuilder(new FileReader("transactions.csv"))
+          .withType(Transactions.class)
+          .build()
+          .parse());
+
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+
+
   }
 
   public User getCurrentUser() {
@@ -282,6 +286,22 @@ public class LoginController extends Controller {
     this.loanApplications = loanApplications;
   }
 
+  public ArrayList<Checks> getPendingChecks() {
+    return pendingChecks;
+  }
+
+  public void setPendingChecks(ArrayList<Checks> pendingChecks) {
+    this.pendingChecks = pendingChecks;
+  }
+
+  public ArrayList<Transactions> getTransactionLog() {
+    return transactionLog;
+  }
+
+  public void setTransactionLog(ArrayList<Transactions> transactionLog) {
+    this.transactionLog = transactionLog;
+  }
+
   //TODO: Need to flush out this writeBankData method for updating the bank's CSV files
   public void writeBankData() {
     Writer userWriter = null;
@@ -289,6 +309,9 @@ public class LoginController extends Controller {
     Writer checkingWriter = null;
     Writer loansWriter = null;
     Writer loanApplicationWriter = null;
+    Writer checksWriter = null;
+    Writer transactionsWriter = null;
+
     try {
       //writes users to a users.csv file
       userWriter = new FileWriter("users.csv");
@@ -314,11 +337,23 @@ public class LoginController extends Controller {
       beanToCsv4.write(loansData);
       loansWriter.close();
 
-      //writes loans application data to a loans.csv file
+      //writes loans application data to a loanApplications.csv file
       loanApplicationWriter = new FileWriter("loanApplications.csv");
       StatefulBeanToCsv beanToCsv5 = new StatefulBeanToCsvBuilder(loanApplicationWriter).build();
-      beanToCsv4.write(loanApplications);
-      loansWriter.close();
+      beanToCsv5.write(loanApplications);
+      loanApplicationWriter.close();
+
+      //writes checks data to a checks.csv file
+      checksWriter = new FileWriter("checks.csv");
+      StatefulBeanToCsv beanToCsv6 = new StatefulBeanToCsvBuilder(checksWriter).build();
+      beanToCsv6.write(pendingChecks);
+      checksWriter.close();
+
+      //writes transactions data to a transactions.csv file
+      transactionsWriter = new FileWriter("transactions.csv");
+      StatefulBeanToCsv beanToCsv7 = new StatefulBeanToCsvBuilder(transactionsWriter).build();
+      beanToCsv7.write(transactionLog);
+      transactionsWriter.close();
 
 
     } catch (Exception e) {
