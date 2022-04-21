@@ -3,12 +3,16 @@ package edu.missouriwestern.agrant4.bankingapplication;
 import edu.missouriwestern.agrant4.bankingapplication.Controller;
 import edu.missouriwestern.agrant4.bankingapplication.classes.Checks;
 import edu.missouriwestern.agrant4.bankingapplication.classes.Loans;
+import edu.missouriwestern.agrant4.bankingapplication.classes.Transactions;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class ManagerChecksController extends Controller {
 
@@ -62,16 +66,43 @@ public class ManagerChecksController extends Controller {
 
         //find the specific check
         Checks processingCheck = getLoginController().findChecksByCheckNum(checkNumberText);
+        String transactionType = processingCheck.getWithdrawOrDeposit();
 
-        if (processingCheck.getWithdrawOrDeposit().equals("deposit")) {
+        //get current date
+        LocalDate date = LocalDate.now();
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+        String currentDate = date.format(formatters);
+
+        //check if check is deposit or withdraw
+        if (transactionType.equals("deposit")) {
           String typeOfAccount = processingCheck.getAccountID().substring(9, 11);
+
+          //check which account the check is slated to go to
           if (typeOfAccount.equals("_c")) {
+            //check is for a checking account
 
-            getLoginController().findCheckingByID(processingCheck.getAccountID()).deposit(processingCheck.getAmountCash());
+            //get the deposit amount and acct id from check
+            double depositAmt = processingCheck.getAmountCash();
+            String destinationAcctId = processingCheck.getAccountID();
 
-            //transaction is done. remove check from list
+            //deposit the money into the appropriate account
+            getLoginController().findCheckingByID(destinationAcctId).deposit(depositAmt);
+
+            //Create transaction object
+            Transactions newTrans = new Transactions(
+                destinationAcctId,
+                transactionType,
+                "Check number " + checkNumberText + " deposited " + depositAmt + " into account.",
+                currentDate
+            );
+
+            //add transaction to log
+            getLoginController().getTransactionLog().add(newTrans);
+
+            //transaction is done. remove check from arraylist
             getLoginController().getPendingChecks().remove(processingCheck);
 
+            //write the data
             getLoginController().writeBankData();
 
 
@@ -95,16 +126,39 @@ public class ManagerChecksController extends Controller {
             // show the dialog
             a.show();
           }
-        } else if (processingCheck.getWithdrawOrDeposit().equals("withdraw")) {
+        } else if (transactionType.equals("withdraw")) {
           String typeOfAccount = processingCheck.getAccountID().substring(9, 11);
+          //check type of account
           if (typeOfAccount.equals("_c")) {
-            //withdraw returns true or false depending on if there is money in the account
-            if (getLoginController().findCheckingByID(processingCheck.getAccountID()).withdraw(processingCheck.getAmountCash())) {
+            //this is for a checking account
+
+            //get the withdraw amount and acct id from check
+            double withdrawAmt = processingCheck.getAmountCash();
+            String originAcctId = processingCheck.getAccountID();
+
+            /*
+             * Withdraw money if there is money in account;
+             * returns true or false depending on if there is money in the account
+             */
+            if (getLoginController().findCheckingByID(originAcctId).withdraw(withdrawAmt)) {
               //transaction is done. remove check from list
+
+              //Create transaction object
+              Transactions newTrans = new Transactions(
+                  originAcctId,
+                  transactionType,
+                  "Check number " + checkNumberText + " withdrew " + withdrawAmt + " from account.",
+                  currentDate
+              );
+
+              //add transaction to log
+              getLoginController().getTransactionLog().add(newTrans);
+
+              //remove pending check from arraylist now that it is processed
               getLoginController().getPendingChecks().remove(processingCheck);
 
+              //write the data
               getLoginController().writeBankData();
-
 
               // create a confirmation screen
               ConfirmationController confirmationController = new ConfirmationController(
@@ -116,7 +170,7 @@ public class ManagerChecksController extends Controller {
 
               confirmationController.showStage();
             }
-            ;
+
           } else {
             //this is not a valid account type for a check
             // create an alert

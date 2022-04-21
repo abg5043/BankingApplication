@@ -29,7 +29,13 @@ public class TellerAccountInfoStartController extends Controller {
 
         this.currentAccountID = accountField.getText();
 
-        if( currentAccountID.length() == 11 ) {
+        if( currentAccountID.length() == 11 &&
+            (getLoginController().hasValidSavingsAccount(currentAccountID) ||
+                getLoginController().hasValidCheckingAccount(currentAccountID) ||
+                getLoginController().hasValidCDAccount(currentAccountID) ||
+                getLoginController().hasValidLoanAccount(currentAccountID)
+            )
+        ) {
 
             // Go to the next screen
             TellerAccountInfoDisplayController controller = new TellerAccountInfoDisplayController(
@@ -44,8 +50,8 @@ public class TellerAccountInfoStartController extends Controller {
             // create an alert
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setTitle("No Account Chosen");
-            a.setHeaderText("Invalid formatting");
-            a.setContentText("Please ensure you follow the suggested formatting.");
+            a.setHeaderText("Invalid account number");
+            a.setContentText("Please ensure you use a valid account.");
 
             // show the dialog
             a.show();

@@ -20,7 +20,6 @@ public class ManagerInterestController extends Controller {
     @FXML
     private Button interestButton;
 
-
     @FXML
     private TextField accountField;
 
@@ -31,19 +30,26 @@ public class ManagerInterestController extends Controller {
     void interestClicked(ActionEvent event) {
 
         try {
-            double checkingInterest = Double.parseDouble(interestRateField.getText());
-            String ID = accountField.getText();
+            double newInterest = Double.parseDouble(interestRateField.getText());
+            String accountID = accountField.getText();
 
-            if( ID.length() == 11) {
-                //TODO: IMPLEMENT LOGIC. SHOULD BE SUPER EASY, but make sure to write to CSV *AND* object
+            if( accountID.length() == 11 && getLoginController().hasValidSavingsAccount(accountID)) {
+
+                //set the new interest rate
+                getLoginController().findSavingsByID(accountID).setInterestRate(newInterest);
+
+                //write data to csv
+                getLoginController().writeBankData();
 
                 // create a confirmation screen
                 ConfirmationController confirmationController = new ConfirmationController(
                     getCurrentStage(),
                     getLoginController(),
                     getMainPage(),
-                    "Congratulations, you updated your interest rate for account " + ID + "!" +
-                        "\n\nChecking rates are now " + checkingInterest
+                    "Congratulations, you updated your savings account interest rate for account " +
+                        accountID + "!" +
+                        "\n\nSavings rate is now " +
+                        newInterest
                 );
 
                 confirmationController.showStage();
@@ -51,8 +57,8 @@ public class ManagerInterestController extends Controller {
                 // create an alert
                 Alert a = new Alert(Alert.AlertType.WARNING);
                 a.setTitle("Rates not updated");
-                a.setHeaderText("Invalid formatting");
-                a.setContentText("Please ensure you follow the suggested formatting.");
+                a.setHeaderText("Invalid account number");
+                a.setContentText("Please enter a valid savings account number.");
 
                 // show the dialog
                 a.show();

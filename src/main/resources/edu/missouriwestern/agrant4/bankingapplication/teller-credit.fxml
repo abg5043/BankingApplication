@@ -13,9 +13,14 @@
    <center>
       <VBox alignment="CENTER" prefHeight="433.0" prefWidth="953.0" spacing="25.0">
          <children>
-            <Label text="Please enter a checking or savings account number">
+            <Label text="Please enter a checking, savings, or CD account number">
                <font>
                   <Font size="16.0" />
+               </font>
+            </Label>
+            <Label contentDisplay="TOP" text="Reminder: CDs have special rules. No deposits and early withdrawals accrue a 20% penalty.">
+               <font>
+                  <Font size="12.0" />
                </font>
             </Label>
             <TextField fx:id="accountField" prefHeight="29.0" prefWidth="312.0" promptText="Enter account # (11 characters)">

@@ -54,7 +54,7 @@
             </Button>
          </right>
          <left>
-            <Button fx:id="mainPageButton" mnemonicParsing="false" onAction="#mainPageClicked" text="Back to Login" textAlignment="CENTER" BorderPane.alignment="CENTER">
+            <Button fx:id="mainPageButton" mnemonicParsing="false" onAction="#mainPageClicked" text="Back to Main" textAlignment="CENTER" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets left="30.0" />
                </BorderPane.margin>

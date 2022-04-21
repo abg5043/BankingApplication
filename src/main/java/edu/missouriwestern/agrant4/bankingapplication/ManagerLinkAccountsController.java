@@ -48,7 +48,7 @@ public class ManagerLinkAccountsController extends Controller {
             Checking modifiedChecking = getLoginController().findCheckingByID(checkingID);
 
             //check if there is already a linked account
-            if (modifiedChecking.getBackupAccountId() == "") {
+            if (modifiedChecking.getBackupAccountId().equals("n/a")) {
                 //modify the checking account
                 modifiedChecking.setBackupAccountId(savingsID);
 

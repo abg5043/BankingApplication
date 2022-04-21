@@ -1,7 +1,6 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
 import edu.missouriwestern.agrant4.bankingapplication.classes.Checks;
-import edu.missouriwestern.agrant4.bankingapplication.classes.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -120,6 +119,8 @@ public class ManagerOpeningController extends Controller {
     setCurrentViewFile("manager-opening-view.fxml");
     setCurrentViewTitle("Manager");
     setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
+    Checks newCheck = new Checks("999999999_c", 999, "deposit", "1", "09-02-2021");
+    getLoginController().getPendingChecks().add(newCheck);
   }
 
   /**

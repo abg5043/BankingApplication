@@ -13,7 +13,7 @@
    <center>
       <VBox alignment="CENTER" prefHeight="433.0" prefWidth="953.0" spacing="25.0">
          <children>
-            <Label text="Change Account Interest Rate Below">
+            <Label text="Change Savings Account Interest Rate Below">
                <font>
                   <Font name="System Bold" size="20.0" />
                </font>

@@ -1,17 +1,16 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
-import edu.missouriwestern.agrant4.bankingapplication.Controller;
 import edu.missouriwestern.agrant4.bankingapplication.classes.Checking;
 import edu.missouriwestern.agrant4.bankingapplication.classes.Loans;
 import edu.missouriwestern.agrant4.bankingapplication.classes.Savings;
-import javafx.event.ActionEvent;
+import edu.missouriwestern.agrant4.bankingapplication.classes.Transactions;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.ArrayList;
 
 public class TellerAccountInfoDisplayController extends Controller {
 
@@ -19,19 +18,32 @@ public class TellerAccountInfoDisplayController extends Controller {
     private TextArea accountInfoArea;
 
     @FXML
-    private TableColumn<?, ?> accountNumberCol1;
+    private TableColumn<Transactions, String> accountNumberCol;
 
     @FXML
-    private TableColumn<?, ?> firstNameCol1;
+    private TableColumn<Transactions, String> dateCol;
 
     @FXML
-    private TableView<?> transactionData;
+    private Button exitButton;
+
+    @FXML
+    private Button mainPageButton;
+
+    @FXML
+    private TableColumn<Transactions, String> memoCol;
+
+    @FXML
+    private TableView<Transactions> transactionData;
+
+    @FXML
+    private TableColumn<Transactions, String> transactionTypeCol;
 
     @FXML
     private Label welcomeLabel;
 
     private String currentAccountID;
     private String accountInfo;
+    private ArrayList<Transactions> prunedTransactionLog;
 
 
     public TellerAccountInfoDisplayController (
@@ -46,6 +58,29 @@ public class TellerAccountInfoDisplayController extends Controller {
         setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
         this.currentAccountID = currentAccountID;
         setAccountInfoArea(currentAccountID);
+
+        this.prunedTransactionLog = pruneTransactionLog(getLoginController().getTransactionLog(), currentAccountID);
+
+        accountNumberCol.setCellValueFactory(new PropertyValueFactory<Transactions, String>("accountID"));
+        transactionTypeCol.setCellValueFactory(new PropertyValueFactory<Transactions, String>("transactionType"));
+        memoCol.setCellValueFactory(new PropertyValueFactory<Transactions, String>("memo"));
+        dateCol.setCellValueFactory(new PropertyValueFactory<Transactions, String>("date"));
+
+        //bind list into the table
+        transactionData.setItems(FXCollections.observableArrayList(this.prunedTransactionLog));
+
+    }
+
+    private ArrayList<Transactions> pruneTransactionLog(ArrayList<Transactions> transactionLog, String accID) {
+        ArrayList<Transactions> tempList = new ArrayList<>();
+
+        for(Transactions transaction : transactionLog) {
+            if(transaction.getAccountID().equals(accID)) {
+                tempList.add(transaction);
+            }
+        }
+
+        return tempList;
     }
 
     private void setAccountInfoArea(String text) {
@@ -58,13 +93,6 @@ public class TellerAccountInfoDisplayController extends Controller {
     @FXML
     private void initialize() {
         this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
-    /*
-    accountNumberCol.setCellValueFactory(new PropertyValueFactory<User, String>("SSN"));
-    firstNameCol.setCellValueFactory(new PropertyValueFactory<User, String>("firstName"));
-    //bind list into the table
-    creditData.setItems(FXCollections.observableArrayList(getLoginController().getUsers()));
-    */
-
     }
 
     private String findAccountInfo(String text) {
