@@ -51,9 +51,15 @@ public class ManagerCreateCdController extends Controller {
             //calculate due date
             LocalDate dueDateObject = date.plusYears(yearsUntilComplete);
             String dueDateString = dueDateObject.format(formatters);
+            //Check that ssn is correct length
             if( customerSSN.length() == 9 ) {
+                //check that ssn matches a user
                 if (getLoginController().isValidUser(customerSSN)) {
-                    if (!getLoginController().hasValidCDAccount(customerSSN  + "_s")) {
+                    //check that user does not already have savings or CD
+                    if (
+                        !getLoginController().hasValidCDAccount(customerSSN  + "_s") ||
+                        !getLoginController().hasValidSavingsAccount(customerSSN + "_s")
+                    ) {
                         Savings newCD = new Savings(
                             customerSSN + "_s",
                             balance,

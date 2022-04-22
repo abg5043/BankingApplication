@@ -1,8 +1,6 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
-import edu.missouriwestern.agrant4.bankingapplication.Controller;
 import edu.missouriwestern.agrant4.bankingapplication.classes.Checks;
-import edu.missouriwestern.agrant4.bankingapplication.classes.Loans;
 import edu.missouriwestern.agrant4.bankingapplication.classes.Transactions;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -85,36 +83,48 @@ public class ManagerChecksController extends Controller {
             double depositAmt = processingCheck.getAmountCash();
             String destinationAcctId = processingCheck.getAccountID();
 
-            //deposit the money into the appropriate account
-            getLoginController().findCheckingByID(destinationAcctId).deposit(depositAmt);
+            //Check if the check is larger than the fee
+            //If yes, deposit money
+            if(getLoginController().findCheckingByID(destinationAcctId).oneTimeDeposit(depositAmt)) {
+              //Create transaction object
+              Transactions newTrans = new Transactions(
+                  destinationAcctId,
+                  transactionType,
+                  "Check number " + checkNumberText + " deposited " + depositAmt + " into account.",
+                  currentDate
+              );
 
-            //Create transaction object
-            Transactions newTrans = new Transactions(
-                destinationAcctId,
-                transactionType,
-                "Check number " + checkNumberText + " deposited " + depositAmt + " into account.",
-                currentDate
-            );
+              //add transaction to log
+              getLoginController().getTransactionLog().add(newTrans);
 
-            //add transaction to log
-            getLoginController().getTransactionLog().add(newTrans);
+              //transaction is done. remove check from arraylist
+              getLoginController().getPendingChecks().remove(processingCheck);
 
-            //transaction is done. remove check from arraylist
-            getLoginController().getPendingChecks().remove(processingCheck);
-
-            //write the data
-            getLoginController().writeBankData();
+              //write the data
+              getLoginController().writeBankData();
 
 
-            // create a confirmation screen
-            ConfirmationController confirmationController = new ConfirmationController(
-                getCurrentStage(),
-                getLoginController(),
-                getMainPage(),
-                "Congratulations, you processed check number " + checkNumberText
-            );
+              // create a confirmation screen
+              ConfirmationController confirmationController = new ConfirmationController(
+                  getCurrentStage(),
+                  getLoginController(),
+                  getMainPage(),
+                  "Congratulations, you processed check number " + checkNumberText
+              );
 
-            confirmationController.showStage();
+              confirmationController.showStage();
+
+            } else {
+              //check is not larger than fee
+              // create an alert
+              Alert a = new Alert(Alert.AlertType.WARNING);
+              a.setTitle("Too small a deposit.");
+              a.setHeaderText("Check not processed.");
+              a.setContentText("Deposit amount less than fee.");
+
+              // show the dialog
+              a.show();
+            }
           } else {
             //this is not a valid account type for a check
             // create an alert
@@ -140,7 +150,7 @@ public class ManagerChecksController extends Controller {
              * Withdraw money if there is money in account;
              * returns true or false depending on if there is money in the account
              */
-            if (getLoginController().findCheckingByID(originAcctId).withdraw(withdrawAmt)) {
+            if (getLoginController().findCheckingByID(originAcctId).oneTimeWithdraw(withdrawAmt)) {
               //transaction is done. remove check from list
 
               //Create transaction object

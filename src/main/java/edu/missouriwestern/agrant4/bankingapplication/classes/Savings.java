@@ -3,6 +3,10 @@ package edu.missouriwestern.agrant4.bankingapplication.classes;
 import com.opencsv.bean.CsvBindByName;
 import javafx.scene.control.Alert;
 
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class Savings {
     @CsvBindByName(column = "account_id")
     private String accountId;
@@ -44,6 +48,7 @@ public class Savings {
     public String getDueDate() {
         return dueDate;
     }
+    public Boolean isCD() {return !dueDate.equals("n/a"); }
 
     //___________Setters___________
     public void setAccountId(String accountId) {
@@ -62,11 +67,19 @@ public class Savings {
         this.dueDate = dueDate;
     }
 
-    public void deposit(double cashAmount) {
+    public void oneTimeDeposit(double cashAmount) {
         this.accountBalance += cashAmount;
     }
 
-    public Boolean withdraw(double cashAmount) {
+    public Boolean oneTimeWithdraw(double cashAmount) {
+        DateTimeFormatter newFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+
+        //checks if this is a CD and that the due date hasn't arrived
+        if(isCD() && LocalDate.parse(this.dueDate, newFormatter).isAfter(LocalDate.now())) {
+            //you accrue a 20% penalty for early withdrawal
+            cashAmount *= 1.2;
+        }
+
         if(this.accountBalance >= cashAmount) {
             this.accountBalance -= cashAmount;
             return true;
@@ -75,7 +88,7 @@ public class Savings {
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setTitle("Not enough money.");
             a.setHeaderText("Withdraw not processed.");
-            a.setContentText("Not enough money in account.");
+            a.setContentText("Not enough money in savings account.");
 
             // show the dialog
             a.show();

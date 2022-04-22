@@ -46,10 +46,15 @@ public class ManagerCreateSavingsController extends Controller {
             DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
             String openDate = date.format(formatters);
 
-            //Check that the text is not blank and matches an account
+            //Check that the text is not blank
             if( customerSSN.length() == 9) {
+                //check that the SSN matches a user
                 if (getLoginController().isValidUser(customerSSN)) {
-                    if(!getLoginController().hasValidSavingsAccount(customerSSN + "_s")) {
+                    //check that the user doesn't have a savings or CD
+                    if(
+                        !getLoginController().hasValidSavingsAccount(customerSSN + "_s") ||
+                        !getLoginController().hasValidCDAccount(customerSSN + "_s")
+                    ) {
                         Savings newSavings = new Savings(
                             customerSSN + "_s",
                             balance,

@@ -1,7 +1,6 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
-import edu.missouriwestern.agrant4.bankingapplication.ConfirmationController;
-import edu.missouriwestern.agrant4.bankingapplication.Controller;
+import edu.missouriwestern.agrant4.bankingapplication.classes.Checking;
 import edu.missouriwestern.agrant4.bankingapplication.classes.Savings;
 import edu.missouriwestern.agrant4.bankingapplication.classes.Transactions;
 import javafx.event.ActionEvent;
@@ -18,264 +17,170 @@ import java.time.format.DateTimeFormatter;
 
 public class TellerCreditController extends Controller {
 
-    @FXML
-    private TextField accountField;
+  @FXML
+  private TextField accountField;
 
-    @FXML
-    private Button creditButton;
+  @FXML
+  private Button creditButton;
 
-    @FXML
-    private Button debitButton;
+  @FXML
+  private Button debitButton;
 
-    @FXML
-    private TextField moneyField;
+  @FXML
+  private TextField moneyField;
 
-    @FXML
-    private Label welcomeLabel;
+  @FXML
+  private Label welcomeLabel;
 
-    @FXML
-    void creditClicked(ActionEvent event) {
-        //get current date
-        LocalDate date = LocalDate.now();
-        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-        String currentDate = date.format(formatters);
+  @FXML
+  void creditClicked(ActionEvent event) {
+    //get current date
+    LocalDate date = LocalDate.now();
+    DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+    String currentDate = date.format(formatters);
 
-        try {
-            double incomingMoney = Double.parseDouble(moneyField.getText());
-            String accID = accountField.getText();
+    try {
+      double incomingMoney = Double.parseDouble(moneyField.getText());
+      String accID = accountField.getText();
 
-            //this formats the money amount into currency
-            NumberFormat formatter = NumberFormat.getCurrencyInstance();
-            String formattedIncomingMoney = formatter.format(incomingMoney);
-
-
-            //Checks if this is a valid savings or checking account
-            if(
-                accID.length() == 11 &&
-                (getLoginController().hasValidCheckingAccount(accID) ||
-                    getLoginController().hasValidSavingsAccount(accID))
-            ) {
-
-                String typeOfAccount = accID.substring(9, 11);
-
-                if(typeOfAccount.equals("_c")) {
-                    //is going to checking account
-
-                    //deposit the money into the appropriate account
-                    getLoginController().findCheckingByID(accID).deposit(incomingMoney);
-
-                } else {
-                    //is going to savings account
-
-                    //deposit the money into the appropriate account
-                    getLoginController().findSavingsByID(accID).deposit(incomingMoney);
-                }
-
-                //Create transaction object
-                Transactions newTrans = new Transactions(
-                    accID,
-                    "deposit",
-                    "Deposited " + formattedIncomingMoney + " into account.",
-                    currentDate
-                );
-
-                //add transaction to log
-                getLoginController().getTransactionLog().add(newTrans);
-
-                //write the data
-                getLoginController().writeBankData();
+      //this formats the money amount into currency
+      NumberFormat formatter = NumberFormat.getCurrencyInstance();
+      String formattedIncomingMoney = formatter.format(incomingMoney);
 
 
-                // create a confirmation screen
-                ConfirmationController confirmationController = new ConfirmationController(
-                    getCurrentStage(),
-                    getLoginController(),
-                    getMainPage(),
-                    "Congratulations, you credited " + formattedIncomingMoney +
-                        " to account number " + accID + "."
-                );
+      //Checks if this is a valid savings or checking account
+      if (
+          accID.length() == 11 &&
+              (
+                  getLoginController().hasValidCheckingAccount(accID) ||
+                  getLoginController().hasValidSavingsAccount(accID)
+              )
+      ) {
 
-                confirmationController.showStage();
-            } else {
-                // create an alert
-                Alert a = new Alert(Alert.AlertType.WARNING);
-                a.setTitle("Money Not Credited");
-                a.setHeaderText("Invalid formatting");
-                a.setContentText("Please ensure you follow the suggested formatting.");
+        String typeOfAccount = accID.substring(9, 11);
 
-                // show the dialog
-                a.show();
-            }
+        if (typeOfAccount.equals("_c")) {
+          //is going to checking account
 
-        } catch(NumberFormatException e) {
+          //deposit the money into the appropriate account; only runs if deposit is less than fee
+          if(getLoginController().findCheckingByID(accID).oneTimeDeposit(incomingMoney)) {
+            confirmDeposit(currentDate, accID, formattedIncomingMoney);
+
+          } else {
+            // create an alert
             Alert a = new Alert(Alert.AlertType.WARNING);
-            a.setTitle("Money Not Credited");
-            a.setHeaderText("Invalid formatting");
-            a.setContentText("Please ensure you use numbers in numeric fields.");
+            a.setTitle("Too small a deposit.");
+            a.setHeaderText("Transfer not processed.");
+            a.setContentText("Transfer less than fee.");
 
             // show the dialog
             a.show();
+          }
+
+
+        } else {
+          //is going to savings account
+
+          //deposit the money into the appropriate account
+          getLoginController().findSavingsByID(accID).oneTimeDeposit(incomingMoney);
+
+          confirmDeposit(currentDate, accID, formattedIncomingMoney);
         }
+
+
+      } else {
+        // create an alert
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        a.setTitle("Money Not Credited");
+        a.setHeaderText("Invalid account");
+        a.setContentText("Please ensure you enter in a valid savings or checking account (no CD).");
+
+        // show the dialog
+        a.show();
+      }
+
+    } catch (NumberFormatException e) {
+      Alert a = new Alert(Alert.AlertType.WARNING);
+      a.setTitle("Money Not Credited");
+      a.setHeaderText("Invalid formatting");
+      a.setContentText("Please ensure you use numbers in numeric fields.");
+
+      // show the dialog
+      a.show();
     }
+  }
 
-    @FXML
-    void debitClicked(ActionEvent event) {
-        //get current date
-        LocalDate date = LocalDate.now();
-        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-        String currentDate = date.format(formatters);
+  private void confirmDeposit(String currentDate, String accID, String formattedIncomingMoney) {
+    //Create transaction object
+    Transactions newTrans = new Transactions(
+        accID,
+        "deposit",
+        "Deposited " + formattedIncomingMoney + " into account.",
+        currentDate
+    );
 
-        try {
-            double outgoingMoney = Double.parseDouble(moneyField.getText());
-            String accID = accountField.getText();
+    //add transaction to log
+    getLoginController().getTransactionLog().add(newTrans);
 
-            //this formats the money amount into currency
-            NumberFormat formatter = NumberFormat.getCurrencyInstance();
-            String formattedOutgoingMoney = formatter.format(outgoingMoney);
-
-            //Checks if this is a valid savings or checking account
-            if(
-                accID.length() == 11 &&
-                    (getLoginController().hasValidCheckingAccount(accID) ||
-                        getLoginController().hasValidSavingsAccount(accID) ||
-                        getLoginController().hasValidCDAccount(accID)
-                    )
-            ) {
-
-                String typeOfAccount = accID.substring(9, 11);
-
-                if(typeOfAccount.equals("_c")) {
-                    //is coming from checking account
-
-                    /*
-                     * Withdraw money if there is money in account;
-                     * returns true or false depending on if there is money in the account
-                     */
-                    if (getLoginController().findCheckingByID(accID).withdraw(outgoingMoney)) {
-                        //transaction is done.
-                        //Create transaction object
-                        Transactions newTrans = new Transactions(
-                            accID,
-                            "withdraw",
-                            "Withdrew " + formattedOutgoingMoney + " from account.",
-                            currentDate
-                        );
-
-                        //add transaction to log
-                        getLoginController().getTransactionLog().add(newTrans);
-
-                        //write the data
-                        getLoginController().writeBankData();
+    //write the data
+    getLoginController().writeBankData();
 
 
-                        // create a confirmation screen
-                        ConfirmationController confirmationController = new ConfirmationController(
-                            getCurrentStage(),
-                            getLoginController(),
-                            getMainPage(),
-                            "Congratulations, you credited " + formattedOutgoingMoney +
-                                " to account number " + accID + ".");
+    // create a confirmation screen
+    ConfirmationController confirmationController = new ConfirmationController(
+        getCurrentStage(),
+        getLoginController(),
+        getMainPage(),
+        "Congratulations, you credited " + formattedIncomingMoney +
+            " to account number " + accID + "."
+    );
 
-                        confirmationController.showStage();
-                    }
+    confirmationController.showStage();
+  }
 
-                } else {
-                    //is coming from savings account
+  @FXML
+  void debitClicked(ActionEvent event) {
+    //get current date
+    LocalDate date = LocalDate.now();
+    DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+    String currentDate = date.format(formatters);
 
-                    //make pointer to savings account
-                    Savings targetedAccounted;
-                    Boolean isCD;
-                    if (getLoginController().findSavingsByID(accID) == null) {
-                        //this is a CD
-                        isCD = true;
-                        targetedAccounted = getLoginController().findCDByID(accID);
-                    } else {
-                        //this is not a CD
-                        isCD = false;
-                        targetedAccounted = getLoginController().findSavingsByID(accID);
-                    }
+    try {
+      double outgoingMoney = Double.parseDouble(moneyField.getText());
+      String accID = accountField.getText();
 
-                    if(isCD) {
-                        //check if early withdrawal
+      //this formats the money amount into currency
+      NumberFormat formatter = NumberFormat.getCurrencyInstance();
+      String formattedOutgoingMoney = formatter.format(outgoingMoney);
 
-                        DateTimeFormatter newFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-                        LocalDate dueDateLocalDate = LocalDate.parse(targetedAccounted.getDueDate(), newFormatter);
+      //Checks if this is a valid savings or checking account
+      if (
+          accID.length() == 11 &&
+              (getLoginController().hasValidCheckingAccount(accID) ||
+                  getLoginController().hasValidSavingsAccount(accID) ||
+                  getLoginController().hasValidCDAccount(accID)
+              )
+      ) {
 
-                        if(dueDateLocalDate.isAfter(LocalDate.now())) {
-                            //due date hasn't arrived. accrue 20% penalty
-                            //withdraw if there is money in the account. Apply 20% penalty since this is early withdrawal
+        String typeOfAccount = accID.substring(9, 11);
 
-                            formattedOutgoingMoney = formatter.format(outgoingMoney * 1.2);
+        if (typeOfAccount.equals("_c")) {
+          //money is being withdrawn from a checking account
 
-                            withdrawFromSavings(
-                                currentDate,
-                                outgoingMoney * 1.2,
-                                accID,
-                                formattedOutgoingMoney,
-                                targetedAccounted,
-                                "\n\nThis includes a penalty of 20% for early withdrawal."
-                            );
+            Checking targetedChecking = getLoginController().findCheckingByID(accID);
 
-                        } else {
-                            //CD and due date has passed. Withdraw with no penalty
-                            withdrawFromSavings(
-                                currentDate,
-                                outgoingMoney,
-                                accID,
-                                formattedOutgoingMoney,
-                                targetedAccounted,
-                                ""
-                            );
-                        }
+          /*
+           * Withdraw money if there is money in account;
+           * returns true or false depending on if there is money in the account
+           */
+          if (targetedChecking.oneTimeWithdraw(outgoingMoney)) {
+            //There was money; transaction is done.
 
-                    } else {
-                        //Normal savings account. Withdraw normally.
-                        withdrawFromSavings(
-                            currentDate,
-                            outgoingMoney,
-                            accID,
-                            formattedOutgoingMoney,
-                            targetedAccounted,
-                            "");
-                    }
-                }
-            } else {
-                // create an alert
-                Alert a = new Alert(Alert.AlertType.WARNING);
-                a.setTitle("Money Not Debited");
-                a.setHeaderText("Invalid formatting");
-                a.setContentText("Please ensure you follow the suggested formatting.");
-
-                // show the dialog
-                a.show();
-            }
-        } catch(NumberFormatException e) {
-            Alert a = new Alert(Alert.AlertType.WARNING);
-            a.setTitle("Money Not Debited");
-            a.setHeaderText("Invalid formatting");
-            a.setContentText("Please ensure you use numbers in numeric fields.");
-
-            // show the dialog
-            a.show();
-        }
-    }
-
-    private void withdrawFromSavings(
-        String currentDate,
-        double outgoingMoney,
-        String accID,
-        String formattedOutgoingMoney,
-        Savings targetedAccounted,
-        String appendedMessage
-    ) {
-        //checks if there is money. If there is, it withdraws and returns true
-        if (targetedAccounted.withdraw(outgoingMoney)) {
-            //transaction is done.
             //Create transaction object
             Transactions newTrans = new Transactions(
                 accID,
                 "withdraw",
-                "Withdrew " + formattedOutgoingMoney + " from account.",
+                "Withdrew " + formattedOutgoingMoney + " from accounts" + targetedChecking.getAccountId(),
                 currentDate
             );
 
@@ -291,32 +196,194 @@ public class TellerCreditController extends Controller {
                 getCurrentStage(),
                 getLoginController(),
                 getMainPage(),
-                "Congratulations, you credited " + formattedOutgoingMoney +
-                    " to account number " + accID + ". " + appendedMessage
-            );
+                "Congratulations, you debited " + formattedOutgoingMoney +
+                    " from account number " + accID + ".");
 
             confirmationController.showStage();
+          } else {
+              double overdraftAmount = outgoingMoney - targetedChecking.getCurrentBalance();
+
+              /*
+               * there wasn't enough money.
+               * Check if there is a backup savings and that the savings
+               * has enough to cover the rest
+               */
+              if (
+                  !targetedChecking.getBackupAccountId().equals("n/a") ||
+                  (overdraftAmount <= getLoginController().findSavingsByID(targetedChecking.getBackupAccountId()).getAccountBalance())
+              ) {
+                  Savings backUpSavings = getLoginController().findSavingsByID(targetedChecking.getBackupAccountId());
+
+                  //Withdraw from checking and savings
+                  targetedChecking.setCurrentBalance(0);
+                  if(targetedChecking.getAccountType().equals("Regular")) {
+                    overdraftAmount += 0.5;
+                  }
+                  backUpSavings.oneTimeWithdraw(overdraftAmount);
+
+                  String formattedOverdraft = formatter.format(overdraftAmount);
+
+
+                  //Create transaction object
+                  Transactions newTrans = new Transactions(
+                      accID,
+                      "withdraw",
+                      "Withdrew " + formattedOutgoingMoney + " from accounts " +
+                      targetedChecking.getAccountId() + " and " + backUpSavings.getAccountId() + ".",
+                      currentDate
+                  );
+
+                  //add transaction to log
+                  getLoginController().getTransactionLog().add(newTrans);
+
+                  //write the data
+                  getLoginController().writeBankData();
+
+
+                  // create a confirmation screen
+                  ConfirmationController confirmationController = new ConfirmationController(
+                      getCurrentStage(),
+                      getLoginController(),
+                      getMainPage(),
+                      "Congratulations, you debited " + formattedOutgoingMoney +
+                          " from account number " + accID + ".");
+
+                  confirmationController.showStage();
+
+              } else {
+                   //There wasn't a linked account or there was not enough in that backup account
+                  // create an alert
+                  Alert a = new Alert(Alert.AlertType.WARNING);
+                  a.setTitle("Not enough money.");
+                  a.setHeaderText("Withdraw not processed.");
+                  a.setContentText("Not enough money in account, even with overdraft.");
+
+                  // show the dialog
+                  a.show();
+              }
+          }
+
+        } else {
+          //is coming from savings account
+
+          //make pointer to savings account
+          Savings targetedAccounted;
+          Boolean isCD;
+          if (getLoginController().findSavingsByID(accID) == null) {
+            //this is a CD
+            targetedAccounted = getLoginController().findCDByID(accID);
+          } else {
+            //this is not a CD
+            targetedAccounted = getLoginController().findSavingsByID(accID);
+          }
+
+          DateTimeFormatter newFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+
+          //Check if this is a CD that is withdrawing early
+          if (targetedAccounted.isCD() && LocalDate.parse(targetedAccounted.getDueDate(), newFormatter).isAfter(LocalDate.now())) {
+
+            withdrawFromSavings(
+                currentDate,
+                outgoingMoney,
+                accID,
+                formattedOutgoingMoney,
+                targetedAccounted,
+                "\n\nPlease note we also debited a 20% penalty for early withdrawal."
+            );
+
+          } else {
+            //CD and due date has passed or normal savings. Withdraw with no penalty
+            withdrawFromSavings(
+                currentDate,
+                outgoingMoney,
+                accID,
+                formattedOutgoingMoney,
+                targetedAccounted,
+                ""
+            );
+          }
+
         }
+      } else {
+      // create an alert
+      Alert a = new Alert(Alert.AlertType.WARNING);
+      a.setTitle("Money Not Debited");
+      a.setHeaderText("Invalid account");
+      a.setContentText("Please ensure you enter in a valid account.");
+
+      // show the dialog
+      a.show();
     }
+  } catch (NumberFormatException e) {
+    Alert a = new Alert(Alert.AlertType.WARNING);
+    a.setTitle("Money Not Debited");
+    a.setHeaderText("Invalid formatting");
+    a.setContentText("Please ensure you use numbers in numeric fields.");
+
+    // show the dialog
+    a.show();
+  }
+
+}
+
+  private void withdrawFromSavings(
+      String currentDate,
+      double outgoingMoney,
+      String accID,
+      String formattedOutgoingMoney,
+      Savings targetedAccounted,
+      String appendedMessage
+      ) {
+
+    //checks if there is money. If there is, it withdraws and returns true
+    if (targetedAccounted.oneTimeWithdraw(outgoingMoney)) {
+      //transaction is done.
+      //Create transaction object
+      Transactions newTrans = new Transactions(
+          accID,
+          "withdraw",
+          "Withdrew " + formattedOutgoingMoney + " from account " + targetedAccounted.getAccountId(),
+          currentDate
+      );
+
+      //add transaction to log
+      getLoginController().getTransactionLog().add(newTrans);
+
+      //write the data
+      getLoginController().writeBankData();
 
 
-    public TellerCreditController(
-        Stage currentStage,
-        LoginController loginController,
-        TellerOpeningController tellerOpeningController
-    ) {
-        super(currentStage, loginController, tellerOpeningController);
-        setCurrentViewFile("teller-credit.fxml");
-        setCurrentViewTitle("Credit/Debit Money");
-        setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
-    }
+      // create a confirmation screen
+      ConfirmationController confirmationController = new ConfirmationController(
+          getCurrentStage(),
+          getLoginController(),
+          getMainPage(),
+          "Congratulations, you credited " + formattedOutgoingMoney +
+              " to account number " + accID + ". " + appendedMessage
+      );
 
-    /**
-     * The initialize() method allows you set setup your scene, adding actions, configuring nodes, etc.
-     */
-    @FXML
-    private void initialize() {
-        this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
+      confirmationController.showStage();
     }
+  }
+
+
+  public TellerCreditController(
+      Stage currentStage,
+      LoginController loginController,
+      TellerOpeningController tellerOpeningController
+  ) {
+    super(currentStage, loginController, tellerOpeningController);
+    setCurrentViewFile("teller-credit.fxml");
+    setCurrentViewTitle("Credit/Debit Money");
+    setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
+  }
+
+  /**
+   * The initialize() method allows you set setup your scene, adding actions, configuring nodes, etc.
+   */
+  @FXML
+  private void initialize() {
+    this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
+  }
 
 }

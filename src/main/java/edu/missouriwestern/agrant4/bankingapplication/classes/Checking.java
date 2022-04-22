@@ -1,11 +1,13 @@
 package edu.missouriwestern.agrant4.bankingapplication.classes;
 
 import com.opencsv.bean.CsvBindByName;
-import javafx.scene.control.Alert;
 
 public class Checking {
     @CsvBindByName(column = "account_id")
     private String accountId;
+
+    @CsvBindByName(column = "interest")
+    private String interest;
 
     @CsvBindByName(column = "account_type")
     private String accountType;
@@ -23,13 +25,14 @@ public class Checking {
     @CsvBindByName(column = "open_date")
     private String openDate;
 
-    public Checking(String accountId, String accountType, double currentBalance, String backupAccountId, int overDrafts, String openDate){
+    public Checking(String accountId, String accountType, double currentBalance, String backupAccountId, int overDrafts, String openDate, String interest){
         this.accountId = accountId;
         this.accountType = accountType;
         this.currentBalance = currentBalance;
         this.backupAccountId = backupAccountId;
         this.overdrafts = overDrafts;
         this.openDate = openDate;
+        this.interest = interest;
     }
 
     public Checking(){
@@ -55,6 +58,10 @@ public class Checking {
         return openDate;
     }
 
+    public String getInterest() {
+        return interest;
+    }
+
     //________Setters___________
     public void setAccountId(String accountId) {
         this.accountId = accountId;
@@ -74,25 +81,49 @@ public class Checking {
     public void setOpenDate(String openDate) {
         this.openDate = openDate;
     }
-
-    public void deposit(double cashAmount) {
-        this.currentBalance += cashAmount;
+    public void setInterest(String interest) {
+        this.interest = interest;
     }
 
-    public Boolean withdraw(double cashAmount) {
-        if(this.currentBalance >= cashAmount) {
-            this.currentBalance -= cashAmount;
-            return true;
+    public Boolean oneTimeDeposit(double cashAmount) {
+        if(this.accountType.equals("Regular")) {
+            //"That's my bank" type of account has 50c per transaction
+            if(cashAmount < 0.5) {
+                return false;
+            } else {
+                this.currentBalance += (cashAmount - 0.5);
+                return true;
+            }
         } else {
-            // create an alert
-            Alert a = new Alert(Alert.AlertType.WARNING);
-            a.setTitle("Not enough money.");
-            a.setHeaderText("Withdraw not processed.");
-            a.setContentText("Not enough money in account.");
+            //"Gold" has no transaction fee
+            this.currentBalance += cashAmount;
+            return true;
+        }
 
-            // show the dialog
-            a.show();
-            return false;
+    }
+
+    public Boolean oneTimeWithdraw(double cashAmount) {
+        if(this.accountType.equals("Regular")) {
+            //"That's my bank" type of account has 50c per transaction
+            if(this.currentBalance >= (cashAmount + 0.5)) {
+                this.currentBalance -= (cashAmount + 0.5) ;
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            //"Gold" type of account has no transaction fee
+            if(this.currentBalance >= cashAmount) {
+                this.currentBalance -= cashAmount;
+                //Check if the balance goes too low to be Gold
+                if(this.currentBalance < 1000) {
+                    this.accountType = "Regular";
+                    this.interest = "n/a";
+                }
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 

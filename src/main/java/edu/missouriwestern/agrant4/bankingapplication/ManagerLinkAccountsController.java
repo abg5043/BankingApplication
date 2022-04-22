@@ -82,7 +82,8 @@ public class ManagerLinkAccountsController extends Controller {
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setTitle("Accounts Not Linked");
             a.setHeaderText("Invalid account ID");
-            a.setContentText("Please ensure you enter valid account IDs.");
+            a.setContentText("Please ensure you enter valid account IDs. " +
+                "\n\nRemember that CDs can't be backup savings!");
 
             // show the dialog
             a.show();

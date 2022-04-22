@@ -44,20 +44,24 @@ public class ManagerCreateCheckingController extends Controller {
             DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
             String openDate = date.format(formatters);
 
-            //Check that the text is not blank and matches an account
+            //Check that the text is not blank and matches an account type
             if(
                 SSN.length() == 9 &&
                 (acctType.equals("Regular") || acctType.equals("Gold"))
             ) {
+                //if the SSN matches a valid user
                 if (getLoginController().isValidUser(SSN) ) {
+                    //if the user doesn't already have a checking account
                     if (!getLoginController().hasValidCheckingAccount(SSN + "_c")) {
+                        //make checking object
                         Checking newChecking = new Checking(
                             SSN + "_c",
                             acctType,
                             balance,
                             "n/a",
                             0,
-                            openDate
+                            openDate,
+                            "0.5"
                         );
 
                         //update data and write to csv
