@@ -8,12 +8,14 @@ import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 public class CustomerOpeningController extends Controller {
+  //True if Checking clicked, False if Savings clicked
+  boolean isChecking;
 
   @FXML
-  private Button balanceButton;
+  private Button checkingButton;
 
   @FXML
-  private Button depositButton;
+  private Button savingsButton;
 
   @FXML
   private TextArea mainTextBox;
@@ -22,21 +24,56 @@ public class CustomerOpeningController extends Controller {
   private Label welcomeLabel;
 
   @FXML
-  private Button withdrawButton;
+  private Button cdButton;
 
   @FXML
-  void balanceClicked(ActionEvent event) {
+  private Button loanButton;
 
+  @FXML
+  void checkingClicked(ActionEvent event) {
+    isChecking = true;
+
+    CustomerPINCheckController customerPINCheckController = new CustomerPINCheckController(
+        getCurrentStage(), getLoginController(), this, true
+    );
+
+    customerPINCheckController.showStage();
   }
 
   @FXML
-  void depositClicked(ActionEvent event) {
+  void savingsClicked(ActionEvent event) {
+    isChecking = false;
 
+    CustomerPINCheckController customerPINCheckController = new CustomerPINCheckController(
+        getCurrentStage(),
+        getLoginController(),
+        this,
+        isChecking
+    );
+
+    customerPINCheckController.showStage();
   }
 
   @FXML
-  void withdrawClicked(ActionEvent event) {
+  void cdClicked(ActionEvent event) {
+    CustomerCDController customerCDController = new CustomerCDController(
+        getCurrentStage(),
+        getLoginController(),
+        this
+    );
 
+    customerCDController.showStage();
+  }
+
+  @FXML
+  void loanClicked(ActionEvent event) {
+    CustomerLoanAccountController customerLoanAccountController = new CustomerLoanAccountController(
+        getCurrentStage(),
+        getLoginController(),
+        this
+    );
+
+    customerLoanAccountController.showStage();
   }
 
   public CustomerOpeningController(Stage currentStage, LoginController loginController) {
@@ -53,6 +90,7 @@ public class CustomerOpeningController extends Controller {
   private void initialize() {
     this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
     this.mainTextBox.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!"
+        + "\n\nWelcome to the Customer Main Screen. "
         + "\n\nPlease select your next action.");
   }
 }

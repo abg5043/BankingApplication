@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/">
+    <center>
+        <VBox alignment="CENTER" prefHeight="433.0" prefWidth="953.0" spacing="25.0">
+            <children>
+                <Label fx:id="amtOwedLabel" prefHeight="30.0" prefWidth="249.0" text="Insert Card and Enter PIN">
+                    <font>
+                        <Font name="System Bold" size="20.0" />
+                    </font>
+                </Label>
+            <PasswordField alignment="CENTER" promptText="Enter PIN">
+               <VBox.margin>
+                  <Insets left="350.0" right="350.0" />
+               </VBox.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </PasswordField>
+            </children>
+        </VBox>
+    </center>
+    <top>
+        <BorderPane prefHeight="60.0" prefWidth="753.0" BorderPane.alignment="CENTER">
+            <center>
+                <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label fx:id="welcomeLabel" alignment="CENTER" prefHeight="29.0" prefWidth="252.0" text="Welcome, (Name)!">
+                            <font>
+                                <Font size="24.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+            </center>
+            <right>
+                <Button fx:id="exitButton" mnemonicParsing="false" onAction="#exitClicked" text="Save and Exit" BorderPane.alignment="CENTER">
+                    <font>
+                        <Font size="16.0" />
+                    </font>
+                    <BorderPane.margin>
+                        <Insets right="30.0" />
+                    </BorderPane.margin>
+                    <padding>
+                        <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
+                    </padding>
+                </Button>
+            </right>
+            <left>
+                <Button fx:id="mainPageButton" mnemonicParsing="false" onAction="#mainPageClicked" text="Back to Main" BorderPane.alignment="CENTER">
+                    <font>
+                        <Font size="16.0" />
+                    </font>
+                    <padding>
+                        <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
+                    </padding>
+                    <BorderPane.margin>
+                        <Insets left="30.0" />
+                    </BorderPane.margin>
+                </Button>
+            </left>
+            <padding>
+                <Insets top="30.0" />
+            </padding>
+        </BorderPane>
+    </top>
+    <bottom>
+        <HBox alignment="CENTER" prefWidth="953.0" spacing="50.0" BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="enterButton" alignment="CENTER" mnemonicParsing="false" onAction="#enterClicked" prefHeight="45.0" prefWidth="144.0" text="Enter" textAlignment="CENTER">
+                    <font>
+                        <Font size="16.0" />
+                    </font>
+                    <padding>
+                        <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
+                    </padding>
+                </Button>
+            </children>
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+            <padding>
+                <Insets bottom="15.0" top="15.0" />
+            </padding>
+        </HBox>
+    </bottom>
+</BorderPane>

@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/">
    <center>
       <VBox alignment="CENTER" prefHeight="433.0" prefWidth="953.0" spacing="25.0">
          <children>
@@ -71,7 +71,7 @@
    <bottom>
       <HBox alignment="CENTER" spacing="50.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="depositButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#depositClicked" text="Deposit" textAlignment="CENTER">
+            <Button fx:id="checkingButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#checkingClicked" text="Checking" textAlignment="CENTER">
                <font>
                   <Font size="16.0" />
                </font>
@@ -79,7 +79,7 @@
                   <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
                </padding>
             </Button>
-            <Button fx:id="withdrawButton" alignment="CENTER" mnemonicParsing="false" onAction="#withdrawClicked" text="Withdraw" textAlignment="CENTER">
+            <Button fx:id="savingsButton" alignment="CENTER" mnemonicParsing="false" onAction="#savingsClicked" text="Savings" textAlignment="CENTER">
                <font>
                   <Font size="16.0" />
                </font>
@@ -87,7 +87,15 @@
                   <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
                </padding>
             </Button>
-            <Button fx:id="balanceButton" alignment="CENTER" mnemonicParsing="false" onAction="#balanceClicked" text="Check Balance" textAlignment="CENTER">
+            <Button fx:id="cdButton" alignment="CENTER" mnemonicParsing="false" onAction="#cdClicked" text="CD Account" textAlignment="CENTER">
+               <font>
+                  <Font size="16.0" />
+               </font>
+               <padding>
+                  <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
+               </padding>
+            </Button>
+            <Button fx:id="loanButton" alignment="CENTER" contentDisplay="CENTER" layoutX="276.0" layoutY="10.0" mnemonicParsing="false" onAction="#loanClicked" text="Loan Account" textAlignment="CENTER">
                <font>
                   <Font size="16.0" />
                </font>
