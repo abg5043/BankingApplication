@@ -82,6 +82,14 @@ public class ManagerRolloverCdController extends Controller {
                 cdList.add(savings);
             }
         }
+        accountNumberCol.setCellValueFactory(new PropertyValueFactory<Savings, String>("accountId"));
+        balanceCol.setCellValueFactory(new PropertyValueFactory<Savings, Double>("accountBalance"));
+        interestRateCol.setCellValueFactory(new PropertyValueFactory<Savings, Double>("interestRate"));
+        openDateCol.setCellValueFactory(new PropertyValueFactory<Savings, String>("accountOpenDate"));
+        dueDateCol.setCellValueFactory(new PropertyValueFactory<Savings, String>("dueDate"));
+
+        //bind list into the table
+        cdData.setItems(FXCollections.observableArrayList(cdList));
     }
 
     /**
@@ -90,15 +98,6 @@ public class ManagerRolloverCdController extends Controller {
     @FXML
     private void initialize() {
         this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
-
-        accountNumberCol.setCellValueFactory(new PropertyValueFactory<Savings, String>("accountId"));
-        balanceCol.setCellValueFactory(new PropertyValueFactory<Savings, Double>("accountBalance"));
-        interestRateCol.setCellValueFactory(new PropertyValueFactory<Savings, Double>("interestRate"));
-        openDateCol.setCellValueFactory(new PropertyValueFactory<Savings, String>("accountOpenDate"));
-        dueDateCol.setCellValueFactory(new PropertyValueFactory<Savings, String>("dueDate"));
-
-        //bind list into the table
-        cdData.setItems(FXCollections.observableArrayList(getLoginController().getSavingsData()));
     }
 
 }
