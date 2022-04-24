@@ -39,3 +39,6 @@
 "435678787_c","04-23-2022","Check number 2 withdrew 25.0 from your account.","withdrawal"
 "999999999_c","04-23-2022","Check number 2 deposited 25.0 into account.","deposit"
 "435678787_c","04-23-2022","Check number 3 had payment stopped for not enough money in account.","stop payment"
+"999999999_c","04-23-2022","Transferred 1.0 to account 999999999_s","transfer"
+"999999999_s","04-23-2022","Transferred 1.0 from account 999999999_c","transfer"
+"435678787_c","04-23-2022","Penalized $15.00 from account 435678787_c","penalty"
