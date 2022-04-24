@@ -3,6 +3,7 @@ module edu.missouriwestern.agrant4.bankingapplication {
   requires javafx.fxml;
   requires com.opencsv;
   requires java.sql;
+  requires org.apache.logging.log4j;
 
   opens edu.missouriwestern.agrant4.bankingapplication to javafx.fxml;
   exports edu.missouriwestern.agrant4.bankingapplication;

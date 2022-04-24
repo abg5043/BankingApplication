@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <center>
@@ -17,16 +11,21 @@
          <children>
             <TableView fx:id="checkData" prefHeight="386.0" prefWidth="893.0">
               <columns>
-                <TableColumn fx:id="accountNumberCol" prefWidth="148.8962688446045" text="Account Num" />
-                <TableColumn fx:id="amountCashCol" prefWidth="171.6036834716797" text="Amount of Cash" />
-                  <TableColumn fx:id="withdrawOrDepositCol" prefWidth="155.51309204101562" text="Withdraw or Deposit" />
-                  <TableColumn fx:id="checkNumberCol" prefWidth="184.74371337890625" text="Check Number" />
-                  <TableColumn fx:id="dateCol" prefWidth="231.9588623046875" text="Check Date" />
+                <TableColumn fx:id="originAcctNumCol" prefWidth="167.32179069519043" text="Origin Account Num" />
+                  <TableColumn fx:id="destAcctNumCol" prefWidth="174.6781768798828" text="Destination Account Num" />
+                <TableColumn fx:id="amountCashCol" prefWidth="164.03472900390625" text="Amount of Cash" />
+                  <TableColumn fx:id="checkNumberCol" prefWidth="200.4814453125" text="Check Number" />
+                  <TableColumn fx:id="dateCol" prefWidth="186.5185546875" text="Check Date" />
               </columns>
                <VBox.margin>
-                  <Insets left="30.0" right="30.0" />
+                  <Insets left="30.0" right="30.0" top="20.0" />
                </VBox.margin>
             </TableView>
+            <Label text="(Enter &quot;n/a&quot; when stopping check)">
+               <VBox.margin>
+                  <Insets left="360.0" />
+               </VBox.margin>
+            </Label>
          </children>
       </VBox>
    </center>
@@ -85,12 +84,17 @@
                   <Font size="16.0" />
                </font>
             </Button>
-            <TextField fx:id="checkNumber" prefHeight="29.0" prefWidth="200.0" promptText="Enter Check Number">
+            <TextField fx:id="checkNumber" prefHeight="29.0" prefWidth="125.0" promptText="Enter Check #">
                <font>
                   <Font size="16.0" />
                </font>
             </TextField>
-            <TextField fx:id="acctNumField" layoutX="342.0" layoutY="15.0" prefHeight="29.0" prefWidth="200.0" promptText="Enter Account Number">
+            <TextField fx:id="originAcctField" layoutX="342.0" layoutY="15.0" prefHeight="29.0" prefWidth="180.0" promptText="Origin Account #">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </TextField>
+            <TextField fx:id="destAcctField" layoutX="476.0" layoutY="15.0" prefHeight="29.0" prefWidth="200.0" promptText="Destination Account #">
                <font>
                   <Font size="16.0" />
                </font>

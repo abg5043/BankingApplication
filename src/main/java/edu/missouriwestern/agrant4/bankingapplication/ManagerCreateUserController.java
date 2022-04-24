@@ -52,6 +52,10 @@ public class ManagerCreateUserController extends Controller {
     private TextField zip;
 
     @FXML
+    private TextField pin;
+
+
+    @FXML
     void createUserClicked(ActionEvent event) {
         String ssn = this.ssn.getText();
         String zip = this.zip.getText();
@@ -63,6 +67,7 @@ public class ManagerCreateUserController extends Controller {
         String lName = this.lName.getText();
         String role = this.role.getText();
         String password = this.password.getText();
+        String pin = this.pin.getText();
 
         //Check that the text is not blank and matches the expected formatting
         if(
@@ -75,7 +80,8 @@ public class ManagerCreateUserController extends Controller {
             fName.length() > 0 &&
             lName.length() > 0 &&
             (role.equals("c") || role.equals("m") || role.equals("t")) &&
-            password.length() > 0
+            password.length() > 0 &&
+            pin.length() == 4
         ) {
             if(!getLoginController().isValidUser(ssn)) {
                 Boolean manager = role.equals("m");
@@ -95,7 +101,8 @@ public class ManagerCreateUserController extends Controller {
                     customer,
                     teller,
                     fName,
-                    lName
+                    lName,
+                    pin
                 );
 
                 //update user data

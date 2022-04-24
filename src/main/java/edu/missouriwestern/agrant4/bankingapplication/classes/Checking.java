@@ -127,6 +127,48 @@ public class Checking {
         }
     }
 
+    public Boolean monthlyDeposit(double cashAmount) {
+        if(this.accountType.equals("Regular")) {
+            //"That's my bank" type of account has 75c per transaction
+            if(cashAmount < 0.75) {
+                return false;
+            } else {
+                this.currentBalance += (cashAmount - 0.75);
+                return true;
+            }
+        } else {
+            //"Gold" has no transaction fee
+            this.currentBalance += cashAmount;
+            return true;
+        }
+
+    }
+
+    public Boolean monthlyWithdraw(double cashAmount) {
+        if(this.accountType.equals("Regular")) {
+            //"That's my bank" type of account has 75c per monthly transaction
+            if(this.currentBalance >= (cashAmount + 0.75)) {
+                this.currentBalance -= (cashAmount + 0.75) ;
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            //"Gold" type of account has no transaction fee
+            if(this.currentBalance >= cashAmount) {
+                this.currentBalance -= cashAmount;
+                //Check if the balance goes too low to be Gold
+                if(this.currentBalance < 1000) {
+                    this.accountType = "Regular";
+                    this.interest = "n/a";
+                }
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     @Override
     public String toString() {
     return "account ID='" + accountId + '\'' +
@@ -134,6 +176,7 @@ public class Checking {
         ", current balance='" + currentBalance + '\'' +
         ", backup account id='" + backupAccountId + '\'' +
         ", overdrafts='" + overdrafts + '\'' +
-        ", open date='" + openDate;
+        ", open date='" + openDate + '\'' +
+        ", interest='" + interest;
   }
 }   

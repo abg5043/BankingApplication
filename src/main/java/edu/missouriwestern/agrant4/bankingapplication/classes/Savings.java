@@ -3,7 +3,6 @@ package edu.missouriwestern.agrant4.bankingapplication.classes;
 import com.opencsv.bean.CsvBindByName;
 import javafx.scene.control.Alert;
 
-import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -67,11 +66,11 @@ public class Savings {
         this.dueDate = dueDate;
     }
 
-    public void oneTimeDeposit(double cashAmount) {
+    public void deposit(double cashAmount) {
         this.accountBalance += cashAmount;
     }
 
-    public Boolean oneTimeWithdraw(double cashAmount) {
+    public Boolean withdraw(double cashAmount) {
         DateTimeFormatter newFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 
         //checks if this is a CD and that the due date hasn't arrived

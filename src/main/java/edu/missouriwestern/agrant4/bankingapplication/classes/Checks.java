@@ -3,14 +3,14 @@ package edu.missouriwestern.agrant4.bankingapplication.classes;
 import com.opencsv.bean.CsvBindByName;
 
 public class Checks {
-    @CsvBindByName(column = "account_id")
-    private String accountID;
+    @CsvBindByName(column = "origin_account_id")
+    private String originAccountID;
+
+    @CsvBindByName(column = "destination_account_id")
+    private String destinationAccountID;
 
     @CsvBindByName(column = "amount_cash")
     private double amountCash;
-
-    @CsvBindByName(column = "withdraw_or_deposit")
-    private String withdrawOrDeposit;
 
     @CsvBindByName(column = "check_number")
     private String checkNumber;
@@ -18,52 +18,46 @@ public class Checks {
     @CsvBindByName(column = "date")
     private String date;
 
-    public Checks(String accountID, double amountCash, String withdrawOrDeposit, String checkNumber, String date){
-        this.accountID = accountID;
+    public Checks(String originAccountID, double amountCash, String checkNumber, String date, String destinationAccountID){
+        this.originAccountID = originAccountID;
         this.amountCash = amountCash;
-        this.withdrawOrDeposit = withdrawOrDeposit;
         this.checkNumber = checkNumber;
         this.date = date;
+        this.destinationAccountID = destinationAccountID;
     }
 
     public Checks(){}
 
     //______________Getters_____________
-    public String getAccountID() {
-        return accountID;
+    public String getOriginAccountID() {
+        return originAccountID;
     }
     public String getCheckNumber() {
         return checkNumber;
     }
-    public String getWithdrawOrDeposit() {
-        return withdrawOrDeposit;
-    }
     public String getDate() {
         return date;
     }
-
+    public String getDestinationAccountID() {
+        return destinationAccountID;
+    }
     public double getAmountCash() {
         return amountCash;
     }
 
     //_____________Setters_______________
-    public void setAccountID(String accountID) {
-        this.accountID = accountID;
+    public void setOriginAccountID(String originAccountID) {
+        this.originAccountID = originAccountID;
     }
     public void setCheckNumber(String checkNumber) {
         this.checkNumber = checkNumber;
     }
-    public void setCreditOrDebit(String withdrawOrDeposit) {
-        this.withdrawOrDeposit = withdrawOrDeposit;
-    }
     public void setDate(String date) {
         this.date = date;
     }
-
-    public void setWithdrawOrDeposit(String withdrawOrDeposit) {
-        this.withdrawOrDeposit = withdrawOrDeposit;
+    public void setDestinationAccountID(String destinationAccountID) {
+        this.destinationAccountID = destinationAccountID;
     }
-
     public void setAmountCash(double amountCash) {
         this.amountCash = amountCash;
     }
@@ -71,9 +65,9 @@ public class Checks {
     @Override
     public String toString() {
         return "Checks{" +
-            "accountID='" + accountID + '\'' +
+            "originAccountID='" + originAccountID + '\'' +
+            ", destinationAccountID='" + destinationAccountID + '\'' +
             ", amountCash=" + amountCash +
-            ", withdrawOrDeposit='" + withdrawOrDeposit + '\'' +
             ", checkNumber='" + checkNumber + '\'' +
             ", date='" + date + '\'' +
             '}';

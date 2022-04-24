@@ -49,8 +49,23 @@ public class ManagerLinkAccountsController extends Controller {
 
             //check if there is already a linked account
             if (modifiedChecking.getBackupAccountId().equals("n/a")) {
-                //modify the checking account
+                //modify the checking account accountID
                 modifiedChecking.setBackupAccountId(savingsID);
+
+                //if account is gold, also modify the savings rate
+                if(modifiedChecking.getAccountType().equals("Gold")) {
+                    Savings linkedSavings;
+                    //find the savings account
+                    if(savingsID.substring(9,11).equals("_s")) {
+                        //this is a normal savings
+                        linkedSavings = getLoginController().findSavingsByID(savingsID);
+                    } else {
+                        //this is a CD
+                        linkedSavings = getLoginController().findCDByID(savingsID);
+                    }
+                    //use the savings account to set the interest rate of the checking
+                    modifiedChecking.setInterest(String.valueOf(0.5 * linkedSavings.getInterestRate()));
+                }
 
                 //write to CSV
                 getLoginController().writeBankData();
@@ -65,6 +80,7 @@ public class ManagerLinkAccountsController extends Controller {
 
                 confirmationController.showStage();
             } else {
+                //there is a linked account
                 // create an alert
                 Alert a = new Alert(Alert.AlertType.WARNING);
                 a.setTitle("Accounts Not Linked");
@@ -74,10 +90,8 @@ public class ManagerLinkAccountsController extends Controller {
                 // show the dialog
                 a.show();
             }
-
-
-
         } else {
+            //text is blank or does not match an account
             // create an alert
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setTitle("Accounts Not Linked");
@@ -88,9 +102,6 @@ public class ManagerLinkAccountsController extends Controller {
             // show the dialog
             a.show();
         }
-
-
-
     }
 
     public ManagerLinkAccountsController(

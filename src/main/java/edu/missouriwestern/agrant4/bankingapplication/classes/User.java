@@ -32,6 +32,8 @@ public class User {
   @CsvBindByName(column = "last_name")
   private String lastName;
 
+  @CsvBindByName private String pin;
+
   /**
    * Full constructor for User
    *
@@ -47,8 +49,9 @@ public class User {
    * @param teller - boolean to tell if user is a teller
    * @param firstName - user's first name
    * @param lastName - user's last name
+   * @param pin - the user's ATM pin
    */
-  public User(String user, String pass, String SSN, String address, String city, String state, String zip, Boolean manager, Boolean customer, Boolean teller, String firstName, String lastName) {
+  public User(String user, String pass, String SSN, String address, String city, String state, String zip, Boolean manager, Boolean customer, Boolean teller, String firstName, String lastName, String pin) {
     this.user = user;
     this.pass = pass;
     this.SSN = SSN;
@@ -61,6 +64,7 @@ public class User {
     this.teller = teller;
     this.firstName = firstName;
     this.lastName = lastName;
+    this.pin = pin;
   }
 
   /** Default no-arg constructor needed for openCSV */
@@ -103,8 +107,18 @@ public class User {
     return zip;
   }
 
+
   public void setZip(String zip) {
     this.zip = zip;
+  }
+
+
+  public String getPin() {
+    return pin;
+  }
+
+  public void setPin(String pin) {
+    this.pin = pin;
   }
 
   public String getFirstName() {
@@ -176,6 +190,7 @@ public class User {
         ", customer=" + customer +
         ", teller='" + teller + '\'' +
         ", firstName='" + firstName + '\'' +
-        ", lastName='" + lastName;
+        ", lastName='" + lastName + '\'' +
+        ", pin='" + pin;
   }
 }

@@ -63,30 +63,44 @@ public class ManagerLoansController extends Controller{
         String loanAcc = accountNumber.getText();
 
         //Check that the text is not blank and matches an application
-        if(loanAcc.length() == 11 && getLoginController().hasValidLoanApplication(loanAcc)) {
+        if(
+            loanAcc.length() == 11 &&
+            getLoginController().hasValidLoanApplication(loanAcc)
+        ) {
+            //check that the user doesn't already have a loan account
+            if(!getLoginController().hasValidLoanAccount(loanAcc)) {
+                //create pointer to chosen loan application
+                Loans newLoan = getLoginController().findLoanApplicationByID(loanAcc);
 
-            //create pointer to chosen loan application
-            Loans newLoan = getLoginController().findLoanApplicationByID(loanAcc);
+                //add loan application to loans data arraylist
+                getLoginController().getLoansData().add(newLoan);
 
-            //add loan application to loans data arraylist
-            getLoginController().getLoansData().add(newLoan);
+                //remove loan application
+                getLoginController().getLoanApplications().remove(newLoan);
 
-            //remove loan application
-            getLoginController().getLoanApplications().remove(newLoan);
-
-            //write new data to csv
-            getLoginController().writeBankData();
+                //write new data to csv
+                getLoginController().writeBankData();
 
 
-            // create a confirmation screen
-            ConfirmationController confirmationController = new ConfirmationController(
-                getCurrentStage(),
-                getLoginController(),
-                getMainPage(),
-                "Loan approved for account number " + loanAcc + "."
-            );
+                // create a confirmation screen
+                ConfirmationController confirmationController = new ConfirmationController(
+                    getCurrentStage(),
+                    getLoginController(),
+                    getMainPage(),
+                    "Loan approved for account number " + loanAcc + "."
+                );
 
-            confirmationController.showStage();
+                confirmationController.showStage();
+            } else {
+                // create an alert
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setTitle("Loan Not Approved");
+                a.setHeaderText("User already has loan");
+                a.setContentText("Sorry. Users are only allowed one loan.");
+
+                // show the dialog
+                a.show();
+            }
         } else {
             // create an alert
             Alert a = new Alert(Alert.AlertType.WARNING);

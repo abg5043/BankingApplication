@@ -1,5 +1,7 @@
 package edu.missouriwestern.agrant4.bankingapplication;
 
+import edu.missouriwestern.agrant4.bankingapplication.classes.Checking;
+import edu.missouriwestern.agrant4.bankingapplication.classes.Savings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -36,7 +38,19 @@ public class ManagerInterestController extends Controller {
             if( accountID.length() == 11 && getLoginController().hasValidSavingsAccount(accountID)) {
 
                 //set the new interest rate
-                getLoginController().findSavingsByID(accountID).setInterestRate(newInterest);
+                Savings currentSavings = getLoginController().findSavingsByID(accountID);
+                currentSavings.setInterestRate(newInterest);
+
+                //check if user has checking account, that it is linked to this account, and that it is gold
+                if(
+                    getLoginController().findCheckingByID(accountID.substring(0,9) + "_c") != null &&
+                    getLoginController().findCheckingByID(accountID.substring(0,9) + "_c").getBackupAccountId().equals(accountID) &&
+                    getLoginController().findCheckingByID(accountID.substring(0,9) + "_c").getAccountType().equals("Gold")
+                ) {
+                    //update that interest too
+                    Checking currentChecking = getLoginController().findCheckingByID(accountID.substring(0,9) + "_c");
+                    currentChecking.setInterest(String.valueOf(0.5 * currentSavings.getInterestRate()));
+                }
 
                 //write data to csv
                 getLoginController().writeBankData();

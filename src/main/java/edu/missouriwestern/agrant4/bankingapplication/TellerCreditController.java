@@ -53,7 +53,7 @@ public class TellerCreditController extends Controller {
           accID.length() == 11 &&
               (
                   getLoginController().hasValidCheckingAccount(accID) ||
-                  getLoginController().hasValidSavingsAccount(accID)
+                      getLoginController().hasValidSavingsAccount(accID)
               )
       ) {
 
@@ -63,7 +63,7 @@ public class TellerCreditController extends Controller {
           //is going to checking account
 
           //deposit the money into the appropriate account; only runs if deposit is less than fee
-          if(getLoginController().findCheckingByID(accID).oneTimeDeposit(incomingMoney)) {
+          if (getLoginController().findCheckingByID(accID).oneTimeDeposit(incomingMoney)) {
             confirmDeposit(currentDate, accID, formattedIncomingMoney);
 
           } else {
@@ -82,7 +82,7 @@ public class TellerCreditController extends Controller {
           //is going to savings account
 
           //deposit the money into the appropriate account
-          getLoginController().findSavingsByID(accID).oneTimeDeposit(incomingMoney);
+          getLoginController().findSavingsByID(accID).deposit(incomingMoney);
 
           confirmDeposit(currentDate, accID, formattedIncomingMoney);
         }
@@ -166,8 +166,7 @@ public class TellerCreditController extends Controller {
 
         if (typeOfAccount.equals("_c")) {
           //money is being withdrawn from a checking account
-
-            Checking targetedChecking = getLoginController().findCheckingByID(accID);
+          Checking targetedChecking = getLoginController().findCheckingByID(accID);
 
           /*
            * Withdraw money if there is money in account;
@@ -201,66 +200,76 @@ public class TellerCreditController extends Controller {
 
             confirmationController.showStage();
           } else {
-              double overdraftAmount = outgoingMoney - targetedChecking.getCurrentBalance();
+            //There wasn't enough money; must overdraft
+            double originalCheckingBalance = targetedChecking.getCurrentBalance();
+            double overdraftAmount = outgoingMoney - originalCheckingBalance;
 
-              /*
-               * there wasn't enough money.
-               * Check if there is a backup savings and that the savings
-               * has enough to cover the rest
-               */
-              if (
-                  !targetedChecking.getBackupAccountId().equals("n/a") ||
-                  (overdraftAmount <= getLoginController().findSavingsByID(targetedChecking.getBackupAccountId()).getAccountBalance())
-              ) {
-                  Savings backUpSavings = getLoginController().findSavingsByID(targetedChecking.getBackupAccountId());
+            if (targetedChecking.getAccountType().equals("Regular")) {
+              overdraftAmount += 0.5; //includes 50 cent charge
+            }
+            /*
+             * Check if there is a backup savings and that the savings
+             * has enough to cover the rest
+             */
+            if (
+                !targetedChecking.getBackupAccountId().equals("n/a") &&
+                    (overdraftAmount <= getLoginController().findSavingsByID(targetedChecking.getBackupAccountId()).getAccountBalance())
+            ) {
+              Savings backUpSavings = getLoginController().findSavingsByID(targetedChecking.getBackupAccountId());
 
-                  //Withdraw from checking and savings
-                  targetedChecking.setCurrentBalance(0);
-                  if(targetedChecking.getAccountType().equals("Regular")) {
-                    overdraftAmount += 0.5;
-                  }
-                  backUpSavings.oneTimeWithdraw(overdraftAmount);
+              //Withdraw from checking and savings
+              targetedChecking.setCurrentBalance(0);
+              backUpSavings.withdraw(overdraftAmount);
 
-                  String formattedOverdraft = formatter.format(overdraftAmount);
-
-
-                  //Create transaction object
-                  Transactions newTrans = new Transactions(
-                      accID,
-                      "withdraw",
-                      "Withdrew " + formattedOutgoingMoney + " from accounts " +
-                      targetedChecking.getAccountId() + " and " + backUpSavings.getAccountId() + ".",
-                      currentDate
-                  );
-
-                  //add transaction to log
-                  getLoginController().getTransactionLog().add(newTrans);
-
-                  //write the data
-                  getLoginController().writeBankData();
+              String formattedChecking = formatter.format(originalCheckingBalance);
+              String formattedOverdraft = formatter.format(overdraftAmount);
 
 
-                  // create a confirmation screen
-                  ConfirmationController confirmationController = new ConfirmationController(
-                      getCurrentStage(),
-                      getLoginController(),
-                      getMainPage(),
-                      "Congratulations, you debited " + formattedOutgoingMoney +
-                          " from account number " + accID + ".");
+              //Create two transaction objects
+              Transactions newTrans1 = new Transactions(
+                  targetedChecking.getAccountId(),
+                  "withdraw",
+                  "Withdrew " + formattedChecking + " from account " + targetedChecking.getAccountId() + ".",
+                  currentDate
+              );
 
-                  confirmationController.showStage();
+              //Create two transaction objects
+              Transactions newTrans2 = new Transactions(
+                  targetedChecking.getAccountId(),
+                  "withdraw",
+                  "Withdrew " + formattedOverdraft + " from account " + backUpSavings.getAccountId() + ".",
+                  currentDate
+              );
 
-              } else {
-                   //There wasn't a linked account or there was not enough in that backup account
-                  // create an alert
-                  Alert a = new Alert(Alert.AlertType.WARNING);
-                  a.setTitle("Not enough money.");
-                  a.setHeaderText("Withdraw not processed.");
-                  a.setContentText("Not enough money in account, even with overdraft.");
+              //add transaction to log
+              getLoginController().getTransactionLog().add(newTrans1);
+              getLoginController().getTransactionLog().add(newTrans2);
 
-                  // show the dialog
-                  a.show();
-              }
+              //write the data
+              getLoginController().writeBankData();
+
+
+              // create a confirmation screen
+              ConfirmationController confirmationController = new ConfirmationController(
+                  getCurrentStage(),
+                  getLoginController(),
+                  getMainPage(),
+                  "Congratulations, you debited " + formattedOutgoingMoney +
+                      " from account number " + accID + ".");
+
+              confirmationController.showStage();
+
+            } else {
+              //There wasn't a linked account or there was not enough in that backup account
+              // create an alert
+              Alert a = new Alert(Alert.AlertType.WARNING);
+              a.setTitle("Not enough money.");
+              a.setHeaderText("Withdraw not processed.");
+              a.setContentText("Not enough money in account, even with overdraft.");
+
+              // show the dialog
+              a.show();
+            }
           }
 
         } else {
@@ -305,26 +314,26 @@ public class TellerCreditController extends Controller {
 
         }
       } else {
-      // create an alert
+        // create an alert
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        a.setTitle("Money Not Debited");
+        a.setHeaderText("Invalid account");
+        a.setContentText("Please ensure you enter in a valid account.");
+
+        // show the dialog
+        a.show();
+      }
+    } catch (NumberFormatException e) {
       Alert a = new Alert(Alert.AlertType.WARNING);
       a.setTitle("Money Not Debited");
-      a.setHeaderText("Invalid account");
-      a.setContentText("Please ensure you enter in a valid account.");
+      a.setHeaderText("Invalid formatting");
+      a.setContentText("Please ensure you use numbers in numeric fields.");
 
       // show the dialog
       a.show();
     }
-  } catch (NumberFormatException e) {
-    Alert a = new Alert(Alert.AlertType.WARNING);
-    a.setTitle("Money Not Debited");
-    a.setHeaderText("Invalid formatting");
-    a.setContentText("Please ensure you use numbers in numeric fields.");
 
-    // show the dialog
-    a.show();
   }
-
-}
 
   private void withdrawFromSavings(
       String currentDate,
@@ -333,10 +342,10 @@ public class TellerCreditController extends Controller {
       String formattedOutgoingMoney,
       Savings targetedAccounted,
       String appendedMessage
-      ) {
+  ) {
 
     //checks if there is money. If there is, it withdraws and returns true
-    if (targetedAccounted.oneTimeWithdraw(outgoingMoney)) {
+    if (targetedAccounted.withdraw(outgoingMoney)) {
       //transaction is done.
       //Create transaction object
       Transactions newTrans = new Transactions(

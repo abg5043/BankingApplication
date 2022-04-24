@@ -10,6 +10,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,6 +20,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 
 public class LoginController extends Controller {
+  // Create logger instance
+  public static final Logger LOG = LogManager.getLogger(LoginController.class);
 
   @FXML
   private Button customerButton;
@@ -39,8 +43,10 @@ public class LoginController extends Controller {
 
   private User currentUser;
 
-  // Because we are going to pass this controller to every controller, we can just use that as a way to have access to
-  // all of the files rather than passing every object through every constructor
+  /*
+   * Because we are going to pass this controller to every controller, we can just use that as a way to have access to
+   * all of the files rather than passing every object through every constructor
+   */
   private ArrayList<User> usersData;
   private ArrayList<Savings> savingsData;
   private ArrayList<Loans> loansData;
@@ -52,30 +58,37 @@ public class LoginController extends Controller {
   @Override
   @FXML
   void exitClicked(ActionEvent event) {
+    LOG.trace("Exiting program");
     System.exit(0);
   }
 
   @FXML
   void customerClicked(ActionEvent event) {
+    LOG.trace("Inside customerClicked method");
     String username = userNameField.getText();
     String pass = passwordField.getText();
 
     if (loginIsValid(username, pass)) {
+      LOG.info("Login was valid");
 
       loadBankData();
+      LOG.info("Bank data loaded");
 
       //embedded so that we can differentiate alerts. This will only cause a user type alert now
       if (currentUser.getCustomer()) {
+        LOG.info("User was customer");
         // Create the second controller, which loads its own FXML file. We can pass arguments to this controller.
         // In fact, with "this", we could pass the whole controller
         CustomerOpeningController customerOpeningController = new CustomerOpeningController(
             getCurrentStage(),
             this
         );
+        LOG.info("CustomerOpeningController created");
 
         // Show the new stage/window
         customerOpeningController.showStage();
       } else {
+        LOG.info("User was not customer");
         createUserTypeAlert("customer");
       }
     }
@@ -83,24 +96,30 @@ public class LoginController extends Controller {
 
   @FXML
   void tellerClicked(ActionEvent event) {
+    LOG.trace("Inside tellerClicked method");
     String username = userNameField.getText();
     String pass = passwordField.getText();
 
     if (loginIsValid(username, pass)) {
+      LOG.info("login was valid");
       loadBankData();
+      LOG.info("Bank data loaded");
 
       //embedded so that we can differentiate alerts. This will only cause a user type alert now
       if (currentUser.getTeller()) {
+        LOG.info("User was teller");
         // Create the second controller, which loads its own FXML file. We can pass arguments to this controller.
         // In fact, with "this", we could pass the whole controller
         TellerOpeningController tellerOpeningController = new TellerOpeningController(
             getCurrentStage(),
             this
         );
+        LOG.info("TellerOpeningController object created");
 
         // Show the new stage/window
         tellerOpeningController.showStage();
       } else {
+        LOG.info("User was not teller");
         createUserTypeAlert("teller");
       }
 
@@ -109,14 +128,22 @@ public class LoginController extends Controller {
 
   @FXML
   void managerClicked(ActionEvent event) {
+    LOG.trace("Inside managerClicked method");
+
     String username = userNameField.getText();
     String pass = passwordField.getText();
 
     if (loginIsValid(username, pass)) {
+      LOG.info("Login was valid");
+
       loadBankData();
+      LOG.info("Bank data was loaded");
+
 
       //embedded so that we can differentiate alerts. This will only cause a user type alert now
       if (currentUser.getManager()) {
+        LOG.info("User is manager");
+
         // Create the second controller, which loads its own FXML file. We can pass arguments to this controller.
         // In fact, with "this", we could pass the whole controller
         ManagerOpeningController managerOpeningController = new ManagerOpeningController(
@@ -124,9 +151,13 @@ public class LoginController extends Controller {
             this
         );
 
+        LOG.info("ManagerOpeningController created");
+
         // Show the new stage/window
         managerOpeningController.showStage();
       } else {
+        LOG.info("User is not manager");
+
         createUserTypeAlert("manager");
       }
     }
@@ -138,6 +169,8 @@ public class LoginController extends Controller {
    * @param userType - a type of user for the bank program
    */
   private void createUserTypeAlert(String userType) {
+    LOG.trace("Inside createUserTypeAlert");
+
     // create an alert
     Alert a = new Alert(Alert.AlertType.WARNING);
     a.setTitle("Invalid User Type");
@@ -152,13 +185,66 @@ public class LoginController extends Controller {
    * Loads bank data from csv files to ArrayLists in the object's fields
    */
   public void loadBankData() {
-    //TODO: this should load all the data to the fields
+    LOG.trace("Inside loadBankData method");
+
+    // parse users from csv file as objects and store them in an ArrayList
+    try {
+
+      setUsersData((ArrayList<User>) new CsvToBeanBuilder(new FileReader("users.csv"))
+          .withType(User.class)
+          .build()
+          .parse());
+      LOG.info("users.csv created");
+
+      setSavingsData((ArrayList<Savings>) new CsvToBeanBuilder(new FileReader("savings.csv"))
+          .withType(Savings.class)
+          .build()
+          .parse());
+      LOG.info("savings.csv created");
+
+      setCheckingData((ArrayList<Checking>) new CsvToBeanBuilder(new FileReader("checking.csv"))
+          .withType(Checking.class)
+          .build()
+          .parse());
+      LOG.info("checking.csv created");
+
+      setLoansData( (ArrayList<Loans>) new CsvToBeanBuilder(new FileReader("loans.csv"))
+          .withType(Loans.class)
+          .build()
+          .parse());
+      LOG.info("loans.csv created");
+
+      setLoanApplications( (ArrayList<Loans>) new CsvToBeanBuilder(new FileReader("loanApplications.csv"))
+          .withType(Loans.class)
+          .build()
+          .parse());
+      LOG.info("loanApplications.csv created");
+
+      setPendingChecks((ArrayList<Checks>) new CsvToBeanBuilder(new FileReader("checks.csv"))
+          .withType(Checks.class)
+          .build()
+          .parse());
+      LOG.info("checks.csv created");
+
+      setTransactionLog((ArrayList<Transactions>) new CsvToBeanBuilder(new FileReader("transactions.csv"))
+          .withType(Transactions.class)
+          .build()
+          .parse());
+      LOG.info("transactions.csv created");
+
+
+    } catch (Exception e) {
+      LOG.error(e.getMessage());
+      e.printStackTrace();
+    }
+
   }
 
   /*
    * Validates login credentials
    */
   private boolean loginIsValid(String username, String pass) {
+    LOG.trace("Inside loginIsValid method");
 
     //checks if entered username and password match a record in the system.
     for(User user : getUsersData()) {
@@ -169,6 +255,7 @@ public class LoginController extends Controller {
     }
 
     Boolean isValid = currentUser != null;
+    LOG.info("isValid is " + isValid);
 
     if (!isValid) {
       // create an alert
@@ -187,6 +274,7 @@ public class LoginController extends Controller {
    * Show the stage that was loaded in the constructor
    */
   public void showStage() {
+    LOG.trace("Inside showStage");
     getCurrentStage().show();
   }
 
@@ -194,58 +282,25 @@ public class LoginController extends Controller {
    * Constructor for LoginController
    */
   public LoginController() {
+    LOG.trace("Inside LoginController constructor");
     //sets current user to null since there isn't one logged in yet.
     this.currentUser = null;
     setCurrentViewFile("login-view.fxml");
     setCurrentViewTitle("Login");
     setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
+    LOG.info("New scene set");
 
-    // parse users from csv file as objects and store them in an ArrayList
-    try {
-      setUsersData((ArrayList<User>) new CsvToBeanBuilder(new FileReader("users.csv"))
-          .withType(User.class)
-          .build()
-          .parse());
-      setSavingsData((ArrayList<Savings>) new CsvToBeanBuilder(new FileReader("savings.csv"))
-          .withType(Savings.class)
-          .build()
-          .parse());
-      setCheckingData((ArrayList<Checking>) new CsvToBeanBuilder(new FileReader("checking.csv"))
-          .withType(Checking.class)
-          .build()
-          .parse());
-
-      setLoansData( (ArrayList<Loans>) new CsvToBeanBuilder(new FileReader("loans.csv"))
-          .withType(Loans.class)
-          .build()
-          .parse());
-
-      setLoanApplications( (ArrayList<Loans>) new CsvToBeanBuilder(new FileReader("loanApplications.csv"))
-          .withType(Loans.class)
-          .build()
-          .parse());
-      setPendingChecks((ArrayList<Checks>) new CsvToBeanBuilder(new FileReader("checks.csv"))
-          .withType(Checks.class)
-          .build()
-          .parse());
-
-      setTransactionLog((ArrayList<Transactions>) new CsvToBeanBuilder(new FileReader("transactions.csv"))
-          .withType(Transactions.class)
-          .build()
-          .parse());
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
+    loadBankData();
+    LOG.info("Bank data loaded");
 
   }
 
+  //The following are getters and setters for private fields 
+  
   public User getCurrentUser() {
     return currentUser;
   }
-
-
+  
   public ArrayList<User> getUsersData() {
     return usersData;
   }
@@ -302,8 +357,13 @@ public class LoginController extends Controller {
     this.transactionLog = transactionLog;
   }
 
-  //TODO: Need to flush out this writeBankData method for updating the bank's CSV files
+
+  /**
+   * This method writes all ArrayList data for the bank back to CSV files 
+   */
   public void writeBankData() {
+    LOG.trace("Inside writeBankData");
+
     Writer userWriter = null;
     Writer savingsWriter = null;
     Writer checkingWriter = null;
@@ -318,51 +378,63 @@ public class LoginController extends Controller {
       StatefulBeanToCsv beanToCsv1 = new StatefulBeanToCsvBuilder(userWriter).build();
       beanToCsv1.write(usersData);
       userWriter.close();
+      LOG.trace("users.csv file written");
 
       //writes savings data to a savings.csv file
       savingsWriter = new FileWriter("savings.csv");
       StatefulBeanToCsv beanToCsv2 = new StatefulBeanToCsvBuilder(savingsWriter).build();
       beanToCsv2.write(savingsData);
       savingsWriter.close();
+      LOG.trace("savings.csv file written");
 
       //writes checking data to a checking.csv file
       checkingWriter = new FileWriter("checking.csv");
       StatefulBeanToCsv beanToCsv3 = new StatefulBeanToCsvBuilder(checkingWriter).build();
       beanToCsv3.write(checkingData);
       checkingWriter.close();
+      LOG.trace("checking.csv file written");
 
       //writes loans data to a loans.csv file
       loansWriter = new FileWriter("loans.csv");
       StatefulBeanToCsv beanToCsv4 = new StatefulBeanToCsvBuilder(loansWriter).build();
       beanToCsv4.write(loansData);
       loansWriter.close();
+      LOG.trace("loans.csv file written");
 
       //writes loans application data to a loanApplications.csv file
       loanApplicationWriter = new FileWriter("loanApplications.csv");
       StatefulBeanToCsv beanToCsv5 = new StatefulBeanToCsvBuilder(loanApplicationWriter).build();
       beanToCsv5.write(loanApplications);
       loanApplicationWriter.close();
+      LOG.trace("loanApplications.csv file written");
 
       //writes checks data to a checks.csv file
       checksWriter = new FileWriter("checks.csv");
       StatefulBeanToCsv beanToCsv6 = new StatefulBeanToCsvBuilder(checksWriter).build();
       beanToCsv6.write(pendingChecks);
       checksWriter.close();
+      LOG.trace("checks.csv file written");
 
       //writes transactions data to a transactions.csv file
       transactionsWriter = new FileWriter("transactions.csv");
       StatefulBeanToCsv beanToCsv7 = new StatefulBeanToCsvBuilder(transactionsWriter).build();
       beanToCsv7.write(transactionLog);
       transactionsWriter.close();
+      LOG.trace("transactions.csv file written");
 
 
     } catch (Exception e) {
+      LOG.error(e.getMessage());
       e.printStackTrace();
     }
 
   }
 
+
+  //The following are validation methods for the ArrayList fields that hold the bank data
+
   public boolean isValidUser(String SSN) {
+    LOG.trace("Inside isValidUser");
     for (User user : this.getUsersData()) {
       if (user.getSSN().equals(SSN)) {
         return true;
@@ -372,6 +444,7 @@ public class LoginController extends Controller {
   }
 
   public boolean hasValidLoanAccount(String accNum) {
+    LOG.trace("Inside hasValidLoanAccount");
     for (Loans loan : this.getLoansData()) {
       if (loan.getAccountId().equals(accNum)) {
         return true;
@@ -381,6 +454,7 @@ public class LoginController extends Controller {
   }
 
   public boolean hasValidPendingCheck(String checkNum) {
+    LOG.trace("Inside hasValidPendingCheck");
     for (Checks check : this.getPendingChecks()) {
       if (check.getCheckNumber().equals(checkNum)) {
         return true;
@@ -390,6 +464,7 @@ public class LoginController extends Controller {
   }
 
   public boolean hasValidLoanApplication(String accNum) {
+    LOG.trace("Inside hasValidLoanApplication");
     for (Loans loan : this.getLoanApplications()) {
       if (loan.getAccountId().equals(accNum)) {
         return true;
@@ -400,6 +475,7 @@ public class LoginController extends Controller {
 
 
   public boolean hasValidCheckingAccount(String checkingID) {
+    LOG.trace("Inside hasValidCheckingAccount");
     for (Checking checking : this.getCheckingData()) {
       if (checking.getAccountId().equals(checkingID)) {
         return true;
@@ -409,6 +485,7 @@ public class LoginController extends Controller {
   }
 
   public boolean hasValidSavingsAccount(String savingsID) {
+    LOG.trace("Inside hasValidSavingsAccount");
     for (Savings savings : this.getSavingsData()) {
       if (savings.getAccountId().equals(savingsID) && savings.getDueDate().equals("n/a")) {
         return true;
@@ -418,6 +495,7 @@ public class LoginController extends Controller {
   }
 
   public boolean hasValidCDAccount(String savingsID) {
+    LOG.trace("Inside hasValidCDAccount");
     for (Savings savings : this.getSavingsData()) {
       if (savings.getAccountId().equals(savingsID) && !savings.getDueDate().equals("n/a")) {
         return true;
@@ -426,7 +504,10 @@ public class LoginController extends Controller {
     return false;
   }
 
+  //The following are methods for finding specific objects in the ArrayList fields that hold the bank data
+
   public Loans findLoanByID(String accNum) {
+    LOG.trace("Inside findLoanByID");
     for (Loans loan : this.getLoansData()) {
       if (loan.getAccountId().equals(accNum)) {
         return loan;
@@ -436,6 +517,7 @@ public class LoginController extends Controller {
   }
 
   public Loans findLoanApplicationByID(String accNum) {
+    LOG.trace("Inside findLoanApplicationByID");
     for (Loans loan : this.getLoanApplications()) {
       if (loan.getAccountId().equals(accNum)) {
         return loan;
@@ -445,6 +527,7 @@ public class LoginController extends Controller {
   }
 
   public Savings findSavingsByID(String accNum) {
+    LOG.trace("Inside findSavingsByID");
     for (Savings savings : this.getSavingsData()) {
       if (savings.getAccountId().equals(accNum) && savings.getDueDate().equals("n/a")) {
         return savings;
@@ -454,6 +537,7 @@ public class LoginController extends Controller {
   }
 
   public Savings findCDByID(String accNum) {
+    LOG.trace("Inside findCDByID");
     for (Savings savings : this.getSavingsData()) {
       if (savings.getAccountId().equals(accNum) && !savings.getDueDate().equals("n/a")) {
         return savings;
@@ -463,6 +547,7 @@ public class LoginController extends Controller {
   }
 
   public Checking findCheckingByID(String accNum) {
+    LOG.trace("Inside findCheckingByID");
     for (Checking checking : this.getCheckingData()) {
       if (checking.getAccountId().equals(accNum)) {
         return checking;
@@ -471,9 +556,14 @@ public class LoginController extends Controller {
     return null;
   }
 
-  public Checks findChecksByCheckNum(String checkNum) {
+  public Checks findChecksByCheckNum(String checkNum, String originAcct, String destinationAcct) {
+    LOG.trace("Inside findChecksByCheckNum");
     for (Checks check : this.getPendingChecks()) {
-      if (check.getCheckNumber().equals(checkNum)) {
+      if (
+          check.getCheckNumber().equals(checkNum) &&
+          check.getOriginAccountID().equals(originAcct) &&
+          check.getDestinationAccountID().equals(destinationAcct)
+      ) {
         return check;
       }
     }
