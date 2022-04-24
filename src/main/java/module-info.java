@@ -1,4 +1,4 @@
-module edu.missouriwestern.agrant4.bankingapplication {
+module bankingapplication {
   requires javafx.controls;
   requires javafx.fxml;
   requires com.opencsv;
