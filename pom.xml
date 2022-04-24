@@ -78,7 +78,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                edu.missouriwestern.agrant4.bankingapplication/edu.missouriwestern.agrant4.bankingapplication.Main
+                                edu.missouriwestern.agrant4.bankingapplication/agrant.bankingapplication.Main
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
