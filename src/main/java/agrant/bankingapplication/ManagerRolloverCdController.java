@@ -1,6 +1,7 @@
-package edu.missouriwestern.agrant4.bankingapplication;
+package agrant.bankingapplication;
 
-import edu.missouriwestern.agrant4.bankingapplication.classes.Savings;
+import agrant.bankingapplication.Controller;
+import agrant.bankingapplication.classes.Savings;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
