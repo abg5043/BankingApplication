@@ -13,19 +13,19 @@
     <center>
         <VBox alignment="CENTER" prefHeight="433.0" prefWidth="953.0" spacing="25.0">
             <children>
-                <Label fx:id="amtOwedLabel" prefHeight="30.0" prefWidth="249.0" text="Insert Card and Enter PIN">
+                <Label fx:id="titleLabel" prefHeight="30.0" prefWidth="249.0" text="Insert Card and Enter PIN">
                     <font>
-                        <Font name="System Bold" size="20.0" />
+                        <Font name="System Bold" size="20.0"/>
                     </font>
                 </Label>
-            <PasswordField alignment="CENTER" promptText="Enter PIN">
-               <VBox.margin>
-                  <Insets left="350.0" right="350.0" />
-               </VBox.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </PasswordField>
+                <PasswordField fx:id="pinPasswordField" alignment="CENTER" promptText="Enter 4-Digit Numeric PIN">
+                    <VBox.margin>
+                        <Insets left="350.0" right="350.0"/>
+                    </VBox.margin>
+                    <font>
+                        <Font size="14.0"/>
+                    </font>
+                </PasswordField>
             </children>
         </VBox>
     </center>
