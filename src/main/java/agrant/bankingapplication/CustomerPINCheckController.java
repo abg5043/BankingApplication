@@ -22,6 +22,7 @@ public class CustomerPINCheckController extends Controller {
 
     @FXML
     private Label welcomeLabel;
+
     @FXML
     private PasswordField pinPasswordField;
 
@@ -39,16 +40,16 @@ public class CustomerPINCheckController extends Controller {
             } else if (inputPIN.equals(this.getLoginController().getCurrentUser().getPin())) {
                 if (this.isChecking) {
                     CustomerCheckingController customerCheckingController = new CustomerCheckingController(
-                        this.getCurrentStage(),
-                        this.getLoginController(),
-                        this
+                            this.getCurrentStage(),
+                            this.getLoginController(),
+                            this
                     );
                     customerCheckingController.showStage();
                 } else if (!this.isChecking) {
                     CustomerSavingsController customerSavingsController = new CustomerSavingsController(
-                        this.getCurrentStage(),
-                        this.getLoginController(),
-                        (CustomerOpeningController) getMainPage()
+                            this.getCurrentStage(),
+                            this.getLoginController(),
+                            this
                     );
                     customerSavingsController.showStage();
                 }
@@ -76,6 +77,7 @@ public class CustomerPINCheckController extends Controller {
         this.setNewScene(this, this.getCurrentViewFile(), this.getCurrentViewTitle());
         this.isChecking = accType;
     }
+
 
     /**
      * The initialize() method allows you set set up your scene, adding actions, configuring nodes, etc.

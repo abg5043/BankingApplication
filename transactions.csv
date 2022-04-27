@@ -42,3 +42,7 @@
 "999999999_c","04-23-2022","Transferred 1.0 to account 999999999_s","transfer"
 "999999999_s","04-23-2022","Transferred 1.0 from account 999999999_c","transfer"
 "435678787_c","04-23-2022","Penalized $15.00 from account 435678787_c","penalty"
+"423453245_c","04-27-2022","Deposited $43.00 into account.","deposit"
+"423453245_s","04-27-2022","Withdrew $42.00 from account.","withdraw"
+"423453245_s","04-27-2022","Withdrew  from account 423453245_s.","withdraw"
+"423453245_s","04-27-2022","Deposited $555.00 into account.","deposit"

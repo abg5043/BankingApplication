@@ -86,7 +86,7 @@ public class CustomerCDController extends Controller {
             } else {
                 this.withdrawFromSavings(currentDate, withdrawAmount, accID, formattedWDAmount, targetedAccounted, "");
             }
-        } catch (NumberFormatException var12) {
+        } catch (NumberFormatException nfe) {
             Alert a = new Alert(AlertType.WARNING);
             a.setTitle("Money Not Credited");
             a.setHeaderText("Invalid formatting");

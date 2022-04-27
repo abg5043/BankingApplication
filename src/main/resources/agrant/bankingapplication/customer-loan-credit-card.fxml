@@ -8,11 +8,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/">
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
     <center>
         <VBox alignment="CENTER" prefHeight="433.0" prefWidth="953.0" spacing="25.0">
             <children>
-                <Label fx:id="amtOwedLabel" text="Amount Owed: ">
+                <Label fx:id="amtOwedLabel">
                     <font>
                         <Font name="System Bold" size="20.0" />
                     </font>
@@ -67,29 +67,19 @@
     <bottom>
         <HBox alignment="CENTER" prefWidth="953.0" spacing="50.0" BorderPane.alignment="CENTER">
             <children>
-            <BorderPane prefHeight="100.0" prefWidth="323.0">
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <padding>
-                  <Insets left="10.0" right="10.0" />
-               </padding>
-               <center>
-                      <Button fx:id="chargeCardButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#chargeCardClicked" text="Charge Card" textAlignment="CENTER" BorderPane.alignment="CENTER">
-                          <font>
-                              <Font size="16.0" />
-                          </font>
-                          <padding>
-                              <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
-                          </padding>
-                      </Button>
-               </center>
-            </BorderPane>
-            <HBox prefHeight="100.0" prefWidth="304.0">
+                <Button fx:id="makePurchaseButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#makePurchaseClicked" text="Make Purchase" textAlignment="CENTER">
+                    <font>
+                        <Font size="16.0" />
+                    </font>
+                    <padding>
+                        <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
+                    </padding>
+                </Button>
+            <HBox prefHeight="100.0" prefWidth="361.0">
                <children>
-                  <BorderPane prefHeight="100.0" prefWidth="323.0" style="-fx-border-color: black; -fx-border-width: 1; -fx-border-style: solid;">
+                  <BorderPane prefHeight="100.0" prefWidth="376.0" style="-fx-border-color: black; -fx-border-width: 1; -fx-border-style: solid;">
                      <right>
-                            <Button fx:id="payOverTimeButton" alignment="CENTER" mnemonicParsing="false" onAction="#payOverTimeClicked" prefHeight="45.0" prefWidth="135.0" text="Pay Over Time" textAlignment="CENTER" BorderPane.alignment="CENTER">
+                            <Button fx:id="payOverTimeButton" alignment="CENTER" mnemonicParsing="false" onAction="#payOverTimeClicked" prefHeight="45.0" prefWidth="191.0" text="One-Time Payment" textAlignment="CENTER" BorderPane.alignment="CENTER">
                                 <font>
                                     <Font size="16.0" />
                                 </font>

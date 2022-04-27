@@ -16,24 +16,12 @@ public class CustomerMortgageController extends Controller {
     private Button makePaymentButton;
 
     @FXML
-    private TextField mortgageTerm;
-
-    @FXML
-    private Button newLoanButton;
-
-    @FXML
     private Label welcomeLabel;
 
     @FXML
     void makePaymentClicked(ActionEvent event) {
 
     }
-
-    @FXML
-    void newLoanClicked(ActionEvent event) {
-
-    }
-
 
     public CustomerMortgageController(Stage currentStage, LoginController loginController, CustomerOpeningController customerOpeningController) {
         super(currentStage, loginController, customerOpeningController);
