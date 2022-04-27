@@ -32,9 +32,9 @@ public class CustomerLoanAccountTermController extends Controller{
 
     public CustomerLoanAccountTermController(Stage currentStage,
                                             LoginController loginController,
-                                             CustomerLoanAccountController customerLoanAccountController
+                                             CustomerOpeningController customerOpeningController
     ){
-        super(currentStage, loginController, customerLoanAccountController);
+        super(currentStage, loginController, customerOpeningController);
         setCurrentViewFile("customer-loan-term.fxml");
         setCurrentViewTitle("Loan Term");
         setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());

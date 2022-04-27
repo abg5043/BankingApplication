@@ -25,19 +25,20 @@ public class CustomerLoanAccountController extends Controller{
 
     @FXML
     void longTermClicked(ActionEvent event) {
-        CustomerLoanAccountTermController customerLoanAccountTermController = new CustomerLoanAccountTermController(getCurrentStage(),
+        CustomerMortgageController customerMortgageController = new CustomerMortgageController(
+            getCurrentStage(),
                 getLoginController(),
-                this
+            (CustomerOpeningController) getMainPage()
         );
 
-        customerLoanAccountTermController.showStage();
+        customerMortgageController.showStage();
     }
 
     @FXML
     void shortTermClicked(ActionEvent event) {
         CustomerLoanAccountTermController customerLoanCreditCardController = new CustomerLoanAccountTermController(getCurrentStage(),
                 getLoginController(),
-                this
+            (CustomerOpeningController) getMainPage()
         );
 
         customerLoanCreditCardController.showStage();
@@ -47,7 +48,7 @@ public class CustomerLoanAccountController extends Controller{
     void creditCardClicked(ActionEvent event) {
         CustomerLoanCreditCardController customerLoanAccountTermController = new CustomerLoanCreditCardController(getCurrentStage(),
                 getLoginController(),
-                this
+            (CustomerOpeningController) getMainPage()
         );
 
         customerLoanAccountTermController.showStage();

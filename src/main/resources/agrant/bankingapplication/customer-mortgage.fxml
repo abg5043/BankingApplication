@@ -19,6 +19,19 @@
                   <Insets left="350.0" right="350.0" />
                </VBox.margin>
             </TextField>
+            <TextField fx:id="mortgageTerm" alignment="CENTER" layoutX="360.0" layoutY="241.0" prefHeight="25.0" prefWidth="637.0" promptText="Enter Mortgage Term">
+               <VBox.margin>
+                  <Insets left="350.0" right="350.0" />
+               </VBox.margin>
+            </TextField>
+            <Label text="Enter &quot;n/a&quot; if making a payment">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <padding>
+                  <Insets left="80.0" top="-30.0" />
+               </padding>
+            </Label>
          </children>
         </VBox>
     </center>

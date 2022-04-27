@@ -40,9 +40,9 @@ public class CustomerLoanCreditCardController extends Controller{
 
     public CustomerLoanCreditCardController(Stage currentStage,
                                          LoginController loginController,
-                                            CustomerLoanAccountController customerLoanAccountController
+                                            CustomerOpeningController customerOpeningController
     ){
-        super(currentStage, loginController, customerLoanAccountController);
+        super(currentStage, loginController, customerOpeningController);
         setCurrentViewFile("customer-loan-credit-card.fxml");
         setCurrentViewTitle("Loan Account");
         setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());

@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package agrant.bankingapplication;
 
 import javafx.event.ActionEvent;
@@ -16,11 +11,15 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 public class CustomerPINCheckController extends Controller {
+    //True if Checking clicked, False if Savings clicked
     boolean isChecking;
+
     @FXML
     private Button enterButton;
+
     @FXML
     private TextArea mainTextBox;
+
     @FXML
     private Label welcomeLabel;
     @FXML
@@ -39,10 +38,18 @@ public class CustomerPINCheckController extends Controller {
                 a.show();
             } else if (inputPIN.equals(this.getLoginController().getCurrentUser().getPin())) {
                 if (this.isChecking) {
-                    CustomerCheckingController customerCheckingController = new CustomerCheckingController(this.getCurrentStage(), this.getLoginController(), this);
+                    CustomerCheckingController customerCheckingController = new CustomerCheckingController(
+                        this.getCurrentStage(),
+                        this.getLoginController(),
+                        this
+                    );
                     customerCheckingController.showStage();
                 } else if (!this.isChecking) {
-                    CustomerSavingsController customerSavingsController = new CustomerSavingsController(this.getCurrentStage(), this.getLoginController(), this);
+                    CustomerSavingsController customerSavingsController = new CustomerSavingsController(
+                        this.getCurrentStage(),
+                        this.getLoginController(),
+                        (CustomerOpeningController) getMainPage()
+                    );
                     customerSavingsController.showStage();
                 }
             } else {
@@ -70,6 +77,9 @@ public class CustomerPINCheckController extends Controller {
         this.isChecking = accType;
     }
 
+    /**
+     * The initialize() method allows you set set up your scene, adding actions, configuring nodes, etc.
+     */
     @FXML
     private void initialize() {
         this.welcomeLabel.setText("Hello, " + this.getLoginController().getCurrentUser().getFirstName() + "!");

@@ -10,17 +10,24 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 public class CustomerOpeningController extends Controller {
+  //True if Checking clicked, False if Savings clicked
   boolean isChecking;
+
   @FXML
   private Button checkingButton;
+
   @FXML
   private Button savingsButton;
+
   @FXML
   private TextArea mainTextBox;
+
   @FXML
   private Label welcomeLabel;
+
   @FXML
   private Button cdButton;
+
   @FXML
   private Button loanButton;
 
@@ -61,7 +68,7 @@ public class CustomerOpeningController extends Controller {
   @FXML
   void cdClicked(ActionEvent event) {
       String accID = String.format("%s_s", this.getLoginController().getCurrentUser().getSSN());
-      if (this.getLoginController().findSavingsByID(accID) == null) {
+      if (this.getLoginController().findCDByID(accID) != null) {
           CustomerCDController customerCDController = new CustomerCDController(this.getCurrentStage(), this.getLoginController(), this);
           customerCDController.showStage();
       } else {
@@ -87,9 +94,13 @@ public class CustomerOpeningController extends Controller {
       this.setNewScene(this, this.getCurrentViewFile(), this.getCurrentViewTitle());
   }
 
+  /**
+   * The initialize() method allows you set setup your scene, adding actions, configuring nodes, etc.
+   */
   @FXML
   private void initialize() {
       this.welcomeLabel.setText("Hello, " + this.getLoginController().getCurrentUser().getFirstName() + "!");
       this.mainTextBox.setText("Hello, " + this.getLoginController().getCurrentUser().getFirstName() + "!\n\nWelcome to the Customer Main Screen. \n\nPlease select your next action.");
   }
 }
+

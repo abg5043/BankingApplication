@@ -36,19 +36,20 @@ public class Loans {
     @CsvBindByName(column = "months_left")
     private int monthsLeft;
 
-    public Loans(String ID, int currentBalance, double interestRate, String nextPaymentDueDate, String dateDue, double dateNotifiedOfPayment, String currentPaymentDue, String lastPaymentMade, int missedPaymentFlag, String loanType, int creditLimit, int monthsLeft){
-        this.accountId = ID;
+    public Loans(String accountId, double currentBalance, double interestRate, String nextPaymentDueDate, String dateBillSent, double currentPaymentAmount, String lastPaymentMade, int missedPaymentFlag, String loanType, int creditLimit, int monthsLeft) {
+        this.accountId = accountId;
         this.currentBalance = currentBalance;
         this.interestRate = interestRate;
         this.nextPaymentDueDate = nextPaymentDueDate;
-        this.currentPaymentAmount = dateNotifiedOfPayment;
-        this.dateBillSent = currentPaymentDue;
+        this.dateBillSent = dateBillSent;
+        this.currentPaymentAmount = currentPaymentAmount;
         this.lastPaymentMade = lastPaymentMade;
         this.missedPaymentFlag = missedPaymentFlag;
         this.loanType = loanType;
         this.creditLimit = creditLimit;
         this.monthsLeft = monthsLeft;
     }
+
     public Loans(){}
 
     //_________________Getters_______________
