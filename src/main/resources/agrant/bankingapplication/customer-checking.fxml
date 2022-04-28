@@ -9,6 +9,16 @@
     <center>
         <VBox alignment="CENTER" prefHeight="433.0" prefWidth="953.0" spacing="25.0">
             <children>
+            <Label text="Account Info">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <TextArea fx:id="accountInfoArea" prefHeight="80.0" prefWidth="853.0">
+               <VBox.margin>
+                  <Insets bottom="25.0" left="50.0" right="50.0" />
+               </VBox.margin>
+            </TextArea>
                 <Label text="Deposit Check or Insert Amount and Select Option Below">
                     <font>
                         <Font name="System Bold" size="20.0" />

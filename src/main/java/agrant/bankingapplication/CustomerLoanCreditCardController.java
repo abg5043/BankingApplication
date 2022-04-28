@@ -2,6 +2,7 @@ package agrant.bankingapplication;
 
 import agrant.bankingapplication.classes.Checking;
 import agrant.bankingapplication.classes.Loans;
+import agrant.bankingapplication.classes.Savings;
 import agrant.bankingapplication.classes.Transactions;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,6 +19,9 @@ import java.time.format.DateTimeFormatter;
 public class CustomerLoanCreditCardController extends Controller {
     @FXML
     private Button makePurchaseButton;
+
+    @FXML
+    private TextArea accountInfoArea;
 
     @FXML
     private Button payInFullButton;
@@ -195,6 +199,22 @@ public class CustomerLoanCreditCardController extends Controller {
     void payOverTimeClicked(ActionEvent event) {
     }
 
+    private void setAccountInfoArea(String text) {
+        this.accountInfoArea.setText(findAccountInfo(text));
+    }
+
+    private String findAccountInfo(String text) {
+        String returnString = "Error: No Account found";
+
+        for(Loans loans : getLoginController().getLoansData()) {
+            if(loans.getAccountId().equals(text)) {
+                returnString = loans.toString();
+                break;
+            }
+        }
+        return returnString;
+    }
+
     public CustomerLoanCreditCardController(
         Stage currentStage,
         LoginController loginController,
@@ -204,6 +224,7 @@ public class CustomerLoanCreditCardController extends Controller {
         this.setCurrentViewFile("customer-loan-credit-card.fxml");
         this.setCurrentViewTitle("Credit Card");
         this.setNewScene(this, this.getCurrentViewFile(), this.getCurrentViewTitle());
+        setAccountInfoArea(getLoginController().getCurrentUser().getSSN() + "_l");
     }
 
     @FXML

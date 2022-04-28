@@ -1,6 +1,7 @@
 package agrant.bankingapplication;
 
 import agrant.bankingapplication.classes.Checking;
+import agrant.bankingapplication.classes.Loans;
 import agrant.bankingapplication.classes.Savings;
 import agrant.bankingapplication.classes.Transactions;
 
@@ -10,10 +11,7 @@ import java.time.format.DateTimeFormatter;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
@@ -26,6 +24,9 @@ public class CustomerCheckingController extends Controller {
     private Label welcomeLabel;
     @FXML
     private TextField amountField;
+
+    @FXML
+    private TextArea accountInfoArea;
 
     @FXML
     private Button depositCheckButton;
@@ -135,6 +136,23 @@ public class CustomerCheckingController extends Controller {
 
     }
 
+    private void setAccountInfoArea(String text) {
+        this.accountInfoArea.setText(findAccountInfo(text));
+    }
+
+    private String findAccountInfo(String text) {
+        String returnString = "Error: No Account found";
+
+
+        for(Checking checking : getLoginController().getCheckingData()) {
+            if(checking.getAccountId().equals(text)) {
+                returnString = checking.toString();
+                break;
+            }
+        }
+
+        return returnString;
+    }
 
     private void confirmDeposit(String currentDate, String accID, String formattedIncomingMoney) {
         Transactions newTrans = new Transactions(accID, "deposit", "Deposited " + formattedIncomingMoney + " into account.", currentDate);
@@ -149,6 +167,8 @@ public class CustomerCheckingController extends Controller {
         this.setCurrentViewFile("customer-checking.fxml");
         this.setCurrentViewTitle("Loan Account");
         this.setNewScene(this, this.getCurrentViewFile(), this.getCurrentViewTitle());
+        setAccountInfoArea(getLoginController().getCurrentUser().getSSN() + "_c");
+
     }
 
     @FXML

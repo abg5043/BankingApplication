@@ -17,6 +17,9 @@ public class CustomerLoanAccountTermController extends Controller {
     private boolean isMortgage;
 
     @FXML
+    private TextArea accountInfoArea;
+
+    @FXML
     private Button makePaymentButton;
 
     @FXML
@@ -175,6 +178,22 @@ public class CustomerLoanAccountTermController extends Controller {
         }
     }
 
+    private void setAccountInfoArea(String text) {
+        this.accountInfoArea.setText(findAccountInfo(text));
+    }
+
+    private String findAccountInfo(String text) {
+        String returnString = "Error: No Account found";
+
+        for(Loans loans : getLoginController().getLoansData()) {
+            if(loans.getAccountId().equals(text)) {
+                returnString = loans.toString();
+                break;
+            }
+        }
+        return returnString;
+    }
+
     public CustomerLoanAccountTermController(
         Stage currentStage,
         LoginController loginController,
@@ -186,7 +205,10 @@ public class CustomerLoanAccountTermController extends Controller {
         this.setCurrentViewTitle("Loan Account Actions");
         this.setNewScene(this, this.getCurrentViewFile(), this.getCurrentViewTitle());
         this.isMortgage = isMortgage;
+        setAccountInfoArea(getLoginController().getCurrentUser().getSSN() + "_l");
     }
+
+
 
     @FXML
     private void initialize() {

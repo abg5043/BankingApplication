@@ -1,29 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17">
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <BorderPane layoutX="10.0" layoutY="10.0">
             <center>
                 <VBox alignment="CENTER" prefHeight="433.0" prefWidth="953.0" spacing="25.0">
                     <children>
+                  <Label text="Account Info">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <TextArea fx:id="accountInfoArea" prefHeight="80.0" prefWidth="853.0">
+                     <VBox.margin>
+                        <Insets bottom="50.0" left="50.0" right="50.0" />
+                     </VBox.margin>
+                  </TextArea>
                         <Label layoutX="344.0" layoutY="265.0" text="Enter amount to withdraw or deposit">
                             <font>
-                                <Font name="System Bold" size="20.0"/>
+                                <Font name="System Bold" size="20.0" />
                             </font>
                         </Label>
                         <TextField fx:id="moneyField" layoutX="260.0" layoutY="310.0" promptText="Enter Amount">
                             <font>
-                                <Font size="16.0"/>
+                                <Font size="16.0" />
                             </font>
                             <VBox.margin>
-                                <Insets left="250.0" right="250.0"/>
+                                <Insets left="250.0" right="250.0" />
                             </VBox.margin>
                         </TextField>
                     </children>
@@ -34,43 +42,40 @@
                     <center>
                         <HBox alignment="CENTER" BorderPane.alignment="CENTER">
                             <children>
-                                <Label fx:id="welcomeLabel" alignment="CENTER" prefHeight="29.0" prefWidth="252.0"
-                                       text="Welcome, (Name)!">
+                                <Label fx:id="welcomeLabel" alignment="CENTER" prefHeight="29.0" prefWidth="252.0" text="Welcome, (Name)!">
                                     <font>
-                                        <Font size="24.0"/>
+                                        <Font size="24.0" />
                                     </font>
                                 </Label>
                             </children>
                         </HBox>
                     </center>
                     <padding>
-                        <Insets top="30.0"/>
+                        <Insets top="30.0" />
                     </padding>
                     <right>
-                        <Button fx:id="exitButton" mnemonicParsing="false" onAction="#exitClicked" text="Save and Exit"
-                                BorderPane.alignment="CENTER">
+                        <Button fx:id="exitButton" mnemonicParsing="false" onAction="#exitClicked" text="Save and Exit" BorderPane.alignment="CENTER">
                             <font>
-                                <Font size="16.0"/>
+                                <Font size="16.0" />
                             </font>
                             <BorderPane.margin>
-                                <Insets right="30.0"/>
+                                <Insets right="30.0" />
                             </BorderPane.margin>
                             <padding>
-                                <Insets bottom="10.0" left="16.0" right="16.0" top="10.0"/>
+                                <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
                             </padding>
                         </Button>
                     </right>
                     <left>
-                        <Button fx:id="mainPageButton" mnemonicParsing="false" onAction="#mainPageClicked"
-                                text="Back to Main" textAlignment="CENTER" BorderPane.alignment="CENTER">
+                        <Button fx:id="mainPageButton" mnemonicParsing="false" onAction="#mainPageClicked" text="Back to Main" textAlignment="CENTER" BorderPane.alignment="CENTER">
                             <BorderPane.margin>
-                                <Insets left="30.0"/>
+                                <Insets left="30.0" />
                             </BorderPane.margin>
                             <font>
-                                <Font size="16.0"/>
+                                <Font size="16.0" />
                             </font>
                             <padding>
-                                <Insets bottom="10.0" left="16.0" right="16.0" top="10.0"/>
+                                <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
                             </padding>
                         </Button>
                     </left>
@@ -79,33 +84,31 @@
             <bottom>
                 <HBox alignment="CENTER" spacing="50.0" BorderPane.alignment="CENTER">
                     <children>
-                        <Button fx:id="depositButton" layoutX="605.0" layoutY="10.0" mnemonicParsing="false"
-                                onAction="#depositClicked" text="Deposit">
+                        <Button fx:id="depositButton" layoutX="605.0" layoutY="10.0" mnemonicParsing="false" onAction="#depositClicked" text="Deposit">
                             <padding>
-                                <Insets bottom="10.0" left="16.0" right="16.0" top="10.0"/>
+                                <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
                             </padding>
                             <font>
-                                <Font size="16.0"/>
+                                <Font size="16.0" />
                             </font>
                         </Button>
-                        <Button fx:id="withdrawButton" layoutX="443.0" layoutY="10.0" mnemonicParsing="false"
-                                onAction="#withdrawClicked" text="Withdraw">
+                        <Button fx:id="withdrawButton" layoutX="443.0" layoutY="10.0" mnemonicParsing="false" onAction="#withdrawClicked" text="Withdraw">
                             <padding>
-                                <Insets bottom="10.0" left="16.0" right="16.0" top="10.0"/>
+                                <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
                             </padding>
                             <font>
-                                <Font size="16.0"/>
+                                <Font size="16.0" />
                             </font>
                         </Button>
                     </children>
                     <opaqueInsets>
-                        <Insets/>
+                        <Insets />
                     </opaqueInsets>
                     <BorderPane.margin>
-                        <Insets/>
+                        <Insets />
                     </BorderPane.margin>
                     <padding>
-                        <Insets bottom="30.0"/>
+                        <Insets bottom="30.0" />
                     </padding>
                 </HBox>
             </bottom>

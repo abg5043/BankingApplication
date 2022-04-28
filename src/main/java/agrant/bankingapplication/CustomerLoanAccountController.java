@@ -1,5 +1,8 @@
 package agrant.bankingapplication;
 
+import agrant.bankingapplication.classes.Checking;
+import agrant.bankingapplication.classes.Loans;
+import agrant.bankingapplication.classes.Savings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -56,7 +59,9 @@ public class CustomerLoanAccountController extends Controller {
         String accID = String.format("%s_l", getLoginController().getCurrentUser().getSSN());
 
         if(getLoginController().hasValidLoanAccount(accID) &&
-                getLoginController().findLoanByID(accID).getLoanType().equals("Mortgage")
+            (getLoginController().findLoanByID(accID).getLoanType().equals("Mortgage-15") ||
+                getLoginController().findLoanByID(accID).getLoanType().equals("Mortgage-30")
+            )
         ){
         isMortgage = true;
         CustomerLoanAccountTermController customerLoanAccountTermController = new CustomerLoanAccountTermController(
@@ -74,6 +79,7 @@ public class CustomerLoanAccountController extends Controller {
             a.show();
         }
     }
+
 
     @FXML
     void shortTermClicked(ActionEvent event) {

@@ -1,5 +1,7 @@
 package agrant.bankingapplication;
 
+import agrant.bankingapplication.classes.Checking;
+import agrant.bankingapplication.classes.Loans;
 import agrant.bankingapplication.classes.Savings;
 import agrant.bankingapplication.classes.Transactions;
 
@@ -18,6 +20,9 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 public class CustomerCDController extends Controller {
+    @FXML
+    private TextArea accountInfoArea;
+
     @FXML
     private Button depositButton;
     @FXML
@@ -115,11 +120,27 @@ public class CustomerCDController extends Controller {
         confirmationController.showStage();
     }
 
+    private void setAccountInfoArea(String text) {
+        this.accountInfoArea.setText(findAccountInfo(text));
+    }
+
+    private String findAccountInfo(String text) {
+        String returnString = "Error: No Account found";
+            for(Savings savings : getLoginController().getSavingsData()) {
+                if(savings.getAccountId().equals(text)) {
+                    returnString = savings.toString();
+                    break;
+                }
+            }
+        return returnString;
+    }
+
     public CustomerCDController(Stage currentStage, LoginController loginController, CustomerOpeningController customerOpeningController) {
         super(currentStage, loginController, customerOpeningController);
         this.setCurrentViewFile("customer-cd.fxml");
         this.setCurrentViewTitle("CD Account");
         this.setNewScene(this, this.getCurrentViewFile(), this.getCurrentViewTitle());
+        setAccountInfoArea(getLoginController().getCurrentUser().getSSN() + "_s");
     }
 
     @FXML

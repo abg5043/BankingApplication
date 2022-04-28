@@ -93,7 +93,7 @@ public class CustomerDepositCheckController extends Controller {
                 }
             } catch (NumberFormatException e) {
                 Alert a = new Alert(Alert.AlertType.WARNING);
-                a.setTitle("Money Not Transferred");
+                a.setTitle("Deposit failed");
                 a.setHeaderText("Invalid formatting");
                 a.setContentText("Please ensure you use numbers in numeric fields.");
 
@@ -103,7 +103,7 @@ public class CustomerDepositCheckController extends Controller {
         }else {
             // create an alert
             Alert a = new Alert(Alert.AlertType.WARNING);
-            a.setTitle("Unable to Make Purchase");
+            a.setTitle("Deposit failed");
             a.setHeaderText("Null or Misformatted Fields");
             a.setContentText("Please enter information in all fields according to suggested formatting.");
 
