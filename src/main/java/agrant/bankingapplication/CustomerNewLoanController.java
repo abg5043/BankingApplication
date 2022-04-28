@@ -160,6 +160,7 @@ public class CustomerNewLoanController extends Controller {
                     //Get selected loan term
                     int loanTerm = Integer.parseInt(mortgageLoanYearChoice.getSelectionModel().getSelectedItem().toString());
                     dueDate = currentDate.plusYears(loanTerm);
+                    loanType = loanType + "-"+ loanTerm;
                 } else {
                     //5 years for short-term loan
                     dueDate = currentDate.plusYears(5);
@@ -168,22 +169,35 @@ public class CustomerNewLoanController extends Controller {
                 nextPayment = currentDate.plusMonths(1);
 
                 //Get months between current date and due date
-                int monthsLeft = Period.between(currentDate, dueDate).getMonths();
+                int monthsLeft = Period.between(currentDate, dueDate).getYears() * 12;
 
                 DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
                 String formattedCurrentDate = currentDate.format(formatters);
                 String formattedDueDate = dueDate.format(formatters);
                 String formattedNextPaymentDate = nextPayment.format(formatters);
+                double interestRate = 0.017;
+                String formattedInterest = String.format("%.2f",(interestRate * 100));
 
-                double nextPaymentAmt = ((loanAmount/monthsLeft) + ((loanAmount/2) * Period.between(currentDate, dueDate).getYears() * 1.7))/2;
-                NumberFormat numberFormatter = NumberFormat.getCurrencyInstance();
-                String formattedPaymentAmt = numberFormatter.format(nextPaymentAmt);
+                double nextPaymentAmt = ((loanAmount/monthsLeft) + ((loanAmount/2) * (monthsLeft/12) * interestRate))/2;
 
                 //Create new loan object
-                Loans loanApp = new Loans(accID, loanAmount, 1.7, formattedNextPaymentDate, formattedDueDate, 0.00, formattedPaymentAmt, "n/a", 0, loanType, -1, monthsLeft);
+                Loans loanApp = new Loans(accID, loanAmount, Double.parseDouble(formattedInterest), formattedNextPaymentDate, nextPaymentAmt, "n/a", 0, loanType, -1, monthsLeft);
 
                 //Add loan to loan applications
                 getLoginController().getLoanApplications().add(loanApp);
+
+                //write data
+                getLoginController().writeBankData();
+
+                // create a confirmation screen
+                ConfirmationController confirmationController = new ConfirmationController(
+                    getCurrentStage(),
+                    getLoginController(),
+                    getMainPage(),
+                    "Congratulations, you applied for a loan!"
+                );
+
+                confirmationController.showStage();
             }else{
                 //Credit account
                 nextPayment = currentDate.plusMonths(1);
@@ -194,18 +208,32 @@ public class CustomerNewLoanController extends Controller {
                 String formattedNextPaymentDate = nextPayment.format(formatters);
 
                 NumberFormat numberFormatter = NumberFormat.getCurrencyInstance();
+                double interestRate = 1.7;
 
                 //Create new loan object
-                Loans loanApp = new Loans(accID, 0.00, 1.7, formattedNextPaymentDate, formattedDueDate, 0.00, "n/a", "n/a", 0, loanType, (int)loanAmount, -1);
+                Loans loanApp = new Loans(accID, 0.00, interestRate, formattedNextPaymentDate, 0.00, "n/a", 0, loanType, (int)loanAmount, -1);
 
                 //Add loan to loan applications
                 getLoginController().getLoanApplications().add(loanApp);
+
+                //write data
+                getLoginController().writeBankData();
+
+                // create a confirmation screen
+                ConfirmationController confirmationController = new ConfirmationController(
+                    getCurrentStage(),
+                    getLoginController(),
+                    getMainPage(),
+                    "Congratulations, you applied for a loan!"
+                );
+
+                confirmationController.showStage();
             }
         }catch (NumberFormatException var21) {
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setTitle("Loan Application Unsuccessful");
             a.setHeaderText("Invalid formatting");
-            a.setContentText("Please ensure you use numbers in numeric fields.");
+            a.setContentText("Please ensure you use numbers in numeric fields and/or select a loan term.");
             a.show();
         }
     }
