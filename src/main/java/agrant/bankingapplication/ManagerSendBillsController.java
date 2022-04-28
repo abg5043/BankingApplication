@@ -81,7 +81,7 @@ public class ManagerSendBillsController extends Controller {
 
       //print bill for sending
       currentLoan.printBill(
-          currentDate + "_Bill.md",
+          billedAcc + currentDate + "_Bill.md",
           getLoginController().getTransactionLog(),
           getLoginController().getCurrentUser()
       );

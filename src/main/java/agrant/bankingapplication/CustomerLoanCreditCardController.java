@@ -6,10 +6,7 @@ import agrant.bankingapplication.classes.Savings;
 import agrant.bankingapplication.classes.Transactions;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.text.NumberFormat;
@@ -27,7 +24,10 @@ public class CustomerLoanCreditCardController extends Controller {
     private Button payInFullButton;
 
     @FXML
-    private Button payOverTimeButton;
+    private Button oneTimePay;
+
+    @FXML
+    private TextField moneyField;
 
     @FXML
     private TextArea mainTextBox;
@@ -51,6 +51,53 @@ public class CustomerLoanCreditCardController extends Controller {
 
     @FXML
     void payInFullClicked(ActionEvent event) {
+
+        //get account ID
+        String accID = String.format("%s_l", getLoginController().getCurrentUser().getSSN());
+        String checkAccID = String.format("%s_c", getLoginController().getCurrentUser().getSSN());
+
+        //Check if user has a valid loan already
+        if(getLoginController().hasValidLoanAccount(accID)) {
+            try{
+                //get current date
+                LocalDate date = LocalDate.now();
+                DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+                String currentDate = date.format(formatters);
+
+                //parse next payment due date to compare to current date
+                LocalDate dueDate = LocalDate.parse(
+                    getLoginController().findLoanByID(accID).getNextPaymentDueDate(),
+                    formatters
+                );
+
+                Loans loan = getLoginController().findLoanByID(accID);
+                double payAmt = loan.getCurrentPaymentAmount();
+
+                //this formats the money amount into currency
+                NumberFormat formatter = NumberFormat.getCurrencyInstance();
+                String formattedPayAmt = formatter.format(payAmt);
+
+                //Pay loan
+                payCC(loan, payAmt, accID, checkAccID, dueDate, date, currentDate, formattedPayAmt, formatter);
+            }catch(NumberFormatException nfe){
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setTitle("Payment Not Processed");
+                a.setHeaderText("Invalid formatting");
+                a.setContentText("Please ensure you use numbers in numeric fields.");
+                a.show();
+            }
+        }else{
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setTitle("Unable to proceed.");
+            a.setHeaderText("Account not found");
+            a.setContentText("Unable to locate account.");
+            a.show();
+        }
+
+    }
+
+    @FXML
+    void oneTimePayClicked(ActionEvent event) {
         //get account ID
         String accID = String.format("%s_l", getLoginController().getCurrentUser().getSSN());
         String checkAccID = String.format("%s_c", getLoginController().getCurrentUser().getSSN());
@@ -64,121 +111,19 @@ public class CustomerLoanCreditCardController extends Controller {
                 String currentDate = date.format(formatters);
                 //parse next payment due date to compare to current date
                 LocalDate dueDate = LocalDate.parse(
-                        getLoginController().findLoanByID(accID).getNextPaymentDueDate(),
-                        formatters
+                    getLoginController().findLoanByID(accID).getNextPaymentDueDate(),
+                    formatters
                 );
 
                 Loans loan = getLoginController().findLoanByID(accID);
-                double payAmt = loan.getCurrentPaymentAmount();
+                double payAmt = Double.parseDouble(moneyField.getText());
 
                 //this formats the money amount into currency
                 NumberFormat formatter = NumberFormat.getCurrencyInstance();
                 String formattedPayAmt = formatter.format(payAmt);
 
-                //proceed if loan type matches the button the user clicked
-                if((loan.getLoanType().equals("Credit"))){
-                    //Pay specified amount to loan account
-
-                    Loans loanPayment = getLoginController().findLoanByID(accID);
-                    Checking fromChecking = getLoginController().findCheckingByID(checkAccID);
-
-                    //Check that the checking has enough money
-                    if (fromChecking.getCurrentBalance() - payAmt >= 0) {
-                        //We have enough! Withdraw first.
-                        fromChecking.oneTimeWithdraw(payAmt);
-                        //deposit next
-                        if(loanPayment.ccOnetimePay(payAmt)) {
-
-                            //Create two transaction objects
-                            Transactions newTrans1 = new Transactions(
-                                    checkAccID,
-                                    "transfer",
-                                    "Made payment of  " + payAmt + " to account " + accID,
-                                    currentDate
-                            );
-
-                            Transactions newTrans2 = new Transactions(
-                                    accID,
-                                    "payment",
-                                    "Made payment of " + payAmt + " from account " + checkAccID,
-                                    currentDate
-                            );
-
-                            //add transactions to log
-                            getLoginController().getTransactionLog().add(newTrans1);
-                            getLoginController().getTransactionLog().add(newTrans2);
-
-                            //add late penalty to transaction log if overdue
-                            if (dueDate.isBefore(date)) {
-                                //pay late fee
-                                if (date.isAfter(dueDate)) {
-                                    double lFee = 75.00;
-                                    fromChecking.oneTimeWithdraw(lFee);
-                                }
-
-                                //create
-                                Transactions pastDueTrans = new Transactions(
-                                        checkAccID,
-                                        "penalty",
-                                        "Penalized  $75.00 from account " + checkAccID,
-                                        currentDate
-                                );
-                                getLoginController().getTransactionLog().add(pastDueTrans);
-                            }
-
-                            if(loanPayment.getCurrentBalance() == 0) {
-                                getLoginController().getLoanApplications().remove(getLoginController().findLoanByID(accID));
-
-                                //write the data
-                                getLoginController().writeBankData();
-
-                                // create a confirmation screen
-                                ConfirmationController confirmationController = new ConfirmationController(
-                                        getCurrentStage(),
-                                        getLoginController(),
-                                        getMainPage(),
-                                        "Congratulations, you paid " + formattedPayAmt +
-                                                " from account number " + checkAccID + " loan " +
-                                                accID + " and you have fully paid off your loan! Congrats!"
-                                );
-
-                                confirmationController.showStage();
-                            }else{
-                                //write the data
-                                getLoginController().writeBankData();
-
-                                // create a confirmation screen
-                                ConfirmationController confirmationController = new ConfirmationController(
-                                        getCurrentStage(),
-                                        getLoginController(),
-                                        getMainPage(),
-                                        "Congratulations, you paid " + formattedPayAmt +
-                                                " from account number " + checkAccID + " loan " +
-                                                accID + "."
-                                );
-
-                                confirmationController.showStage();
-                            }
-                        }
-                    } else {
-                        //we do not have enough money
-                        // create an alert
-                        Alert a = new Alert(Alert.AlertType.WARNING);
-                        a.setTitle("Money Not Transferred");
-                        a.setHeaderText("Not enough money in checking.");
-                        a.setContentText("Please ensure you have enough money in checking.");
-
-                        // show the dialog
-                        a.show();
-                    }
-                }else{
-                    //User chose wrong account
-                    Alert a = new Alert(Alert.AlertType.WARNING);
-                    a.setTitle("Unable to proceed.");
-                    a.setHeaderText("Account mismatch.");
-                    a.setContentText("Account type differed from one chosen. Please go back and try again.");
-                    a.show();
-                }
+                //Pay loan
+                payCC(loan, payAmt, accID, checkAccID, dueDate, date, currentDate, formattedPayAmt, formatter);
             }catch(NumberFormatException nfe){
                 Alert a = new Alert(Alert.AlertType.WARNING);
                 a.setTitle("Payment Not Processed");
@@ -195,8 +140,206 @@ public class CustomerLoanCreditCardController extends Controller {
         }
     }
 
-    @FXML
-    void payOverTimeClicked(ActionEvent event) {
+    private void payCC(Loans loan, double payAmt, String accID, String checkAccID, LocalDate dueDate, LocalDate date, String currentDate, String formattedPayAmt, NumberFormat formatter) {
+        //proceed if loan type matches the button the user clicked
+        if(loan.getLoanType().equals("Credit")){
+
+            //check if the payment amount is more than the loan amount
+            if(loan.getCurrentBalance() >= payAmt) {
+                //Pay specified amount to loan account
+
+                Checking fromChecking = getLoginController().findCheckingByID(checkAccID);
+
+                //check that payment isn't late
+                //add late penalty to transaction log if overdue
+                if (dueDate.isBefore(date)) {
+                    payAmt += 75;
+                }
+
+                //Check that the checking has enough money
+                if (fromChecking.getCurrentBalance() - payAmt >= 0) {
+                    //We have enough! Withdraw first.
+                    fromChecking.oneTimeWithdraw(payAmt);
+                    //deposit next
+                    if(loan.ccOnetimePay(payAmt)) {
+                        //update payment date
+                        loan.setLastPaymentMade(currentDate);
+
+                        //Create two transaction objects
+                        Transactions newTrans1 = new Transactions(
+                            checkAccID,
+                            "transfer",
+                            "Made payment of  " + payAmt + " to account " + accID,
+                            currentDate
+                        );
+
+                        Transactions newTrans2 = new Transactions(
+                            accID,
+                            "payment",
+                            "Made payment of " + payAmt + " from account " + checkAccID,
+                            currentDate
+                        );
+
+                        //add transactions to log
+                        getLoginController().getTransactionLog().add(newTrans1);
+                        getLoginController().getTransactionLog().add(newTrans2);
+
+                        if(loan.getCurrentBalance() == 0) {
+                            getLoginController().getLoansData().remove(getLoginController().findLoanByID(accID));
+
+                            //write the data
+                            getLoginController().writeBankData();
+
+                            // create a confirmation screen
+                            ConfirmationController confirmationController = new ConfirmationController(
+                                getCurrentStage(),
+                                getLoginController(),
+                                getMainPage(),
+                                "Congratulations, you paid " + formattedPayAmt +
+                                    " from account number " + checkAccID + " loan " +
+                                    accID + " and you have fully paid off your loan! Congrats!"
+                            );
+
+                            confirmationController.showStage();
+                        }else{
+                            //write the data
+                            getLoginController().writeBankData();
+
+                            // create a confirmation screen
+                            ConfirmationController confirmationController = new ConfirmationController(
+                                getCurrentStage(),
+                                getLoginController(),
+                                getMainPage(),
+                                "Congratulations, you paid " + formattedPayAmt +
+                                    " from account number " + checkAccID + " loan " +
+                                    accID + "."
+                            );
+
+                            confirmationController.showStage();
+                        }
+                    }
+                } else {
+                    //There wasn't enough money; must try to overdraft
+                    double originalCheckingBalance = fromChecking.getCurrentBalance();
+                    double overdraftAmount = payAmt - originalCheckingBalance;
+
+                    if (fromChecking.getAccountType().equals("Regular")) {
+                        overdraftAmount += 0.5; //includes 50 cent charge
+                    }
+                    /*
+                     * Check if there is a backup savings and that the savings
+                     * has enough to cover the rest
+                     */
+                    if (
+                        !fromChecking.getBackupAccountId().equals("n/a") &&
+                            (overdraftAmount <= getLoginController().findSavingsByID(fromChecking.getBackupAccountId()).getAccountBalance())
+                    ) {
+                        Savings backUpSavings = getLoginController().findSavingsByID(fromChecking.getBackupAccountId());
+
+                        //Withdraw from checking and savings
+                        fromChecking.setCurrentBalance(0);
+                        backUpSavings.withdraw(overdraftAmount);
+
+                        //deposit into cc
+                        loan.ccOnetimePay(payAmt);
+
+                        //update payment date
+                        loan.setLastPaymentMade(currentDate);
+
+                        String formattedChecking = formatter.format(originalCheckingBalance);
+                        String formattedOverdraft = formatter.format(overdraftAmount);
+
+
+                        //Create three transaction objects
+                        Transactions newTrans1 = new Transactions(
+                            fromChecking.getAccountId(),
+                            "withdraw",
+                            "Withdrew " + formattedChecking + " from account " + fromChecking.getAccountId() + ".",
+                            currentDate
+                        );
+
+                        Transactions newTrans2 = new Transactions(
+                            fromChecking.getAccountId(),
+                            "withdraw",
+                            "Withdrew " + formattedOverdraft + " from account " + backUpSavings.getAccountId() + ".",
+                            currentDate
+                        );
+
+                        Transactions newTrans3 = new Transactions(
+                            accID,
+                            "payment",
+                            "Made payment of " + payAmt + ".",
+                            currentDate
+                        );
+
+                        //add transaction to log
+                        getLoginController().getTransactionLog().add(newTrans1);
+                        getLoginController().getTransactionLog().add(newTrans2);
+                        getLoginController().getTransactionLog().add(newTrans3);
+
+
+                        if(loan.getCurrentBalance() == 0) {
+                            getLoginController().getLoansData().remove(getLoginController().findLoanByID(accID));
+
+                            //write the data
+                            getLoginController().writeBankData();
+
+                            // create a confirmation screen
+                            ConfirmationController confirmationController = new ConfirmationController(
+                                getCurrentStage(),
+                                getLoginController(),
+                                getMainPage(),
+                                "Congratulations, you paid " + formattedPayAmt +
+                                    " from account number " + checkAccID + " loan " +
+                                    accID + " and you have fully paid off your loan! Congrats!"
+                            );
+
+                            confirmationController.showStage();
+                        }else{
+                            //write the data
+                            getLoginController().writeBankData();
+
+                            // create a confirmation screen
+                            ConfirmationController confirmationController = new ConfirmationController(
+                                getCurrentStage(),
+                                getLoginController(),
+                                getMainPage(),
+                                "Congratulations, you paid " + formattedPayAmt +
+                                    " from account number " + checkAccID + " loan " +
+                                    accID + "."
+                            );
+
+                            confirmationController.showStage();
+                        }
+
+                    } else {
+                        //There wasn't a linked account or there was not enough in that backup account
+                        // create an alert
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.setTitle("Not enough money.");
+                        a.setHeaderText("Payment not processed.");
+                        a.setContentText("Not enough money in checking account, even with overdraft.");
+
+                        // show the dialog
+                        a.show();
+                    }
+                }
+            } else {
+                //loan is less than the payment
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setTitle("Unable to proceed.");
+                a.setHeaderText("Payment amount error.");
+                a.setContentText("Cannot pay more than loan is for.");
+                a.show();
+            }
+        }else{
+            //User chose wrong account
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setTitle("Unable to proceed.");
+            a.setHeaderText("Account mismatch.");
+            a.setContentText("Account type differed from one chosen. Please go back and try again.");
+            a.show();
+        }
     }
 
     private void setAccountInfoArea(String text) {

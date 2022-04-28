@@ -208,8 +208,6 @@ public class CustomerLoanAccountTermController extends Controller {
         setAccountInfoArea(getLoginController().getCurrentUser().getSSN() + "_l");
     }
 
-
-
     @FXML
     private void initialize() {
         this.welcomeLabel.setText("Hello, " + this.getLoginController().getCurrentUser().getFirstName() + "!");

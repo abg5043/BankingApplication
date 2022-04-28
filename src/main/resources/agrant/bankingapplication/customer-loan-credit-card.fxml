@@ -19,6 +19,16 @@
                   <Insets left="50.0" right="50.0" />
                </VBox.margin>
             </TextArea>
+            <Label layoutX="434.0" layoutY="161.0" text="Either Make Purchase or Enter Amount Below to Pay">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <TextField fx:id="moneyField" promptText="Enter number of dollars">
+               <VBox.margin>
+                  <Insets left="250.0" right="250.0" />
+               </VBox.margin>
+            </TextField>
             </children>
         </VBox>
     </center>
@@ -81,7 +91,7 @@
                <children>
                   <BorderPane prefHeight="100.0" prefWidth="376.0" style="-fx-border-color: black; -fx-border-width: 1; -fx-border-style: solid;">
                      <right>
-                            <Button fx:id="payOverTimeButton" alignment="CENTER" mnemonicParsing="false" onAction="#payOverTimeClicked" prefHeight="45.0" prefWidth="191.0" text="One-Time Payment" textAlignment="CENTER" BorderPane.alignment="CENTER">
+                            <Button fx:id="oneTimePay" alignment="CENTER" mnemonicParsing="false" onAction="#oneTimePayClicked" prefHeight="45.0" prefWidth="191.0" text="One-Time Payment" textAlignment="CENTER" BorderPane.alignment="CENTER">
                                 <font>
                                     <Font size="16.0" />
                                 </font>
