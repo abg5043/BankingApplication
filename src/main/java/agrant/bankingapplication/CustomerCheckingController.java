@@ -56,6 +56,8 @@ public class CustomerCheckingController extends Controller {
                     if (!targetedChecking.getBackupAccountId().equals("n/a") && overdraftAmount <= this.getLoginController().findSavingsByID(targetedChecking.getBackupAccountId()).getAccountBalance()) {
                         Savings backUpSavings = this.getLoginController().findSavingsByID(targetedChecking.getBackupAccountId());
                         targetedChecking.setCurrentBalance(0.0);
+                        targetedChecking.setInterest("n/a");
+                        targetedChecking.setAccountType("Regular");
                         backUpSavings.withdraw(overdraftAmount);
                         String formattedChecking = numberFormatter.format(originalCheckingBalance);
                         String formattedOverdraft = numberFormatter.format(overdraftAmount);
@@ -116,7 +118,7 @@ public class CustomerCheckingController extends Controller {
             String formattedDepAmount = numberFormatter.format(depAmount);
             String accID = String.format("%s_c", this.getLoginController().getCurrentUser().getSSN());
             if (this.getLoginController().hasValidCheckingAccount(accID)) {
-                if (this.getLoginController().findCheckingByID(accID).oneTimeDeposit(depAmount)) {
+                if (this.getLoginController().findCheckingByID(accID).oneTimeDeposit(depAmount, getLoginController())) {
                     this.confirmDeposit(currentDate, accID, formattedDepAmount);
                 }
             } else {

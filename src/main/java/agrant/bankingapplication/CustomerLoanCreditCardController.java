@@ -238,6 +238,8 @@ public class CustomerLoanCreditCardController extends Controller {
 
                         //Withdraw from checking and savings
                         fromChecking.setCurrentBalance(0);
+                        fromChecking.setInterest("n/a");
+                        fromChecking.setAccountType("Regular");
                         backUpSavings.withdraw(overdraftAmount);
 
                         //deposit into cc

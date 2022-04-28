@@ -65,7 +65,7 @@ public class TellerTransferController extends Controller {
               //Withdraw first. This only runs if there is enough money
               if (originSavings.withdraw(transferredMoney)) {
                 //deposit next; only runs if deposit is less than fee
-                if(toChecking.oneTimeDeposit(transferredMoney)) {
+                if(toChecking.oneTimeDeposit(transferredMoney, getLoginController())) {
                   //Create two transaction objects
                   Transactions newTrans1 = new Transactions(
                       fromID,

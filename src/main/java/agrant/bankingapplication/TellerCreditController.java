@@ -63,7 +63,7 @@ public class TellerCreditController extends Controller {
           //is going to checking account
 
           //deposit the money into the appropriate account; only runs if deposit is less than fee
-          if (getLoginController().findCheckingByID(accID).oneTimeDeposit(incomingMoney)) {
+          if (getLoginController().findCheckingByID(accID).oneTimeDeposit(incomingMoney, getLoginController())) {
             confirmDeposit(currentDate, accID, formattedIncomingMoney);
 
           } else {
@@ -219,6 +219,8 @@ public class TellerCreditController extends Controller {
 
               //Withdraw from checking and savings
               targetedChecking.setCurrentBalance(0);
+              targetedChecking.setInterest("n/a");
+              targetedChecking.setAccountType("Regular");
               backUpSavings.withdraw(overdraftAmount);
 
               String formattedChecking = formatter.format(originalCheckingBalance);
@@ -227,7 +229,7 @@ public class TellerCreditController extends Controller {
 
               //Create two transaction objects
               Transactions newTrans1 = new Transactions(
-                  targetedChecking.getAccountId(),
+                  backUpSavings.getAccountId(),
                   "withdraw",
                   "Withdrew " + formattedChecking + " from account " + targetedChecking.getAccountId() + ".",
                   currentDate

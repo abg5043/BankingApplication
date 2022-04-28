@@ -136,7 +136,7 @@ public class ManagerChecksController extends Controller {
              */
 
             Checking destinationCheckingAcct = getLoginController().findCheckingByID(destAcctFieldText);
-            if (destinationCheckingAcct.oneTimeDeposit(depositAmt)) {
+            if (destinationCheckingAcct.oneTimeDeposit(depositAmt, getLoginController())) {
               //The deposit is not smaller than the fee
 
               //now withdraw the money
@@ -304,6 +304,8 @@ public class ManagerChecksController extends Controller {
 
             //Withdraw from checking and savings
             originChecking.setCurrentBalance(0);
+            originChecking.setInterest("n/a");
+            originChecking.setAccountType("Regular");
             backUpSavings.withdraw(overdraftAmount);
 
             //this formats the money amount into currency

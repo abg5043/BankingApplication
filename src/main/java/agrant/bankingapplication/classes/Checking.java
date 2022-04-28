@@ -1,5 +1,6 @@
 package agrant.bankingapplication.classes;
 
+import agrant.bankingapplication.LoginController;
 import com.opencsv.bean.CsvBindByName;
 
 public class Checking {
@@ -85,13 +86,21 @@ public class Checking {
         this.interest = interest;
     }
 
-    public Boolean oneTimeDeposit(double cashAmount) {
+    public Boolean oneTimeDeposit(double cashAmount, LoginController loginController) {
         if(this.accountType.equals("Regular")) {
             //"That's my bank" type of account has 50c per transaction
             if(cashAmount < 0.5) {
                 return false;
             } else {
                 this.currentBalance += (cashAmount - 0.5);
+                if(this.currentBalance >= 1000) {
+                    this.accountType = "Gold";
+                    //check if there is backup savings
+                    Savings linkedSavings = loginController.findSavingsByID(loginController.getCurrentUser().getSSN() + "_s");
+                    if(linkedSavings != null) {
+                        this.interest = String.valueOf(0.5 * linkedSavings.getInterestRate());
+                    }
+                }
                 return true;
             }
         } else {
