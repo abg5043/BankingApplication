@@ -76,8 +76,17 @@ public class ManagerSendBillsController extends Controller {
       DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
       String currentDate = date.format(formatters);
 
-      //update date bill sent
+      //get loan
       Loans currentLoan = getLoginController().findLoanByID(billedAcc);
+
+      //print bill for sending
+      currentLoan.printBill(
+          currentDate + "_Bill.md",
+          getLoginController().getTransactionLog(),
+          getLoginController().getCurrentUser()
+      );
+
+      //update bill sent date
       currentLoan.setDateBillSent(currentDate);
 
       //write the data

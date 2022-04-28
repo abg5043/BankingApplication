@@ -87,7 +87,7 @@ public class CustomerLoanCreditCardController extends Controller {
 
                             //Create two transaction objects
                             Transactions newTrans1 = new Transactions(
-                                    accID,
+                                    checkAccID,
                                     "transfer",
                                     "Made payment of  " + payAmt + " to account " + accID,
                                     currentDate

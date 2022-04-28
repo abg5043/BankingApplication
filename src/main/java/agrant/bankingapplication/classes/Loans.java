@@ -4,8 +4,11 @@ import agrant.bankingapplication.ConfirmationController;
 import com.opencsv.bean.CsvBindByName;
 import javafx.scene.control.Alert;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Loans {
@@ -219,6 +222,50 @@ public class Loans {
         }else{
             //called by non-credit account
             return false;
+        }
+    }
+
+    /**
+     * Prints the report as a formatted markdown file.
+     *
+     * @param fileName -- the file name for the created markdown file
+     */
+    public void printBill(String fileName, ArrayList<Transactions> transactionsArrayList, User currentUser) {
+        try {
+            PrintWriter output = new PrintWriter(fileName);
+            output.println("# Bill for " + currentUser.getFirstName() + " " + currentUser.getLastName());
+
+            output.println("## Account ID " + this.accountId);
+
+            output.println("### Account Information");
+
+            output.println("* Loan type: " + this.loanType);
+            output.println("* Credit Limit: " + this.creditLimit);
+            output.println("* Current balance: " + this.currentBalance);
+            output.println("* Interest Rate: " + this.interestRate);
+
+
+            output.println("### Payment Information");
+            output.println("* Current Payment Due: " + this.currentPaymentAmount);
+            output.println("* Next Payment Due: " + this.nextPaymentDueDate);
+            output.println("* Last Payment Made: " + this.lastPaymentMade);
+            output.println("* Months left on loan: " + this.monthsLeft);
+
+            output.println("### Recent Transactions");
+            int j = 1;
+            for(int i = 0; i < transactionsArrayList.size(); i++) {
+                Transactions currentTransaction = transactionsArrayList.get(i);
+                if(currentTransaction.getAccountID().equals(this.accountId)) {
+                    output.println("\nTransaction " + j + ": " + currentTransaction.getDate() + ": " + currentTransaction.getMemo());
+                    j++;
+                }
+
+            }
+
+            output.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.exit(1);
         }
     }
 

@@ -56,7 +56,8 @@ public class CustomerLoanAccountController extends Controller {
         String accID = String.format("%s_l", getLoginController().getCurrentUser().getSSN());
 
         if(getLoginController().hasValidLoanAccount(accID) &&
-                getLoginController().findLoanByID(accID).getLoanType().equals("Mortgage")){
+                getLoginController().findLoanByID(accID).getLoanType().equals("Mortgage")
+        ){
         isMortgage = true;
         CustomerLoanAccountTermController customerLoanAccountTermController = new CustomerLoanAccountTermController(
                 getCurrentStage(),
