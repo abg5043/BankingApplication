@@ -111,7 +111,7 @@ public class CustomerCheckingController extends Controller {
                 a.setContentText("Transfer less than fee.");
                 a.show();
             }
-        } catch (NumberFormatException var11) {
+        } catch (NumberFormatException nfe) {
             Alert a = new Alert(AlertType.WARNING);
             a.setTitle("Money Not Credited");
             a.setHeaderText("Invalid formatting");

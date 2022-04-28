@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
     <center>
@@ -14,24 +18,11 @@
                         <Font name="System Bold" size="20.0" />
                     </font>
                 </Label>
-            <TextField alignment="CENTER" prefHeight="25.0" prefWidth="637.0" promptText="Enter Loan or Payment Amount">
+            <TextField alignment="CENTER" prefHeight="38.0" prefWidth="253.0" promptText="Enter Loan Payment Amount">
                <VBox.margin>
                   <Insets left="350.0" right="350.0" />
                </VBox.margin>
             </TextField>
-            <TextField fx:id="mortgageTerm" alignment="CENTER" layoutX="360.0" layoutY="241.0" prefHeight="25.0" prefWidth="637.0" promptText="Enter Mortgage Term">
-               <VBox.margin>
-                  <Insets left="350.0" right="350.0" />
-               </VBox.margin>
-            </TextField>
-            <Label text="Enter &quot;n/a&quot; if making a payment">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-               <padding>
-                  <Insets left="80.0" top="-30.0" />
-               </padding>
-            </Label>
          </children>
         </VBox>
     </center>
@@ -82,14 +73,6 @@
     <bottom>
         <HBox alignment="CENTER" prefWidth="953.0" spacing="50.0" BorderPane.alignment="CENTER">
             <children>
-                  <Button fx:id="newLoanButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#newLoanClicked" text="New Loan" textAlignment="CENTER">
-                      <font>
-                          <Font size="16.0" />
-                      </font>
-                      <padding>
-                          <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
-                      </padding>
-                  </Button>
                     <Button fx:id="makePaymentButton" alignment="CENTER" mnemonicParsing="false" onAction="#makePaymentClicked" prefHeight="45.0" prefWidth="144.0" text="Make Payment" textAlignment="CENTER">
                         <font>
                             <Font size="16.0" />

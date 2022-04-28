@@ -2,7 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -11,13 +13,30 @@
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
     <center>
         <VBox alignment="CENTER" prefHeight="433.0" prefWidth="953.0" spacing="25.0">
-         <children>
-            <Label text="Please Select a Loan Type:">
+            <children>
+                <Label fx:id="amtOwedLabel" prefHeight="30.0" prefWidth="536.0" text="Enter Loan Amount or Credit Limit and Select an Option:">
+                    <font>
+                        <Font name="System Bold" size="20.0" />
+                    </font>
+                </Label>
+                <TextField fx:id="paymentAmountField" alignment="CENTER" prefHeight="31.0" prefWidth="253.0" promptText="Enter Loan Amount or Credit Limit">
+                    <VBox.margin>
+                        <Insets left="350.0" right="350.0" />
+                    </VBox.margin>
                <font>
-                  <Font name="System Bold" size="20.0" />
+                  <Font size="14.0" />
                </font>
+                </TextField>
+            <Label prefHeight="13.0" prefWidth="257.0" text="Choose Below if Applying for New Mortgage">
+               <font>
+                  <Font size="13.0" />
+               </font>
+               <padding>
+                  <Insets bottom="-25.0" />
+               </padding>
             </Label>
-         </children>
+            <ChoiceBox fx:id="mortgageLoanYearChoice" prefHeight="25.0" prefWidth="241.0" />
+            </children>
         </VBox>
     </center>
     <top>
@@ -65,9 +84,25 @@
         </BorderPane>
     </top>
     <bottom>
-        <HBox alignment="CENTER" spacing="50.0" BorderPane.alignment="CENTER">
+        <HBox alignment="CENTER" prefWidth="953.0" spacing="50.0" BorderPane.alignment="CENTER">
             <children>
-            <Button fx:id="newLoanButton" alignment="CENTER" contentDisplay="CENTER" layoutX="274.0" layoutY="10.0" mnemonicParsing="false" onAction="#newLoanClicked" text="New Loan" textAlignment="CENTER">
+                <Button fx:id="newMortgageButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#newMortgageClicked" text="New Mortgage Loan" textAlignment="CENTER">
+                    <font>
+                        <Font size="16.0" />
+                    </font>
+                    <padding>
+                        <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
+                    </padding>
+                </Button>
+                <Button fx:id="newShortTermButton" alignment="CENTER" mnemonicParsing="false" onAction="#newShortTermClicked" prefHeight="45.0" prefWidth="198.0" text="New Short-Term Loan" textAlignment="CENTER">
+                    <font>
+                        <Font size="16.0" />
+                    </font>
+                    <padding>
+                        <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
+                    </padding>
+                </Button>
+            <Button fx:id="newCreditButton" alignment="CENTER" layoutX="501.0" layoutY="25.0" mnemonicParsing="false" onAction="#newCreditClicked" prefHeight="45.0" prefWidth="198.0" text="New Credit Card" textAlignment="CENTER">
                <font>
                   <Font size="16.0" />
                </font>
@@ -75,30 +110,6 @@
                   <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
                </padding>
             </Button>
-                <Button fx:id="mortgageButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#mortgageClicked" text="Mortgage" textAlignment="CENTER">
-                    <font>
-                        <Font size="16.0" />
-                    </font>
-                    <padding>
-                        <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
-                    </padding>
-                </Button>
-                <Button fx:id="shortTermButton" alignment="CENTER" mnemonicParsing="false" onAction="#shortTermClicked" text="Short Term" textAlignment="CENTER">
-                    <font>
-                        <Font size="16.0" />
-                    </font>
-                    <padding>
-                        <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
-                    </padding>
-                </Button>
-                <Button fx:id="creditCardButton" alignment="CENTER" mnemonicParsing="false" onAction="#creditCardClicked" text="Credit Card" textAlignment="CENTER">
-                    <font>
-                        <Font size="16.0" />
-                    </font>
-                    <padding>
-                        <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
-                    </padding>
-                </Button>
             </children>
             <opaqueInsets>
                 <Insets />
@@ -107,7 +118,7 @@
                 <Insets />
             </BorderPane.margin>
             <padding>
-                <Insets bottom="30.0" />
+                <Insets bottom="15.0" top="15.0" />
             </padding>
         </HBox>
     </bottom>

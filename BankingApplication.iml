@@ -40,5 +40,6 @@
     <orderEntry type="library" name="Maven: org.apache.commons:commons-collections4:4.4" level="project" />
     <orderEntry type="library" name="Maven: io.datafx:flow:8.0.7" level="project" />
     <orderEntry type="library" name="Maven: io.datafx:core:8.0.7" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>
