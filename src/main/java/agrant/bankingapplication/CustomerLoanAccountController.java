@@ -37,8 +37,8 @@ public class CustomerLoanAccountController extends Controller {
             CustomerNewLoanController customerNewLoanController = new CustomerNewLoanController(
                     this.getCurrentStage(),
                     this.getLoginController(),
-                    this
-                    );
+                (CustomerOpeningController) this.getMainPage()
+            );
 
             customerNewLoanController.showStage();
         }else {
@@ -62,7 +62,7 @@ public class CustomerLoanAccountController extends Controller {
         CustomerLoanAccountTermController customerLoanAccountTermController = new CustomerLoanAccountTermController(
                 getCurrentStage(),
                 getLoginController(),
-                this,
+            (CustomerOpeningController) this.getMainPage(),
                 isMortgage);
 
         customerLoanAccountTermController.showStage();
@@ -86,7 +86,7 @@ public class CustomerLoanAccountController extends Controller {
         CustomerLoanAccountTermController customerLoanCreditCardController = new CustomerLoanAccountTermController(
                 getCurrentStage(),
                 getLoginController(),
-                this,
+            (CustomerOpeningController) this.getMainPage(),
                 isMortgage);
 
         customerLoanCreditCardController.showStage();
@@ -104,7 +104,7 @@ public class CustomerLoanAccountController extends Controller {
         CustomerLoanCreditCardController customerLoanCreditCardController = new CustomerLoanCreditCardController(
                 getCurrentStage(),
                 getLoginController(),
-                this);
+            (CustomerOpeningController) this.getMainPage());
 
         customerLoanCreditCardController.showStage();
     }

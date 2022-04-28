@@ -120,8 +120,8 @@ public class CustomerSavingsController extends Controller {
     confirmationController.showStage();
   }
 
-  public CustomerSavingsController(Stage currentStage, LoginController loginController, CustomerPINCheckController customerPINCheckController) {
-    super(currentStage, loginController, new CustomerOpeningController(currentStage, loginController));
+  public CustomerSavingsController(Stage currentStage, LoginController loginController, CustomerOpeningController customerOpeningController) {
+    super(currentStage, loginController, customerOpeningController);
     this.setCurrentViewFile("customer-savings.fxml");
     this.setCurrentViewTitle("Loan Account");
     this.setNewScene(this, this.getCurrentViewFile(), this.getCurrentViewTitle());

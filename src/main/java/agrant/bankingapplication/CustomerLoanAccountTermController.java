@@ -175,8 +175,13 @@ public class CustomerLoanAccountTermController extends Controller {
         }
     }
 
-    public CustomerLoanAccountTermController(Stage currentStage, LoginController loginController, CustomerLoanAccountController customerLoanAccountController, boolean isMortgage) {
-        super(currentStage, loginController, customerLoanAccountController);
+    public CustomerLoanAccountTermController(
+        Stage currentStage,
+        LoginController loginController,
+        CustomerOpeningController customerOpeningController,
+        boolean isMortgage
+    ) {
+        super(currentStage, loginController, customerOpeningController);
         this.setCurrentViewFile("customer-loan-term.fxml");
         this.setCurrentViewTitle("Loan Account Actions");
         this.setNewScene(this, this.getCurrentViewFile(), this.getCurrentViewTitle());

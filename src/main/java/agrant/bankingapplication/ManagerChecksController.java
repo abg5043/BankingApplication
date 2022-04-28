@@ -208,7 +208,7 @@ public class ManagerChecksController extends Controller {
         Alert a = new Alert(Alert.AlertType.WARNING);
         a.setTitle("Invalid input");
         a.setHeaderText("Check not processed");
-        a.setContentText("Account number(s): Please contact the person depositing the check.");
+        a.setContentText("Account number(s) invalid: Please contact the person depositing the check.");
 
         // show the dialog
         a.show();

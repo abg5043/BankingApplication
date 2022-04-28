@@ -23,7 +23,11 @@ public class CustomerMortgageController extends Controller {
 
     }
 
-    public CustomerMortgageController(Stage currentStage, LoginController loginController, CustomerOpeningController customerOpeningController) {
+    public CustomerMortgageController(
+        Stage currentStage,
+        LoginController loginController,
+        CustomerOpeningController customerOpeningController
+    ) {
         super(currentStage, loginController, customerOpeningController);
         setCurrentViewFile("customer-mortgage.fxml");
         setCurrentViewTitle("Mortgage");

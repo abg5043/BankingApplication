@@ -210,8 +210,12 @@ public class CustomerNewLoanController extends Controller {
         }
     }
 
-    public CustomerNewLoanController(Stage currentStage, LoginController loginController, CustomerLoanAccountController customerNewLoanController) {
-        super(currentStage, loginController, customerNewLoanController);
+    public CustomerNewLoanController(
+        Stage currentStage,
+        LoginController loginController,
+        CustomerOpeningController customerOpeningController
+    ) {
+        super(currentStage, loginController, customerOpeningController);
         this.setCurrentViewFile("customer-new-loan.fxml");
         this.setCurrentViewTitle("Apply For New Loan");
         this.setNewScene(this, this.getCurrentViewFile(), this.getCurrentViewTitle());

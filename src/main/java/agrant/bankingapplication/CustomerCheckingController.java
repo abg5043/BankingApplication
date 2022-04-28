@@ -28,6 +28,9 @@ public class CustomerCheckingController extends Controller {
     private TextField amountField;
 
     @FXML
+    private Button depositCheckButton;
+
+    @FXML
     void basicWithdrawClicked(ActionEvent event) {
         LocalDate date = LocalDate.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
@@ -81,6 +84,17 @@ public class CustomerCheckingController extends Controller {
 
     }
 
+    @FXML
+    void depositCheckClicked(ActionEvent event) {
+        CustomerDepositCheckController controller = new CustomerDepositCheckController(
+            this.getCurrentStage(),
+            this.getLoginController(),
+            (CustomerOpeningController) this.getMainPage()
+        );
+        controller.showStage();
+
+    }
+
     private void confirmWithdraw(String currentDate, String accID, String formattedIncomingMoney) {
         Transactions newTrans = new Transactions(accID, "withdraw", "Withdrew " + formattedIncomingMoney + " from account.", currentDate);
         this.getLoginController().getTransactionLog().add(newTrans);
@@ -121,6 +135,7 @@ public class CustomerCheckingController extends Controller {
 
     }
 
+
     private void confirmDeposit(String currentDate, String accID, String formattedIncomingMoney) {
         Transactions newTrans = new Transactions(accID, "deposit", "Deposited " + formattedIncomingMoney + " into account.", currentDate);
         this.getLoginController().getTransactionLog().add(newTrans);
@@ -129,8 +144,8 @@ public class CustomerCheckingController extends Controller {
         confirmationController.showStage();
     }
 
-    public CustomerCheckingController(Stage currentStage, LoginController loginController, CustomerPINCheckController customerPINCheckController) {
-        super(currentStage, loginController, new CustomerOpeningController(currentStage, loginController));
+    public CustomerCheckingController(Stage currentStage, LoginController loginController, CustomerOpeningController customerOpeningController) {
+        super(currentStage, loginController, customerOpeningController);
         this.setCurrentViewFile("customer-checking.fxml");
         this.setCurrentViewTitle("Loan Account");
         this.setNewScene(this, this.getCurrentViewFile(), this.getCurrentViewTitle());

@@ -39,7 +39,7 @@ public class CustomerLoanCreditCardController extends Controller {
         CustomerCCPurchaseController customerCCPurchaseController = new CustomerCCPurchaseController(
                 this.getCurrentStage(),
                 this.getLoginController(),
-                new CustomerOpeningController(getLoginController().getCurrentStage(), getLoginController())
+            (CustomerOpeningController) this.getMainPage()
         );
 
         customerCCPurchaseController.showStage();
@@ -195,8 +195,12 @@ public class CustomerLoanCreditCardController extends Controller {
     void payOverTimeClicked(ActionEvent event) {
     }
 
-    public CustomerLoanCreditCardController(Stage currentStage, LoginController loginController, CustomerLoanAccountController customerLoanAccountController) {
-        super(currentStage, loginController, customerLoanAccountController);
+    public CustomerLoanCreditCardController(
+        Stage currentStage,
+        LoginController loginController,
+        CustomerOpeningController customerOpeningController
+    ) {
+        super(currentStage, loginController, customerOpeningController);
         this.setCurrentViewFile("customer-loan-credit-card.fxml");
         this.setCurrentViewTitle("Credit Card");
         this.setNewScene(this, this.getCurrentViewFile(), this.getCurrentViewTitle());

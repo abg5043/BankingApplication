@@ -42,14 +42,14 @@ public class CustomerPINCheckController extends Controller {
                     CustomerCheckingController customerCheckingController = new CustomerCheckingController(
                             this.getCurrentStage(),
                             this.getLoginController(),
-                            this
+                        (CustomerOpeningController) this.getMainPage()
                     );
                     customerCheckingController.showStage();
                 } else if (!this.isChecking) {
                     CustomerSavingsController customerSavingsController = new CustomerSavingsController(
                             this.getCurrentStage(),
                             this.getLoginController(),
-                            this
+                        (CustomerOpeningController) this.getMainPage()
                     );
                     customerSavingsController.showStage();
                 }
