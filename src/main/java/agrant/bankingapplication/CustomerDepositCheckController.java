@@ -56,31 +56,44 @@ public class CustomerDepositCheckController extends Controller {
 
                 //Check that customer has a checking account
                 if(getLoginController().findCheckingByID(customerCheckAccID) != null){
-                    //create new check
-                    Checks newCheck = new Checks(
-                        originAcctID,
-                        amountCash,
-                        String.valueOf(checkNum),
-                        date.format(formatters),
-                        customerCheckAccID
-                    );
+                    //check if we are trying to send a check to ourselves
+                    if(customerCheckAccID != originAcctID) {
+                        //create new check
+                        Checks newCheck = new Checks(
+                            originAcctID,
+                            amountCash,
+                            String.valueOf(checkNum),
+                            date.format(formatters),
+                            customerCheckAccID
+                        );
 
-                    //add check to pending
-                    getLoginController().getPendingChecks().add(newCheck);
+                        //add check to pending
+                        getLoginController().getPendingChecks().add(newCheck);
 
-                    //write the data
-                    getLoginController().writeBankData();
+                        //write the data
+                        getLoginController().writeBankData();
 
-                    // create a confirmation screen
-                    ConfirmationController confirmationController = new ConfirmationController(
-                        getCurrentStage(),
-                        getLoginController(),
-                        getMainPage(),
-                        "Congratulations, you deposited check " + checkNum +
-                        " to acct " + customerCheckAccID + "."
-                    );
+                        // create a confirmation screen
+                        ConfirmationController confirmationController = new ConfirmationController(
+                            getCurrentStage(),
+                            getLoginController(),
+                            getMainPage(),
+                            "Congratulations, you deposited check " + checkNum +
+                                " to acct " + customerCheckAccID + "."
+                        );
 
-                    confirmationController.showStage();
+                        confirmationController.showStage();
+                    } else {
+                        //we tried to send a check to ourselves
+                        // create an alert
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.setTitle("Deposit Failed");
+                        a.setHeaderText("Invalid account");
+                        a.setContentText("Please do not send checks to and from the same account.");
+
+                        // show the dialog
+                        a.show();
+                    }
                 }else{
                     // create an alert
                     Alert a = new Alert(Alert.AlertType.WARNING);
