@@ -1,7 +1,6 @@
 package agrant.bankingapplication;
 
 import agrant.bankingapplication.classes.Checking;
-import agrant.bankingapplication.classes.Loans;
 import agrant.bankingapplication.classes.Savings;
 import agrant.bankingapplication.classes.Transactions;
 
@@ -32,6 +31,9 @@ public class CustomerCheckingController extends Controller {
     private Button depositCheckButton;
 
     @FXML
+    private Button sendCheckButton;
+
+    @FXML
     void basicWithdrawClicked(ActionEvent event) {
         LocalDate date = LocalDate.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
@@ -47,28 +49,42 @@ public class CustomerCheckingController extends Controller {
                 if (this.getLoginController().findCheckingByID(accID).oneTimeWithdraw(withdrawAmount)) {
                     this.confirmWithdraw(currentDate, accID, formattedWDAmount);
                 } else {
+                    //we have to overdraft
                     double originalCheckingBalance = targetedChecking.getCurrentBalance();
                     double overdraftAmount = withdrawAmount - originalCheckingBalance;
+
+                    //we have to account for the fee
                     if (targetedChecking.getAccountType().equals("Regular")) {
                         overdraftAmount += 0.5;
                     }
 
-                    if (!targetedChecking.getBackupAccountId().equals("n/a") && overdraftAmount <= this.getLoginController().findSavingsByID(targetedChecking.getBackupAccountId()).getAccountBalance()) {
+                    //check if we have a backup account and that it has enough money
+                    if (
+                        !targetedChecking.getBackupAccountId().equals("n/a") &&
+                        overdraftAmount <= this.getLoginController().findSavingsByID(targetedChecking.getBackupAccountId()).getAccountBalance()
+                    ) {
                         Savings backUpSavings = this.getLoginController().findSavingsByID(targetedChecking.getBackupAccountId());
+
+                        //Withdraw from checking and savings
                         targetedChecking.setCurrentBalance(0.0);
                         targetedChecking.setInterest("n/a");
                         targetedChecking.setAccountType("Regular");
                         backUpSavings.withdraw(overdraftAmount);
+                        targetedChecking.setOverdrafts(targetedChecking.getOverdrafts() + 1);
+
                         String formattedChecking = numberFormatter.format(originalCheckingBalance);
                         String formattedOverdraft = numberFormatter.format(overdraftAmount);
+
+                        //Create 2 transaction objects
                         Transactions newTrans1 = new Transactions(targetedChecking.getAccountId(), "withdraw", "Withdrew " + formattedChecking + " from account " + targetedChecking.getAccountId() + ".", currentDate);
-                        Transactions newTrans2 = new Transactions(targetedChecking.getAccountId(), "withdraw", "Withdrew " + formattedOverdraft + " from account " + backUpSavings.getAccountId() + ".", currentDate);
+                        Transactions newTrans2 = new Transactions(backUpSavings.getAccountId(), "withdraw", "Withdrew " + formattedOverdraft + " from account " + backUpSavings.getAccountId() + ".", currentDate);
                         this.getLoginController().getTransactionLog().add(newTrans1);
                         this.getLoginController().getTransactionLog().add(newTrans2);
                         this.getLoginController().writeBankData();
                         ConfirmationController confirmationController = new ConfirmationController(this.getCurrentStage(), this.getLoginController(), this.getMainPage(), "Congratulations, you withdrew " + formattedWDAmount + " from account number " + accID + ".");
                         confirmationController.showStage();
                     } else {
+                        //we either don't have a linked savings or we don't have enough with the overdraft
                         Alert a = new Alert(AlertType.WARNING);
                         a.setTitle("Not enough money.");
                         a.setHeaderText("Withdraw not processed.");
@@ -95,7 +111,16 @@ public class CustomerCheckingController extends Controller {
             (CustomerOpeningController) this.getMainPage()
         );
         controller.showStage();
+    }
 
+    @FXML
+    void sendCheckClicked(ActionEvent event) {
+        CustomerSendCheckController controller = new CustomerSendCheckController(
+            this.getCurrentStage(),
+            this.getLoginController(),
+            (CustomerOpeningController) this.getMainPage()
+        );
+        controller.showStage();
     }
 
     private void confirmWithdraw(String currentDate, String accID, String formattedIncomingMoney) {

@@ -19,7 +19,7 @@
                   <Insets bottom="25.0" left="50.0" right="50.0" />
                </VBox.margin>
             </TextArea>
-                <Label text="Deposit Check or Insert Amount and Select Option Below">
+                <Label text="Deposit Check, Send Check, or Insert Amount and Select Option Below">
                     <font>
                         <Font name="System Bold" size="20.0" />
                     </font>
@@ -96,6 +96,14 @@
                     </padding>
                 </Button>
             <Button fx:id="depositCheckButton" alignment="CENTER" layoutX="336.0" layoutY="25.0" mnemonicParsing="false" onAction="#depositCheckClicked" prefHeight="45.0" prefWidth="150.0" text="Deposit Check" textAlignment="CENTER">
+               <font>
+                  <Font size="16.0" />
+               </font>
+               <padding>
+                  <Insets bottom="10.0" left="16.0" right="16.0" top="10.0" />
+               </padding>
+            </Button>
+            <Button fx:id="sendCheckButton" alignment="CENTER" layoutX="588.0" layoutY="25.0" mnemonicParsing="false" onAction="#sendCheckClicked" prefHeight="45.0" prefWidth="150.0" text="Send Check" textAlignment="CENTER">
                <font>
                   <Font size="16.0" />
                </font>

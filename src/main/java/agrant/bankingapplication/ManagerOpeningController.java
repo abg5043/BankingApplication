@@ -118,9 +118,6 @@ public class ManagerOpeningController extends Controller {
     setCurrentViewFile("manager-opening-view.fxml");
     setCurrentViewTitle("Manager");
     setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
-    //TODO: Delete this
-    //Checks check = new Checks("435678787_c", 25, "3", "10-02-2022", "999999999_c");
-    //getLoginController().getPendingChecks().add(check);
   }
 
   /**

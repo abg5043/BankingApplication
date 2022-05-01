@@ -1,5 +1,6 @@
 package agrant.bankingapplication;
 
+import agrant.bankingapplication.Controller;
 import agrant.bankingapplication.classes.Checks;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,42 +14,42 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class CustomerDepositCheckController extends Controller {
+public class CustomerSendCheckController extends Controller {
 
     @FXML
     private TextField checkNumField;
 
     @FXML
-    private Button depositButton;
+    private TextField destAccIDField;
 
     @FXML
-    private TextField originAccIDField;
+    private TextField memoField;
 
     @FXML
     private TextField moneyField;
+
+    @FXML
+    private Button sendButton;
 
     @FXML
     private Label welcomeLabel;
 
 
     @FXML
-    private TextField memoField;
-
-    @FXML
-    void depositClicked(ActionEvent event) {
+    void sendClicked(ActionEvent event) {
         //get current date
         LocalDate date = LocalDate.now();
         DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
         String currentDate = date.format(formatters);
 
-        String originAcctID = originAccIDField.getText();
+        String destAccID = destAccIDField.getText();
 
         //check that the formatting is good in the text areas
-        if(!originAccIDField.getText().isEmpty() &&
+        if(!destAccIDField.getText().isEmpty() &&
             !moneyField.getText().isEmpty() &&
             !checkNumField.getText().isEmpty() &&
             !memoField.getText().isEmpty() &&
-            originAcctID.length() == 11
+            destAccID.length() == 11
         ) {
             try {
                 int checkNum = Integer.parseInt(checkNumField.getText());
@@ -63,14 +64,14 @@ public class CustomerDepositCheckController extends Controller {
                 //Check that customer has a checking account
                 if(getLoginController().findCheckingByID(customerCheckAccID) != null){
                     //check if we are trying to send a check to ourselves
-                    if(!customerCheckAccID.equals(originAcctID)) {
+                    if(!customerCheckAccID.equals(destAccID)) {
                         //create new check
                         Checks newCheck = new Checks(
-                            originAcctID,
+                            customerCheckAccID,
                             amountCash,
                             String.valueOf(checkNum),
                             currentDate,
-                            customerCheckAccID,
+                            destAccID,
                             memo
                         );
 
@@ -85,8 +86,8 @@ public class CustomerDepositCheckController extends Controller {
                             getCurrentStage(),
                             getLoginController(),
                             getMainPage(),
-                            "Congratulations, you deposited check " + checkNum +
-                                " to acct " + customerCheckAccID + "."
+                            "Congratulations, you sent check " + checkNum +
+                                " to acct " + destAccID + "."
                         );
 
                         confirmationController.showStage();
@@ -133,16 +134,17 @@ public class CustomerDepositCheckController extends Controller {
             // show the dialog
             a.show();
         }
+
     }
 
-    public CustomerDepositCheckController(
+    public CustomerSendCheckController(
         Stage currentStage,
         LoginController loginController,
         CustomerOpeningController customerOpeningController
     ) {
         super(currentStage, loginController, customerOpeningController);
-        this.setCurrentViewFile("customer-deposit-check.fxml");
-        this.setCurrentViewTitle("Deposit Check");
+        this.setCurrentViewFile("customer-send-check.fxml");
+        this.setCurrentViewTitle("Send Check");
         this.setNewScene(this, this.getCurrentViewFile(), this.getCurrentViewTitle());
     }
 

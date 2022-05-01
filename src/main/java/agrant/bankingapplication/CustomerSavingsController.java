@@ -46,7 +46,7 @@ public class CustomerSavingsController extends Controller {
           Transactions newTrans = new Transactions(
               targetedSavings.getAccountId(),
               "withdraw",
-              "Withdrew " + " from account " + targetedSavings.getAccountId() + ".",
+              "Withdrew " + formattedWDAmount + " from account " + targetedSavings.getAccountId() + ".",
               currentDate
           );
 

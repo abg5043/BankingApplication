@@ -18,9 +18,6 @@ public class ManagerCreateCheckingController extends Controller {
     private TextField acctIDField;
 
     @FXML
-    private TextField acctTypeField;
-
-    @FXML
     private Button checkingButton;
 
     @FXML
@@ -32,7 +29,6 @@ public class ManagerCreateCheckingController extends Controller {
     @FXML
     void checkingClicked(ActionEvent event) {
         String SSN = acctIDField.getText();
-        String acctType = acctTypeField.getText();
 
         try {
             double balance = Double.parseDouble(startingBalanceField.getText());
@@ -42,77 +38,67 @@ public class ManagerCreateCheckingController extends Controller {
             DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
             String openDate = date.format(formatters);
 
-            //check that the text is not blank and matches an account type
+            //check that the SSN text is not blank
             if(
-                SSN.length() == 9 &&
-                (acctType.equals("Regular") || acctType.equals("Gold"))
+                SSN.length() == 9
             ) {
-                //check that the account will have a valid balance
-                if(
-                    acctType.equals("Regular") || (acctType.equals("Gold") && balance >= 1000)
-                ) {
-                    //check if the SSN matches a valid user
-                    if (getLoginController().isValidUser(SSN) ) {
-                        //check if the user doesn't already have a checking account
-                        if (!getLoginController().hasValidCheckingAccount(SSN + "_c")) {
-                            //make checking object
-                            Checking newChecking = new Checking(
-                                SSN + "_c",
-                                acctType,
-                                balance,
-                                "n/a",
-                                0,
-                                openDate,
-                                "n/a"
-                            );
+                String accType;
+                if (balance >= 1000 ) {
+                    accType = "Gold";
+                } else {
+                    accType = "Regular";
+                }
+                //check if the SSN matches a valid user
+                if (getLoginController().isValidUser(SSN) ) {
+                    //check if the user doesn't already have a checking account
+                    if (!getLoginController().hasValidCheckingAccount(SSN + "_c")) {
+                        //make checking object
+                        Checking newChecking = new Checking(
+                            SSN + "_c",
+                            accType,
+                            balance,
+                            "n/a",
+                            0,
+                            openDate,
+                            "n/a"
+                        );
 
-                            //update data and write to csv
-                            getLoginController().getCheckingData().add(newChecking);
-                            getLoginController().writeBankData();
+                        //update data and write to csv
+                        getLoginController().getCheckingData().add(newChecking);
+                        getLoginController().writeBankData();
 
-                            // create a confirmation screen
-                            ConfirmationController confirmationController = new ConfirmationController(
-                                getCurrentStage(),
-                                getLoginController(),
-                                getMainPage(),
-                                "Congratulations, you created a checking account!"
-                            );
+                        // create a confirmation screen
+                        ConfirmationController confirmationController = new ConfirmationController(
+                            getCurrentStage(),
+                            getLoginController(),
+                            getMainPage(),
+                            "Congratulations, you created a checking account!"
+                        );
 
-                            confirmationController.showStage();
-                        } else {
-                            //user already has a checking account
-                            // create an alert
-                            Alert a = new Alert(Alert.AlertType.WARNING);
-                            a.setTitle("Checking Not Created");
-                            a.setHeaderText("User already has account");
-                            a.setContentText("Sorry. Users are only allowed one account.");
-
-                            // show the dialog
-                            a.show();
-                        }
+                        confirmationController.showStage();
                     } else {
-                        //SSN does not match a valid user
+                        //user already has a checking account
                         // create an alert
                         Alert a = new Alert(Alert.AlertType.WARNING);
                         a.setTitle("Checking Not Created");
-                        a.setHeaderText("Invalid SSN");
-                        a.setContentText("Please ensure you enter a SSN for a valid user.");
+                        a.setHeaderText("User already has account");
+                        a.setContentText("Sorry. Users are only allowed one account.");
 
                         // show the dialog
                         a.show();
                     }
-
                 } else {
-                    //account does not have valid balance
+                    //SSN does not match a valid user
                     // create an alert
                     Alert a = new Alert(Alert.AlertType.WARNING);
                     a.setTitle("Checking Not Created");
-                    a.setHeaderText("Invalid account balance");
-                    a.setContentText("Please ensure you have $1000 or more for Gold accounts.");
+                    a.setHeaderText("Invalid SSN");
+                    a.setContentText("Please ensure you enter a SSN for a valid user.");
 
                     // show the dialog
                     a.show();
                 }
+
             } else {
                 //Text is blank or does not matche an account type
                 // create an alert

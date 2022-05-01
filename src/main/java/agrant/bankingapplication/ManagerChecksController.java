@@ -24,6 +24,9 @@ public class ManagerChecksController extends Controller {
   private TableColumn<Checks, String> destAcctNumCol;
 
   @FXML
+  private TableColumn<Checks, String> memoCol;
+
+  @FXML
   private TableColumn<Checks, Double> amountCashCol;
 
   @FXML
@@ -56,11 +59,16 @@ public class ManagerChecksController extends Controller {
 
   @FXML
   void processClicked(ActionEvent event) {
+    //get current date
+    LocalDate date = LocalDate.now();
+    DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+    String currentDate = date.format(formatters);
+
     String checkNumberText = checkNumber.getText();
     String destAcctFieldText = destAcctField.getText();
     String originAcctFieldText = originAcctField.getText();
 
-    //check that the check number is valid
+    //check that the check number is not blank and matches a pending check
     if (
         checkNumberText.length() != 0 &&
             getLoginController().hasValidPendingCheck(checkNumberText)
@@ -78,11 +86,8 @@ public class ManagerChecksController extends Controller {
           //find the specific check
           Checks processingCheck = getLoginController().findChecksByCheckNum(checkNumberText, originAcctFieldText, destAcctFieldText);
 
-          if(processingCheck != null) {
-            //get current date
-            LocalDate date = LocalDate.now();
-            DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-            String currentDate = date.format(formatters);
+          //check that info entered matches a pending check
+          if (processingCheck != null) {
 
             String typeOfAccount = processingCheck.getOriginAccountID().substring(9, 11);
 
@@ -96,12 +101,12 @@ public class ManagerChecksController extends Controller {
               //check if processing check with cause overdraft
               Checking originCheckingAcct = getLoginController().findCheckingByID(originAcctFieldText);
               double withdrawAmt = depositAmt;
-              if(originCheckingAcct.getAccountType().equals("Regular")) {
+              if (originCheckingAcct.getAccountType().equals("Regular")) {
                 //has fee
                 withdrawAmt += 0.5;
               }
               //We frown on overdrafts with checks. So check the checking balance alone
-              if(originCheckingAcct.getCurrentBalance() < withdrawAmt) {
+              if (originCheckingAcct.getCurrentBalance() < withdrawAmt) {
                 /*
                  * there is not enough money. Stop payment.
                  * (We used to charge fees, but we got rid of them!)
@@ -149,14 +154,14 @@ public class ManagerChecksController extends Controller {
                   Transactions newTrans1 = new Transactions(
                       originAcctFieldText,
                       "withdrawal",
-                      "Check number " + checkNumberText + " withdrew " + withdrawAmt + " from your account.",
+                      "Check number " + checkNumberText + " withdrew " + withdrawAmt + " from your account. Memo: " + processingCheck.getMemo(),
                       currentDate
                   );
 
                   Transactions newTrans2 = new Transactions(
                       destAcctFieldText,
                       "deposit",
-                      "Check number " + checkNumberText + " deposited " + depositAmt + " into account.",
+                      "Check number " + checkNumberText + " deposited " + depositAmt + " into account. Memo: " + processingCheck.getMemo(),
                       currentDate
                   );
 
@@ -205,7 +210,7 @@ public class ManagerChecksController extends Controller {
               a.show();
             }
           } else {
-            //origin and destination are not allowed to be the same
+            //something was not entered correctly
             // create an alert
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setTitle("Invalid input");
@@ -268,43 +273,104 @@ public class ManagerChecksController extends Controller {
     String originAcctFieldText = originAcctField.getText();
 
 
-    //check that the text is not blank and matches a check
-    if (checkNumberText.length() != 0 && getLoginController().hasValidPendingCheck(checkNumberText)) {
+    //check that the check number is not blank and matches a pending check
+    if (
+        checkNumberText.length() != 0 &&
+            getLoginController().hasValidPendingCheck(checkNumberText)
+    ) {
       //check that the entered account numbers match actual checking accounts (no savings)
       if (
           originAcctFieldText.length() != 0 &&
               destAcctFieldText.length() != 0 &&
-              getLoginController().hasValidCheckingAccount(originAcctFieldText) &&
-              destAcctFieldText.equals("n/a")
+              getLoginController().hasValidCheckingAccount(originAcctFieldText)
       ) {
-        //check that the entered account and origin account aren't the same
-        if(!originAcctFieldText.equals(destAcctFieldText) ) {
+        //accounts match
 
-          //find the specific check
-          Checks stoppedCheck = getLoginController().findChecksByCheckNum(checkNumberText, originAcctFieldText, destAcctFieldText);
+        //find the specific check
+        Checks stoppedCheck = getLoginController().findChecksByCheckNum(checkNumberText, originAcctFieldText, destAcctFieldText);
 
+        //check that info entered matches a pending check
+        if (stoppedCheck != null) {
           //find origin checking account to penalize
           Checking originChecking = getLoginController().findCheckingByID(originAcctFieldText);
 
-          //check that both objects exist
-          if (stoppedCheck != null && originChecking != null) {
-            /*
-             * Stopped payment requires 15 dollar penalty. Withdraw money if there is money in account;
-             * returns true or false depending on if there is money in the account
-             */
-            if (originChecking.oneTimeWithdraw(15)) {
-              //There was money; transaction is done.
+          /*
+           * Stopped payment requires 15 dollar penalty. Withdraw money if there is money in account;
+           * returns true or false depending on if there is money in the account
+           */
+          if (originChecking.oneTimeWithdraw(15)) {
+            //There was money; transaction is done.
 
-              //Create transaction object to reflect penalty
-              Transactions newTrans = new Transactions(
-                  originAcctFieldText,
+            //Create transaction object to reflect penalty
+            Transactions newTrans = new Transactions(
+                originAcctFieldText,
+                "penalty",
+                "Penalized $15.00 from account " + originChecking.getAccountId() + " for stopping a check.",
+                currentDate
+            );
+
+            //add transaction to log
+            getLoginController().getTransactionLog().add(newTrans);
+
+            //remove check from pending
+            getLoginController().getPendingChecks().remove(stoppedCheck);
+
+            //write the data
+            getLoginController().writeBankData();
+
+            // create a confirmation screen
+            ConfirmationController confirmationController = new ConfirmationController(
+                getCurrentStage(),
+                getLoginController(),
+                getMainPage(),
+                "Congratulations, you stopped check " + checkNumberText + ".");
+
+            confirmationController.showStage();
+          } else {
+            //There wasn't enough money. Need to overdraft.
+            double originalCheckingBal = originChecking.getCurrentBalance();
+            double overdraftAmount = 15 - originalCheckingBal;
+            /*
+             * Check if there is a backup savings and that the savings
+             * has enough to cover the rest
+             */
+            if (
+                !originChecking.getBackupAccountId().equals("n/a") &&
+                    (overdraftAmount <= getLoginController().findSavingsByID(originChecking.getBackupAccountId()).getAccountBalance())
+            ) {
+              //there is enough money in savings
+              Savings backUpSavings = getLoginController().findSavingsByID(originChecking.getBackupAccountId());
+
+              //Withdraw from checking and savings
+              originChecking.setCurrentBalance(0);
+              originChecking.setInterest("n/a");
+              originChecking.setAccountType("Regular");
+              backUpSavings.withdraw(overdraftAmount);
+              originChecking.setOverdrafts(originChecking.getOverdrafts() + 1);
+
+              //this formats the money amount into currency
+              NumberFormat formatter = NumberFormat.getCurrencyInstance();
+              String formattedOverdraft = formatter.format(overdraftAmount);
+              String formattedOriginalChecking = formatter.format(originalCheckingBal);
+
+              //Create 2 transaction objects
+              Transactions newTrans1 = new Transactions(
+                  originChecking.getAccountId(),
                   "penalty",
-                  "Penalized $15.00 from account " + originChecking.getAccountId(),
+                  "Penalized " + formattedOriginalChecking + " from account " + originChecking.getAccountId() + ".",
+                  currentDate
+              );
+
+              Transactions newTrans2 = new Transactions(
+                  backUpSavings.getAccountId(),
+                  "penalty",
+                  "Penalized " + formattedOverdraft + " from account " + backUpSavings.getAccountId() + " through overdraft.",
                   currentDate
               );
 
               //add transaction to log
-              getLoginController().getTransactionLog().add(newTrans);
+              getLoginController().getTransactionLog().add(newTrans1);
+              getLoginController().getTransactionLog().add(newTrans2);
 
               //remove check from pending
               getLoginController().getPendingChecks().remove(stoppedCheck);
@@ -317,111 +383,42 @@ public class ManagerChecksController extends Controller {
                   getCurrentStage(),
                   getLoginController(),
                   getMainPage(),
-                  "Congratulations, you stopped check " + checkNumberText + ".");
+                  "Congratulations, you have stopped check " + checkNumberText + ".");
 
               confirmationController.showStage();
+
             } else {
-              //There wasn't enough money. Need to overdraft.
-              double originalCheckingBal = originChecking.getCurrentBalance();
-              double overdraftAmount = 15 - originalCheckingBal;
-              /*
-               * Check if there is a backup savings and that the savings
-               * has enough to cover the rest
-               */
-              if (
-                  !originChecking.getBackupAccountId().equals("n/a") &&
-                      (overdraftAmount <= getLoginController().findSavingsByID(originChecking.getBackupAccountId()).getAccountBalance())
-              ) {
-                //there is enough money in savings
-                Savings backUpSavings = getLoginController().findSavingsByID(originChecking.getBackupAccountId());
+              //there was not enough in that backup account
+              // create an alert
+              Alert a = new Alert(Alert.AlertType.WARNING);
+              a.setTitle("Not enough money.");
+              a.setHeaderText("Check not stopped.");
+              a.setContentText("Not enough money in account, even with overdraft, to stop check. Contact account owner.");
 
-                //Withdraw from checking and savings
-                originChecking.setCurrentBalance(0);
-                originChecking.setInterest("n/a");
-                originChecking.setAccountType("Regular");
-                backUpSavings.withdraw(overdraftAmount);
-
-                //this formats the money amount into currency
-                NumberFormat formatter = NumberFormat.getCurrencyInstance();
-                String formattedOverdraft = formatter.format(overdraftAmount);
-                String formattedOriginalChecking = formatter.format(originalCheckingBal);
-
-                //Create 2 transaction objects
-                Transactions newTrans1 = new Transactions(
-                    originAcctFieldText,
-                    "penalty",
-                    "Penalized " + formattedOriginalChecking + " from account " + originChecking.getAccountId() + ".",
-                    currentDate
-                );
-
-                Transactions newTrans2 = new Transactions(
-                    backUpSavings.getAccountId(),
-                    "penalty",
-                    "Penalized " + formattedOverdraft + " from account " + backUpSavings.getAccountId() + " through overdraft.",
-                    currentDate
-                );
-
-                //add transaction to log
-                getLoginController().getTransactionLog().add(newTrans1);
-                getLoginController().getTransactionLog().add(newTrans2);
-
-                //remove check from pending
-                getLoginController().getPendingChecks().remove(stoppedCheck);
-
-                //write the data
-                getLoginController().writeBankData();
-
-                // create a confirmation screen
-                ConfirmationController confirmationController = new ConfirmationController(
-                    getCurrentStage(),
-                    getLoginController(),
-                    getMainPage(),
-                    "Congratulations, you have stopped check " + checkNumberText + ".");
-
-                confirmationController.showStage();
-
-              } else {
-                //there was not enough in that backup account
-                // create an alert
-                Alert a = new Alert(Alert.AlertType.WARNING);
-                a.setTitle("Not enough money.");
-                a.setHeaderText("Check not stopped.");
-                a.setContentText("Not enough money in account, even with overdraft, to stop check. Contact account owner.");
-
-                // show the dialog
-                a.show();
-              }
+              // show the dialog
+              a.show();
             }
-
-          } else {
-            //information was entered incorrectly
-            Alert a = new Alert(Alert.AlertType.WARNING);
-            a.setTitle("Invalid input");
-            a.setHeaderText("Check not processed");
-            a.setContentText("Please check account numbers on input. They do not match a check.");
-
-            // show the dialog
-            a.show();
           }
 
         } else {
-          //the accounts are the same.
+          //something was not entered correctly
           // create an alert
           Alert a = new Alert(Alert.AlertType.WARNING);
           a.setTitle("Invalid input");
-          a.setHeaderText("Check not processed");
-          a.setContentText("Contact owner. Cannot send checks to the same account it came from.");
+          a.setHeaderText("Check not stopped");
+          a.setContentText("Entered information does not match a check needing to be processed.");
 
           // show the dialog
           a.show();
         }
+
 
       } else {
         //There wasn't a linked account
         // create an alert
         Alert a = new Alert(Alert.AlertType.WARNING);
         a.setTitle("Invalid input");
-        a.setHeaderText("Check not processed");
+        a.setHeaderText("Check not stopped");
         a.setContentText("Origin account number does not link to current checking account OR enter \"n/a\" for destination.");
 
         // show the dialog
@@ -465,6 +462,7 @@ public class ManagerChecksController extends Controller {
     amountCashCol.setCellValueFactory(new PropertyValueFactory<Checks, Double>("amountCash"));
     checkNumberCol.setCellValueFactory(new PropertyValueFactory<Checks, String>("checkNumber"));
     dateCol.setCellValueFactory(new PropertyValueFactory<Checks, String>("date"));
+    memoCol.setCellValueFactory(new PropertyValueFactory<Checks, String>("memo"));
 
     //bind list into the table
     checkData.setItems(FXCollections.observableArrayList(getLoginController().getPendingChecks()));

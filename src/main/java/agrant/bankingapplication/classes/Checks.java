@@ -18,12 +18,17 @@ public class Checks {
     @CsvBindByName(column = "date")
     private String date;
 
-    public Checks(String originAccountID, double amountCash, String checkNumber, String date, String destinationAccountID){
+    @CsvBindByName(column = "memo")
+    private String memo;
+
+
+    public Checks(String originAccountID, double amountCash, String checkNumber, String date, String destinationAccountID, String memo){
         this.originAccountID = originAccountID;
         this.amountCash = amountCash;
         this.checkNumber = checkNumber;
         this.date = date;
         this.destinationAccountID = destinationAccountID;
+        this.memo = memo;
     }
 
     public Checks(){}
@@ -44,7 +49,7 @@ public class Checks {
     public double getAmountCash() {
         return amountCash;
     }
-
+    public String getMemo() {return memo; }
     //_____________Setters_______________
     public void setOriginAccountID(String originAccountID) {
         this.originAccountID = originAccountID;
@@ -58,6 +63,7 @@ public class Checks {
     public void setDestinationAccountID(String destinationAccountID) {
         this.destinationAccountID = destinationAccountID;
     }
+    public void setMemo(String memo) {this.memo = memo;}
     public void setAmountCash(double amountCash) {
         this.amountCash = amountCash;
     }
@@ -70,6 +76,7 @@ public class Checks {
             ", amountCash=" + amountCash +
             ", checkNumber='" + checkNumber + '\'' +
             ", date='" + date + '\'' +
+            ", memo='" + memo + '\'' +
             '}';
     }
 }

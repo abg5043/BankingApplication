@@ -96,9 +96,15 @@ public class Checking {
                 if(this.currentBalance >= 1000) {
                     this.accountType = "Gold";
                     //check if there is backup savings
-                    Savings linkedSavings = loginController.findSavingsByID(loginController.getCurrentUser().getSSN() + "_s");
+                    Savings linkedSavings = loginController.findSavingsByID(backupAccountId);
                     if(linkedSavings != null) {
-                        this.interest = String.valueOf(0.5 * linkedSavings.getInterestRate());
+                        //linked savings, so interest is calculated
+                        double rate = 0.5 * linkedSavings.getInterestRate();
+                        rate = Math.round(rate *100.0)/100.0;
+                        this.interest = String.valueOf(rate);
+                    } else {
+                        //no linked savings, so no interest
+                        this.interest = "n/a";
                     }
                 }
                 return true;
@@ -136,13 +142,27 @@ public class Checking {
         }
     }
 
-    public Boolean monthlyDeposit(double cashAmount) {
+    public Boolean monthlyDeposit(double cashAmount, LoginController loginController) {
         if(this.accountType.equals("Regular")) {
             //"That's my bank" type of account has 75c per transaction
             if(cashAmount < 0.75) {
                 return false;
             } else {
                 this.currentBalance += (cashAmount - 0.75);
+                if(this.currentBalance >= 1000) {
+                    this.accountType = "Gold";
+                    //check if there is backup savings
+                    Savings linkedSavings = loginController.findSavingsByID(this.backupAccountId);
+                    if(linkedSavings != null) {
+                        //linked savings, so interest is calculated
+                        double rate = 0.5 * linkedSavings.getInterestRate();
+                        rate = Math.round(rate *100.0)/100.0;
+                        this.interest = String.valueOf(rate);
+                    } else {
+                        //no linked savings, so no interest
+                        this.interest = "n/a";
+                    }
+                }
                 return true;
             }
         } else {

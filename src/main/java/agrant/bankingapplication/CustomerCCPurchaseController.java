@@ -1,8 +1,5 @@
 package agrant.bankingapplication;
 
-import agrant.bankingapplication.classes.Checking;
-import agrant.bankingapplication.classes.Loans;
-import agrant.bankingapplication.classes.Savings;
 import agrant.bankingapplication.classes.Transactions;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -80,8 +77,7 @@ public class CustomerCCPurchaseController extends Controller {
                     Alert a = new Alert(Alert.AlertType.WARNING);
                     a.setTitle("Payment Failed");
                     a.setHeaderText("Amount exceeds limit");
-                    //TODO: Maybe change this
-                    a.setContentText("Please get better spending habits.");
+                    a.setContentText("You cannot spend more than your credit limit.");
 
                     // show the dialog
                     a.show();

@@ -53,13 +53,20 @@ public class TellerTransferController extends Controller {
         //check that from account is valid
         if (
             getLoginController().hasValidSavingsAccount(fromID) ||
-                getLoginController().hasValidCheckingAccount(fromID)
+            getLoginController().hasValidCheckingAccount(fromID) ||
+            getLoginController().hasValidCDAccount(fromID)
         ) {
           //check the type of from account
           if (fromID.substring(9, 11).equals("_s")) {
             //We are transferring from a savings, check that the other is a checking
             if (getLoginController().hasValidCheckingAccount(toID)) {
-              Savings originSavings = getLoginController().findSavingsByID(fromID);
+              Savings originSavings;
+              if(getLoginController().findSavingsByID(fromID) != null) {
+                //this is a savings
+                originSavings = getLoginController().findSavingsByID(fromID);
+              } else {
+                originSavings = getLoginController().findCDByID(fromID);
+              }
               Checking toChecking = getLoginController().findCheckingByID(toID);
 
               //Withdraw first. This only runs if there is enough money
@@ -88,17 +95,33 @@ public class TellerTransferController extends Controller {
                   //write the data
                   getLoginController().writeBankData();
 
-                  // create a confirmation screen
-                  ConfirmationController confirmationController = new ConfirmationController(
-                      getCurrentStage(),
-                      getLoginController(),
-                      getMainPage(),
-                      "Congratulations, you transferred " + formattedTransferredMoney +
-                          " from account number " + fromID + " to account number " +
-                          toID + "."
-                  );
+                  if(originSavings.isCD() && LocalDate.parse(originSavings.getDueDate(), formatters).isAfter(LocalDate.now())) {
+                    //this was an early withdrawal
+                    // create a confirmation screen
+                    ConfirmationController confirmationController = new ConfirmationController(
+                        getCurrentStage(),
+                        getLoginController(),
+                        getMainPage(),
+                        "Congratulations, you transferred " + formattedTransferredMoney +
+                            " from account number " + fromID + " to account number " +
+                            toID + "." + "\n\nNote that we took a 20% penalty for early withdrawal from a CD."
+                    );
 
-                  confirmationController.showStage();
+                    confirmationController.showStage();
+
+                  } else {
+                    // create a confirmation screen
+                    ConfirmationController confirmationController = new ConfirmationController(
+                        getCurrentStage(),
+                        getLoginController(),
+                        getMainPage(),
+                        "Congratulations, you transferred " + formattedTransferredMoney +
+                            " from account number " + fromID + " to account number " +
+                            toID + "."
+                    );
+
+                    confirmationController.showStage();
+                  }
                 } else {
                   // create an alert
                   Alert a = new Alert(Alert.AlertType.WARNING);
@@ -198,7 +221,7 @@ public class TellerTransferController extends Controller {
           Alert a = new Alert(Alert.AlertType.WARNING);
           a.setTitle("Money Not Transferred");
           a.setHeaderText("Invalid ID");
-          a.setContentText("Please ensure you use valid ID for \"from\" account that isn't a CD.");
+          a.setContentText("Please ensure you use valid ID for \"from\" account.");
 
           // show the dialog
           a.show();

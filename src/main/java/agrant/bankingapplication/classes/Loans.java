@@ -1,15 +1,12 @@
 package agrant.bankingapplication.classes;
 
-import agrant.bankingapplication.ConfirmationController;
 import com.opencsv.bean.CsvBindByName;
-import javafx.scene.control.Alert;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Loans {
     @CsvBindByName(column = "account_id")

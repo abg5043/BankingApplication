@@ -222,6 +222,7 @@ public class TellerCreditController extends Controller {
               targetedChecking.setInterest("n/a");
               targetedChecking.setAccountType("Regular");
               backUpSavings.withdraw(overdraftAmount);
+              targetedChecking.setOverdrafts(targetedChecking.getOverdrafts() + 1);
 
               String formattedChecking = formatter.format(originalCheckingBalance);
               String formattedOverdraft = formatter.format(overdraftAmount);
@@ -229,7 +230,7 @@ public class TellerCreditController extends Controller {
 
               //Create two transaction objects
               Transactions newTrans1 = new Transactions(
-                  backUpSavings.getAccountId(),
+                  targetedChecking.getAccountId(),
                   "withdraw",
                   "Withdrew " + formattedChecking + " from account " + targetedChecking.getAccountId() + ".",
                   currentDate
@@ -237,7 +238,7 @@ public class TellerCreditController extends Controller {
 
               //Create two transaction objects
               Transactions newTrans2 = new Transactions(
-                  targetedChecking.getAccountId(),
+                  backUpSavings.getAccountId(),
                   "withdraw",
                   "Withdrew " + formattedOverdraft + " from account " + backUpSavings.getAccountId() + ".",
                   currentDate

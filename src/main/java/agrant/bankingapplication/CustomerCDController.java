@@ -1,7 +1,5 @@
 package agrant.bankingapplication;
 
-import agrant.bankingapplication.classes.Checking;
-import agrant.bankingapplication.classes.Loans;
 import agrant.bankingapplication.classes.Savings;
 import agrant.bankingapplication.classes.Transactions;
 
@@ -24,8 +22,6 @@ public class CustomerCDController extends Controller {
     private TextArea accountInfoArea;
 
     @FXML
-    private Button depositButton;
-    @FXML
     private Button withdrawButton;
     @FXML
     private TextArea mainTextBox;
@@ -33,45 +29,6 @@ public class CustomerCDController extends Controller {
     private Label welcomeLabel;
     @FXML
     private TextField moneyField;
-
-    @FXML
-    void depositClicked(ActionEvent event) {
-        LocalDate date = LocalDate.now();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-        String currentDate = date.format(dateFormatter);
-
-        try {
-            double depAmount = Double.parseDouble(this.moneyField.getText());
-            NumberFormat numberFormatter = NumberFormat.getCurrencyInstance();
-            String formattedDepAmount = numberFormatter.format(depAmount);
-            String accID = String.format("%s_s", this.getLoginController().getCurrentUser().getSSN());
-            if (this.getLoginController().hasValidCDAccount(accID)) {
-                this.getLoginController().findCDByID(accID).deposit(depAmount);
-                this.confirmDeposit(currentDate, accID, formattedDepAmount);
-            } else {
-                Alert a = new Alert(AlertType.WARNING);
-                a.setTitle("Invalid Account Type");
-                a.setHeaderText("Deposit not processed.");
-                a.setContentText("Account is not CD account.");
-                a.show();
-            }
-        } catch (NumberFormatException var11) {
-            Alert a = new Alert(AlertType.WARNING);
-            a.setTitle("Money Not Credited");
-            a.setHeaderText("Invalid formatting");
-            a.setContentText("Please ensure you use numbers in numeric fields.");
-            a.show();
-        }
-
-    }
-
-    private void confirmDeposit(String currentDate, String accID, String formattedIncomingMoney) {
-        Transactions newTrans = new Transactions(accID, "deposit", "Deposited " + formattedIncomingMoney + " into account.", currentDate);
-        this.getLoginController().getTransactionLog().add(newTrans);
-        this.getLoginController().writeBankData();
-        ConfirmationController confirmationController = new ConfirmationController(this.getCurrentStage(), this.getLoginController(), this.getMainPage(), "Congratulations, you deposited " + formattedIncomingMoney + " to account number " + accID + ".");
-        confirmationController.showStage();
-    }
 
     @FXML
     void withdrawClicked(ActionEvent event) {
@@ -93,7 +50,7 @@ public class CustomerCDController extends Controller {
             }
         } catch (NumberFormatException nfe) {
             Alert a = new Alert(AlertType.WARNING);
-            a.setTitle("Money Not Credited");
+            a.setTitle("Money Not Withdrawn");
             a.setHeaderText("Invalid formatting");
             a.setContentText("Please ensure you use numbers in numeric fields.");
             a.show();
@@ -106,18 +63,10 @@ public class CustomerCDController extends Controller {
             Transactions newTrans = new Transactions(accID, "withdraw", "Withdrew " + formattedOutgoingMoney + " from account " + targetedAccounted.getAccountId(), currentDate);
             this.getLoginController().getTransactionLog().add(newTrans);
             this.getLoginController().writeBankData();
-            ConfirmationController confirmationController = new ConfirmationController(this.getCurrentStage(), this.getLoginController(), this.getMainPage(), "Congratulations, you credited " + formattedOutgoingMoney + " to account number " + accID + ". " + appendedMessage);
+            ConfirmationController confirmationController = new ConfirmationController(this.getCurrentStage(), this.getLoginController(), this.getMainPage(), "Congratulations, you withdrew " + formattedOutgoingMoney + " from account number " + accID + ". " + appendedMessage);
             confirmationController.showStage();
         }
 
-    }
-
-    private void confirmWithdraw(String currentDate, String accID, String formattedIncomingMoney) {
-        Transactions newTrans = new Transactions(accID, "withdraw", "Withdrew " + formattedIncomingMoney + " from account.", currentDate);
-        this.getLoginController().getTransactionLog().add(newTrans);
-        this.getLoginController().writeBankData();
-        ConfirmationController confirmationController = new ConfirmationController(this.getCurrentStage(), this.getLoginController(), this.getMainPage(), "Congratulations, you withdrew " + formattedIncomingMoney + " from account number " + accID + ".");
-        confirmationController.showStage();
     }
 
     private void setAccountInfoArea(String text) {

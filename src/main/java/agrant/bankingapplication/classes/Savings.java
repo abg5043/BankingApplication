@@ -77,6 +77,7 @@ public class Savings {
         if(isCD() && LocalDate.parse(this.dueDate, newFormatter).isAfter(LocalDate.now())) {
             //you accrue a 20% penalty for early withdrawal
             cashAmount *= 1.2;
+            cashAmount = Math.round(cashAmount*100.0)/100.0;
         }
 
         if(this.accountBalance >= cashAmount) {

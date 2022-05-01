@@ -241,6 +241,7 @@ public class CustomerLoanCreditCardController extends Controller {
                         fromChecking.setInterest("n/a");
                         fromChecking.setAccountType("Regular");
                         backUpSavings.withdraw(overdraftAmount);
+                        fromChecking.setOverdrafts(fromChecking.getOverdrafts() + 1);
 
                         //deposit into cc
                         loan.ccOnetimePay(payAmt);
@@ -261,7 +262,7 @@ public class CustomerLoanCreditCardController extends Controller {
                         );
 
                         Transactions newTrans2 = new Transactions(
-                            fromChecking.getAccountId(),
+                            backUpSavings.getAccountId(),
                             "withdraw",
                             "Withdrew " + formattedOverdraft + " from account " + backUpSavings.getAccountId() + ".",
                             currentDate
