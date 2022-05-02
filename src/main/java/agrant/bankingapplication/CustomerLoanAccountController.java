@@ -36,7 +36,7 @@ public class CustomerLoanAccountController extends Controller {
         //get account ID
         String accID = String.format("%s_l", getLoginController().getCurrentUser().getSSN());
 
-        if(!getLoginController().hasValidLoanApplication(accID) || !getLoginController().hasValidLoanAccount(accID)) {
+        if(!getLoginController().hasValidLoanApplication(accID) && !getLoginController().hasValidLoanAccount(accID)) {
             CustomerNewLoanController customerNewLoanController = new CustomerNewLoanController(
                     this.getCurrentStage(),
                     this.getLoginController(),
@@ -107,12 +107,33 @@ public class CustomerLoanAccountController extends Controller {
 
     @FXML
     void creditCardClicked(ActionEvent event) {
-        CustomerLoanCreditCardController customerLoanCreditCardController = new CustomerLoanCreditCardController(
-                getCurrentStage(),
-                getLoginController(),
-            (CustomerOpeningController) this.getMainPage());
+        //get account ID
+        String accID = String.format("%s_l", getLoginController().getCurrentUser().getSSN());
+        String checkAccID = String.format("%s_c", getLoginController().getCurrentUser().getSSN());
 
-        customerLoanCreditCardController.showStage();
+        //Check if user has a valid loan already
+        if(getLoginController().hasValidLoanAccount(accID)){
+            if(getLoginController().findLoanByID(accID).getLoanType().equals("Credit")) {
+                CustomerLoanCreditCardController customerLoanCreditCardController = new CustomerLoanCreditCardController(
+                        getCurrentStage(),
+                        getLoginController(),
+                        (CustomerOpeningController) this.getMainPage());
+
+                customerLoanCreditCardController.showStage();
+            }else{
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setTitle("Unable to proceed.");
+                a.setHeaderText("Account Mismatch");
+                a.setContentText("Incorrect account type found. Please select correct account.");
+                a.show();
+            }
+        }else{
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setTitle("Unable to proceed.");
+            a.setHeaderText("Account not found");
+            a.setContentText("Unable to locate account.");
+            a.show();
+        }
     }
 
     public CustomerLoanAccountController(Stage currentStage, LoginController loginController, CustomerOpeningController customerOpeningController) {

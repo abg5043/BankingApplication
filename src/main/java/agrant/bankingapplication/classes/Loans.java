@@ -141,9 +141,7 @@ public class Loans {
     public boolean makeLoanPayment(double payAmt){
         if(this.loanType.equals("Mortgage") || this.loanType.equals("Short-Term")) {
             //get current date
-            LocalDate date = LocalDate.now();
             DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-            String currentDate = date.format(formatters);
             //parse next payment due date to compare to current date
             LocalDate dueDate = LocalDate.parse(this.nextPaymentDueDate, formatters);
             String formattedDueDate = formatters.format(dueDate);
@@ -151,9 +149,6 @@ public class Loans {
             if((this.currentBalance - payAmt) >= 0) {
                 this.currentBalance -= payAmt;
                 this.lastPaymentMade = formattedDueDate;
-                if (this.monthsLeft > 0 && this.currentBalance == 0) {
-                    this.monthsLeft--;
-                }
 
                 return true;
             }else{
@@ -177,30 +172,6 @@ public class Loans {
                 return false;
             }
         }else{
-            return false;
-        }
-    }
-
-    public boolean ccPayInFull(double payAmt){
-        if(this.loanType.equals("Credit")) {
-            //get current date
-            LocalDate date = LocalDate.now();
-            DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-            String currentDate = date.format(formatters);
-            //parse next payment due date to compare to current date
-            LocalDate dueDate = LocalDate.parse(this.nextPaymentDueDate, formatters);
-            String formattedDueDate = formatters.format(dueDate);
-
-            if((this.currentBalance - payAmt) == 0) {
-                this.currentBalance = 0;
-
-                return true;
-            }else{
-                //Would result in overpayment or underpayment
-                return false;
-            }
-        }else{
-            //called for non-credit account
             return false;
         }
     }

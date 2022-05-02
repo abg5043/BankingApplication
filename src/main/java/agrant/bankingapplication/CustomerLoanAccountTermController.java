@@ -58,7 +58,8 @@ public class CustomerLoanAccountTermController extends Controller {
                 String formattedPayAmt = formatter.format(payAmt);
 
                 //proceed if loan type matches the button the user clicked
-                if((loan.getLoanType().equals("Mortgage") && isMortgage) ||
+                if((loan.getLoanType().equals("Mortgage-15") && isMortgage) ||
+                        (loan.getLoanType().equals("Mortgage-30") && isMortgage) ||
                         (loan.getLoanType().equals("Short-Term") && !isMortgage)){
                     //Pay specified amount to loan account
 
@@ -127,9 +128,6 @@ public class CustomerLoanAccountTermController extends Controller {
 
                                 confirmationController.showStage();
                             }else{
-                                //write the data
-                                getLoginController().writeBankData();
-
                                 // create a confirmation screen
                                 ConfirmationController confirmationController = new ConfirmationController(
                                     getCurrentStage(),
@@ -142,6 +140,8 @@ public class CustomerLoanAccountTermController extends Controller {
 
                                 confirmationController.showStage();
                             }
+                            //write the data
+                            getLoginController().writeBankData();
                         }
                     } else {
                         //we do not have enough money
