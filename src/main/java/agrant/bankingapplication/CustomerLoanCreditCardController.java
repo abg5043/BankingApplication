@@ -56,44 +56,63 @@ public class CustomerLoanCreditCardController extends Controller {
         String accID = String.format("%s_l", getLoginController().getCurrentUser().getSSN());
         String checkAccID = String.format("%s_c", getLoginController().getCurrentUser().getSSN());
 
-        //Check if user has a valid loan already
-        if(getLoginController().hasValidLoanAccount(accID)) {
-            try{
-                //get current date
-                LocalDate date = LocalDate.now();
-                DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-                String currentDate = date.format(formatters);
+        //Create and show confirmation and await user input to avoid accidental financial catastrophe
+        Alert confirmChoice = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmChoice.setTitle("Confirm Choice.");
+        confirmChoice.setHeaderText("Are you sure you wish to proceed?");
+        confirmChoice.setContentText("Choose OK to pay account in full.");
 
-                //parse next payment due date to compare to current date
-                LocalDate dueDate = LocalDate.parse(
-                    getLoginController().findLoanByID(accID).getNextPaymentDueDate(),
-                    formatters
-                );
+        confirmChoice.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                //Check if user has a valid loan already
+                if(getLoginController().hasValidLoanAccount(accID)) {
+                    try{
+                        //get current date
+                        LocalDate date = LocalDate.now();
+                        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+                        String currentDate = date.format(formatters);
 
-                Loans loan = getLoginController().findLoanByID(accID);
-                double payAmt = loan.getCurrentPaymentAmount();
+                        //parse next payment due date to compare to current date
+                        LocalDate dueDate = LocalDate.parse(
+                            getLoginController().findLoanByID(accID).getNextPaymentDueDate(),
+                            formatters
+                        );
 
-                //this formats the money amount into currency
-                NumberFormat formatter = NumberFormat.getCurrencyInstance();
-                String formattedPayAmt = formatter.format(payAmt);
+                        Loans loan = getLoginController().findLoanByID(accID);
+                        double payAmt = loan.getCurrentPaymentAmount();
 
-                //Pay loan
-                payCC(loan, payAmt, accID, checkAccID, dueDate, date, currentDate, formattedPayAmt, formatter);
-            }catch(NumberFormatException nfe){
-                Alert a = new Alert(Alert.AlertType.WARNING);
-                a.setTitle("Payment Not Processed");
-                a.setHeaderText("Invalid formatting");
-                a.setContentText("Please ensure you use numbers in numeric fields.");
-                a.show();
+                        //Ensure account has enough money after potential late fee
+                        if((getLoginController().findCheckingByID(accID).getCurrentBalance() >= (payAmt + 75))){
+
+                            //this formats the money amount into currency
+                            NumberFormat formatter = NumberFormat.getCurrencyInstance();
+                            String formattedPayAmt = formatter.format(payAmt);
+
+                            //Pay loan
+                            payCC(loan, payAmt, accID, checkAccID, dueDate, date, currentDate, formattedPayAmt, formatter);
+                        }else{
+                            Alert a = new Alert(Alert.AlertType.WARNING);
+                            a.setTitle("Unable to Make Payment.");
+                            a.setHeaderText("Account balance too low");
+                            a.setContentText("Unable to locate account.");
+                            a.show();
+                        }
+                    }catch(NumberFormatException nfe){
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.setTitle("Payment Not Processed");
+                        a.setHeaderText("Invalid formatting");
+                        a.setContentText("Please ensure you use numbers in numeric fields.");
+                        a.show();
+                    }
+                }else{
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.setTitle("Unable to proceed.");
+                    a.setHeaderText("Account not found");
+                    a.setContentText("Unable to locate account.");
+                    a.show();
+                }
             }
-        }else{
-            Alert a = new Alert(Alert.AlertType.WARNING);
-            a.setTitle("Unable to proceed.");
-            a.setHeaderText("Account not found");
-            a.setContentText("Unable to locate account.");
-            a.show();
-        }
-
+        });
     }
 
     @FXML
@@ -124,6 +143,19 @@ public class CustomerLoanCreditCardController extends Controller {
 
                 //Pay loan
                 payCC(loan, payAmt, accID, checkAccID, dueDate, date, currentDate, formattedPayAmt, formatter);
+
+                //Create transaction object
+                Transactions newTrans = new Transactions(
+                        accID,
+                        "payment",
+                        "Deposited " + formattedPayAmt + " into account.",
+                        currentDate
+                );
+
+                //add transaction to log
+                getLoginController().getTransactionLog().add(newTrans);
+                //write the data
+                getLoginController().writeBankData();
             }catch(NumberFormatException nfe){
                 Alert a = new Alert(Alert.AlertType.WARNING);
                 a.setTitle("Payment Not Processed");
@@ -196,8 +228,8 @@ public class CustomerLoanCreditCardController extends Controller {
                                 getLoginController(),
                                 getMainPage(),
                                 "Congratulations, you paid " + formattedPayAmt +
-                                    " from account number " + checkAccID + " loan " +
-                                    accID + " and you have fully paid off your loan! Congrats!"
+                                    " from account number " + checkAccID + " to loan " +
+                                    accID + " and you have fully paid off your loan!"
                             );
 
                             confirmationController.showStage();
