@@ -41,7 +41,6 @@ public class CustomerSavingsController extends Controller {
 
       if (this.getLoginController().hasValidSavingsAccount(accID)) {
         if (this.getLoginController().findSavingsByID(accID).withdraw(withdrawAmount)) {
-          this.confirmWithdraw(currentDate, accID, formattedWDAmount);
 
           Transactions newTrans = new Transactions(
               targetedSavings.getAccountId(),
@@ -72,14 +71,6 @@ public class CustomerSavingsController extends Controller {
       a.show();
     }
 
-  }
-
-  private void confirmWithdraw(String currentDate, String accID, String formattedIncomingMoney) {
-    Transactions newTrans = new Transactions(accID, "withdraw", "Withdrew " + formattedIncomingMoney + " from account.", currentDate);
-    this.getLoginController().getTransactionLog().add(newTrans);
-    this.getLoginController().writeBankData();
-    ConfirmationController confirmationController = new ConfirmationController(this.getCurrentStage(), this.getLoginController(), this.getMainPage(), "Congratulations, you withdrew " + formattedIncomingMoney + " from account number " + accID + ".");
-    confirmationController.showStage();
   }
 
   @FXML
