@@ -59,7 +59,7 @@ public class Loans {
         this.interestRate = interestRate;
         this.nextPaymentDueDate = nextPaymentDueDate;
         this.currentPaymentAmount = currentPaymentDue;
-        this.dateBillSent = nextPaymentDueDate;
+        this.dateBillSent = "n/a";
         this.lastPaymentMade = lastPaymentMade;
         this.missedPaymentFlag = missedPaymentFlag;
         this.loanType = loanType;
@@ -139,15 +139,21 @@ public class Loans {
     }
 
     public boolean makeLoanPayment(double payAmt){
-        if(this.loanType.equals("Mortgage") || this.loanType.equals("Short-Term")) {
+        if(this.loanType.equals("Mortgage-15") ||
+                this.loanType.equals("Short-Term") ||
+                this.loanType.equals("Mortgage-15")
+        ) {
             //get current date
             DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
             //parse next payment due date to compare to current date
             LocalDate dueDate = LocalDate.parse(this.nextPaymentDueDate, formatters);
+            LocalDate nextDue = LocalDate.parse(this.nextPaymentDueDate, formatters).plusMonths(1);
             String formattedDueDate = formatters.format(dueDate);
+            String formattedNextDue = formatters.format(nextDue);
 
             if((this.currentBalance - payAmt) >= 0) {
-                this.currentBalance -= payAmt;
+                this.currentBalance = Math.round((this.currentBalance - payAmt) * 100.0) / 100.0;
+                this.nextPaymentDueDate = formattedNextDue;
                 this.lastPaymentMade = formattedDueDate;
 
                 return true;
@@ -161,12 +167,18 @@ public class Loans {
         }
     }
 
-    public boolean makeCCPurchase(double payAmt){
+    public boolean makeCCPurchase(double payAmt, LocalDate date){
+        LocalDate dueDate = date.plusMonths(1);
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+        String formattedDueDate = dueDate.format(formatters);
+
         if(this.loanType.equals("Credit")){
             //Check that purchase doesn't exceed limit
             if((this.currentBalance + payAmt) <= this.creditLimit){
-                this.currentBalance += payAmt;
+                this.currentBalance = Math.round((this.currentBalance + payAmt) * 100.0) / 100.0;
+                this.currentPaymentAmount = Math.round((this.currentBalance / 4) * 100.0) / 100.0;
 
+                this.nextPaymentDueDate = formattedDueDate;
                 return true;
             }else{
                 return false;
@@ -178,20 +190,15 @@ public class Loans {
 
     public boolean ccOnetimePay(double payAmt){
         if(this.loanType.equals("Credit")) {
-            //get current date
-            LocalDate date = LocalDate.now();
             DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-            String currentDate = date.format(formatters);
-            //parse next payment due date to compare to current date
+            //parse next payment due date
             LocalDate dueDate = LocalDate.parse(this.nextPaymentDueDate, formatters);
             String formattedDueDate = formatters.format(dueDate);
 
             if((this.currentBalance - payAmt) >= 0) {
-                this.currentBalance -= payAmt;
+                this.currentBalance = Math.round((this.currentBalance - payAmt) * 100.0) / 100.0;
+                this.currentPaymentAmount = Math.round((this.currentBalance / 4) * 100.0) / 100.0;
                 this.lastPaymentMade = formattedDueDate;
-                if (this.monthsLeft > 0 && this.currentBalance == 0) {
-                    this.monthsLeft--;
-                }
 
                 return true;
             }else{
@@ -202,6 +209,41 @@ public class Loans {
             //called by non-credit account
             return false;
         }
+    }
+
+    public boolean makeMonthlyPayment() {
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+        //parse next payment due date to compare to current date
+        LocalDate dueDate = LocalDate.parse(this.nextPaymentDueDate, formatters);
+        String formattedDueDate = formatters.format(dueDate);
+        //Set next due date to a month from now
+        String formattedNextDueDate = formatters.format(dueDate.plusMonths(1));
+
+        //Ensure monthly payment doesn't over-pay
+        if (this.currentBalance - this.currentPaymentAmount >= 0) {
+            //If account is mortgage or short-term
+            if (this.loanType.equals("Short-Term") ||
+                    this.loanType.equals("Mortgage-15") ||
+                    this.loanType.equals("Mortgage-30")
+            ){
+                this.currentBalance -= this.currentPaymentAmount;
+                this.monthsLeft--;
+                this.lastPaymentMade = formattedDueDate;
+                this.nextPaymentDueDate = formattedNextDueDate;
+
+                return true;
+            } else if (this.loanType.equals("Credit")) {
+                this.currentBalance = Math.round((this.currentBalance - this.currentPaymentAmount) * 100.0) / 100.0;
+                this.currentPaymentAmount = Math.round((this.currentBalance / 4) * 100.0) / 100.0;
+                this.lastPaymentMade = formattedDueDate;
+                this.nextPaymentDueDate = formattedNextDueDate;
+
+                return true;
+            } else{
+                //Loan type is none of the above
+                return false;
+            }
+        }else return false;
     }
 
     /**
