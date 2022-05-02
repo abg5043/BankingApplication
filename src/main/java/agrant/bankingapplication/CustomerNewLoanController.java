@@ -178,7 +178,8 @@ public class CustomerNewLoanController extends Controller {
                 double interestRate = 0.017;
                 String formattedInterest = String.format("%.2f",(interestRate * 100));
 
-                double nextPaymentAmt = ((loanAmount/monthsLeft) + ((loanAmount/2) * (monthsLeft/12) * interestRate))/2;
+                double nextPaymentAmt = ((loanAmount/monthsLeft) + ((loanAmount/2.0) * (monthsLeft/12.0) * interestRate))/2.0;
+                nextPaymentAmt = Math.round(nextPaymentAmt * 100.0)/100.0;
 
                 //Create new loan object
                 Loans loanApp = new Loans(accID, loanAmount, Double.parseDouble(formattedInterest), formattedNextPaymentDate, nextPaymentAmt, "n/a", 0, loanType, -1, monthsLeft);

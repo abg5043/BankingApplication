@@ -51,7 +51,7 @@ public class CustomerCCPurchaseController extends Controller {
                     Transactions newTrans1 = new Transactions(
                             accID,
                             "purchase",
-                            "Paid " + paidAmt + " from credit account. Memo: " + memo,
+                            "Charged " + paidAmt + " from credit account. Memo: " + memo,
                             currentDate
                     );
 

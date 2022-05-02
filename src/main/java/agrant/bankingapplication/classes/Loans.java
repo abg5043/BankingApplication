@@ -250,7 +250,7 @@ public class Loans {
 
     @Override
     public String toString() {
-        return "Loans{" +
+        return
             "accountId='" + accountId + '\'' +
             ", currentBalance=" + currentBalance +
             ", interestRate=" + interestRate +
@@ -261,7 +261,6 @@ public class Loans {
             ", missedPaymentFlag=" + missedPaymentFlag +
             ", loanType='" + loanType + '\'' +
             ", creditLimit=" + creditLimit +
-            ", monthsLeft=" + monthsLeft +
-            '}';
+            ", monthsLeft=" + monthsLeft;
     }
 }
