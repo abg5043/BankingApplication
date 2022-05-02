@@ -27,7 +27,7 @@
                   <Font size="14.0" />
                </font>
                 </TextField>
-            <Label text="Please select mortgage term years below:">
+            <Label prefHeight="13.0" prefWidth="257.0" text="Choose Below if Applying for New Mortgage">
                <font>
                   <Font size="13.0" />
                </font>
@@ -35,7 +35,7 @@
                   <Insets bottom="-25.0" />
                </padding>
             </Label>
-            <ChoiceBox fx:id="mortgageLoanYearChoice" />
+            <ChoiceBox fx:id="mortgageLoanYearChoice" prefHeight="25.0" prefWidth="241.0" />
             </children>
         </VBox>
     </center>

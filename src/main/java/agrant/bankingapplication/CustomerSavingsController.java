@@ -41,6 +41,8 @@ public class CustomerSavingsController extends Controller {
 
       if (this.getLoginController().hasValidSavingsAccount(accID)) {
         if (this.getLoginController().findSavingsByID(accID).withdraw(withdrawAmount)) {
+          this.confirmWithdraw(currentDate, accID, formattedWDAmount);
+
           Transactions newTrans = new Transactions(
               targetedSavings.getAccountId(),
               "withdraw",
@@ -70,6 +72,14 @@ public class CustomerSavingsController extends Controller {
       a.show();
     }
 
+  }
+
+  private void confirmWithdraw(String currentDate, String accID, String formattedIncomingMoney) {
+    Transactions newTrans = new Transactions(accID, "withdraw", "Withdrew " + formattedIncomingMoney + " from account.", currentDate);
+    this.getLoginController().getTransactionLog().add(newTrans);
+    this.getLoginController().writeBankData();
+    ConfirmationController confirmationController = new ConfirmationController(this.getCurrentStage(), this.getLoginController(), this.getMainPage(), "Congratulations, you withdrew " + formattedIncomingMoney + " from account number " + accID + ".");
+    confirmationController.showStage();
   }
 
   @FXML
@@ -105,7 +115,7 @@ public class CustomerSavingsController extends Controller {
   }
 
   private void confirmDeposit(String currentDate, String accID, String formattedIncomingMoney) {
-    Transactions newTrans = new Transactions(accID, "deposit", "Deposited " + formattedIncomingMoney + " into account." + accID, currentDate);
+    Transactions newTrans = new Transactions(accID, "deposit", "Deposited " + formattedIncomingMoney + " into account.", currentDate);
     this.getLoginController().getTransactionLog().add(newTrans);
     this.getLoginController().writeBankData();
     ConfirmationController confirmationController = new ConfirmationController(this.getCurrentStage(), this.getLoginController(), this.getMainPage(), "Congratulations, you deposited " + formattedIncomingMoney + " to account number " + accID + ".");

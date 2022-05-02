@@ -19,12 +19,12 @@
                   <Insets bottom="50.0" left="50.0" right="50.0" />
                </VBox.margin>
             </TextArea>
-                <Label fx:id="amtOwedLabel" prefHeight="30.0" prefWidth="374.0" text="Enter an Amount and Select an Option:">
+                <Label fx:id="amtOwedLabel" prefHeight="30.0" prefWidth="159.0" text="Select an Option">
                     <font>
                         <Font name="System Bold" size="20.0" />
                     </font>
                 </Label>
-            <TextField fx:id="paymentAmountField" alignment="CENTER" prefHeight="31.0" prefWidth="253.0" promptText="Enter Loan Payment Amount">
+            <TextField alignment="CENTER" prefHeight="38.0" prefWidth="253.0" promptText="Enter Loan Payment Amount">
                <VBox.margin>
                   <Insets left="350.0" right="350.0" />
                </VBox.margin>

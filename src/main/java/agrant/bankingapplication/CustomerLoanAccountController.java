@@ -33,32 +33,22 @@ public class CustomerLoanAccountController extends Controller {
 
     @FXML
     void newLoanClicked(ActionEvent event) {
-        //get loan and checking account IDs
+        //get account ID
         String accID = String.format("%s_l", getLoginController().getCurrentUser().getSSN());
-        String checkAccID = String.format("%s_c", getLoginController().getCurrentUser().getSSN());
 
-        //Check if user has a valid checking account
-        if(getLoginController().hasValidCheckingAccount(checkAccID)) {
-            if (!getLoginController().hasValidLoanApplication(accID) && !getLoginController().hasValidLoanAccount(accID)) {
-                CustomerNewLoanController customerNewLoanController = new CustomerNewLoanController(
-                        this.getCurrentStage(),
-                        this.getLoginController(),
-                        (CustomerOpeningController) this.getMainPage()
-                );
+        if(!getLoginController().hasValidLoanApplication(accID) && !getLoginController().hasValidLoanAccount(accID)) {
+            CustomerNewLoanController customerNewLoanController = new CustomerNewLoanController(
+                    this.getCurrentStage(),
+                    this.getLoginController(),
+                (CustomerOpeningController) this.getMainPage()
+            );
 
-                customerNewLoanController.showStage();
-            } else {
-                Alert a = new Alert(Alert.AlertType.WARNING);
-                a.setTitle("Cannot create a new loan.");
-                a.setHeaderText("Existing Loan Account or Application.");
-                a.setContentText("Cannot create a new loan while valid loan account or application exists.");
-                a.show();
-            }
+            customerNewLoanController.showStage();
         }else {
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setTitle("Cannot create a new loan.");
-            a.setHeaderText("Checking account not found.");
-            a.setContentText("Please hava a manager create a checking account to proceed.");
+            a.setHeaderText("Existing Loan Account or Application.");
+            a.setContentText("Cannot create a new loan while valid loan account or application exists.");
             a.show();
         }
     }
