@@ -82,7 +82,7 @@ public class CustomerLoanCreditCardController extends Controller {
                         double payAmt = loan.getCurrentPaymentAmount();
 
                         //Ensure account has enough money after potential late fee
-                        if((getLoginController().findCheckingByID(accID).getCurrentBalance() >= (payAmt + 75))){
+                        if((getLoginController().findCheckingByID(checkAccID).getCurrentBalance() >= (payAmt + 75))){
 
                             //this formats the money amount into currency
                             NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -94,7 +94,7 @@ public class CustomerLoanCreditCardController extends Controller {
                             Alert a = new Alert(Alert.AlertType.WARNING);
                             a.setTitle("Unable to Make Payment.");
                             a.setHeaderText("Account balance too low");
-                            a.setContentText("Unable to locate account.");
+                            a.setContentText("Please add more money into checking to pay in full.");
                             a.show();
                         }
                     }catch(NumberFormatException nfe){
