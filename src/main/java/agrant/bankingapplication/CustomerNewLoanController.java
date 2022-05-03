@@ -160,7 +160,7 @@ public class CustomerNewLoanController extends Controller {
                     //Get selected loan term
                     int loanTerm = Integer.parseInt(mortgageLoanYearChoice.getSelectionModel().getSelectedItem().toString());
                     dueDate = currentDate.plusYears(loanTerm);
-                    loanType = loanType + "-"+ loanTerm;
+                    loanType = loanType + "-" + loanTerm;
                 } else {
                     //5 years for short-term loan
                     dueDate = currentDate.plusYears(5);
@@ -178,8 +178,8 @@ public class CustomerNewLoanController extends Controller {
                 double interestRate = 0.017;
                 String formattedInterest = String.format("%.2f",(interestRate * 100));
 
-                double nextPaymentAmt = ((loanAmount/monthsLeft) + ((loanAmount/2.0) * (monthsLeft/12.0) * interestRate))/2.0;
-                nextPaymentAmt = Math.round(nextPaymentAmt * 100.0)/100.0;
+                double nextPaymentAmt = ((loanAmount/monthsLeft) + ((loanAmount/2) * (monthsLeft/12) * interestRate))/2;
+                nextPaymentAmt = Math.round(nextPaymentAmt * 100.0) / 100.0;
 
                 //Create new loan object
                 Loans loanApp = new Loans(accID, loanAmount, Double.parseDouble(formattedInterest), formattedNextPaymentDate, nextPaymentAmt, "n/a", 0, loanType, -1, monthsLeft);
@@ -212,7 +212,7 @@ public class CustomerNewLoanController extends Controller {
                 double interestRate = 1.7;
 
                 //Create new loan object
-                Loans loanApp = new Loans(accID, 0.00, interestRate, formattedNextPaymentDate, 0.00, "n/a", 0, loanType, (int)loanAmount, -1);
+                Loans loanApp = new Loans(accID, 0.00, interestRate, "n/a", 0.00, "n/a", 0, loanType, (int)loanAmount, -1);
 
                 //Add loan to loan applications
                 getLoginController().getLoanApplications().add(loanApp);
@@ -253,7 +253,7 @@ public class CustomerNewLoanController extends Controller {
     @FXML
     private void initialize() {
         this.welcomeLabel.setText("Hello, " + this.getLoginController().getCurrentUser().getFirstName() + "!");
-        mortgageLoanYearChoice.setValue("Please Choose Mortgage Term (Years):");
+        mortgageLoanYearChoice.setValue("15");
         mortgageLoanYearChoice.setItems(mortgageChoices);
     }
 }

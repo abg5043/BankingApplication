@@ -45,13 +45,13 @@ public class CustomerCCPurchaseController extends Controller {
                 String formattedPaidAmt = formatter.format(paidAmt);
 
                 //Check that purchase doesn't exceed limit
-                if(getLoginController().findLoanByID(accID).makeCCPurchase(paidAmt)){
+                if(getLoginController().findLoanByID(accID).makeCCPurchase(paidAmt, date)){
 
                     //Create transaction object
                     Transactions newTrans1 = new Transactions(
                             accID,
                             "purchase",
-                            "Charged " + paidAmt + " from credit account. Memo: " + memo,
+                            "Paid " + paidAmt + " from credit account. Memo: " + memo,
                             currentDate
                     );
 
