@@ -186,7 +186,7 @@ public class CustomerSavingsController extends Controller {
   public CustomerSavingsController(Stage currentStage, LoginController loginController, CustomerOpeningController customerOpeningController) {
     super(currentStage, loginController, customerOpeningController);
     this.setCurrentViewFile("customer-savings.fxml");
-    this.setCurrentViewTitle("Loan Account");
+    this.setCurrentViewTitle("Savings Account");
     this.setNewScene(this, this.getCurrentViewFile(), this.getCurrentViewTitle());
     setAccountInfoArea(getLoginController().getCurrentUser().getSSN() + "_s");
   }

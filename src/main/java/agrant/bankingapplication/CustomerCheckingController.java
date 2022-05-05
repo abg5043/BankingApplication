@@ -304,7 +304,7 @@ public class CustomerCheckingController extends Controller {
     public CustomerCheckingController(Stage currentStage, LoginController loginController, CustomerOpeningController customerOpeningController) {
         super(currentStage, loginController, customerOpeningController);
         this.setCurrentViewFile("customer-checking.fxml");
-        this.setCurrentViewTitle("Loan Account");
+        this.setCurrentViewTitle("Checking Account");
         this.setNewScene(this, this.getCurrentViewFile(), this.getCurrentViewTitle());
         setAccountInfoArea(getLoginController().getCurrentUser().getSSN() + "_c");
 
