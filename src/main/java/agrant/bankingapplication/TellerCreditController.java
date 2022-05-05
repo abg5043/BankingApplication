@@ -15,6 +15,9 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Controller for teller screen that allows them to credit/debit accounts
+ */
 public class TellerCreditController extends Controller {
 
   @FXML
@@ -32,6 +35,9 @@ public class TellerCreditController extends Controller {
   @FXML
   private Label welcomeLabel;
 
+  /**
+   * Button that lets teller credit an account with money
+   */
   @FXML
   void creditClicked(ActionEvent event) {
     //get current date
@@ -40,6 +46,7 @@ public class TellerCreditController extends Controller {
     String currentDate = date.format(formatters);
 
     try {
+      //check formatting of doubles
       double incomingMoney = Double.parseDouble(moneyField.getText());
       String accID = accountField.getText();
 
@@ -84,6 +91,7 @@ public class TellerCreditController extends Controller {
           //deposit the money into the appropriate account
           getLoginController().findSavingsByID(accID).deposit(incomingMoney);
 
+          //confirm deposit
           confirmDeposit(currentDate, accID, formattedIncomingMoney);
         }
 
@@ -110,6 +118,13 @@ public class TellerCreditController extends Controller {
     }
   }
 
+  /**
+   * Method that confirms a deposit by creating transaction objects and starting confirmation page
+   *
+   * @param currentDate - String of current date
+   * @param accID - account ID
+   * @param formattedIncomingMoney - incoming money as $__.__
+   */
   private void confirmDeposit(String currentDate, String accID, String formattedIncomingMoney) {
     //Create transaction object
     Transactions newTrans = new Transactions(
@@ -138,6 +153,9 @@ public class TellerCreditController extends Controller {
     confirmationController.showStage();
   }
 
+  /**
+   * Button that lets teller withdraw money from accounts for customers
+   */
   @FXML
   void debitClicked(ActionEvent event) {
     //get current date
@@ -146,6 +164,7 @@ public class TellerCreditController extends Controller {
     String currentDate = date.format(formatters);
 
     try {
+      //checks if fields contain numbers
       double outgoingMoney = Double.parseDouble(moneyField.getText());
       String accID = accountField.getText();
 
@@ -279,27 +298,28 @@ public class TellerCreditController extends Controller {
           //is coming from savings account
 
           //make pointer to savings account
-          Savings targetedAccounted;
+          Savings targetedAccount;
           Boolean isCD;
           if (getLoginController().findSavingsByID(accID) == null) {
             //this is a CD
-            targetedAccounted = getLoginController().findCDByID(accID);
+            targetedAccount = getLoginController().findCDByID(accID);
           } else {
             //this is not a CD
-            targetedAccounted = getLoginController().findSavingsByID(accID);
+            targetedAccount = getLoginController().findSavingsByID(accID);
           }
 
           DateTimeFormatter newFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 
           //Check if this is a CD that is withdrawing early
-          if (targetedAccounted.isCD() && LocalDate.parse(targetedAccounted.getDueDate(), newFormatter).isAfter(LocalDate.now())) {
+          if (targetedAccount.isCD() && LocalDate.parse(targetedAccount.getDueDate(), newFormatter).isAfter(LocalDate.now())) {
 
+            //withdraw now
             withdrawFromSavings(
                 currentDate,
                 outgoingMoney,
                 accID,
                 formattedOutgoingMoney,
-                targetedAccounted,
+                targetedAccount,
                 "\n\nPlease note we also debited a 20% penalty for early withdrawal."
             );
 
@@ -310,7 +330,7 @@ public class TellerCreditController extends Controller {
                 outgoingMoney,
                 accID,
                 formattedOutgoingMoney,
-                targetedAccounted,
+                targetedAccount,
                 ""
             );
           }
@@ -338,6 +358,16 @@ public class TellerCreditController extends Controller {
 
   }
 
+  /**
+   * Method for withdrawing money from a savings account
+   *
+   * @param currentDate - today's date
+   * @param outgoingMoney - money to be withdrawn
+   * @param accID - account ID of savings account
+   * @param formattedOutgoingMoney - formatted money as $__.__
+   * @param targetedAccounted - Savings object of targetted account
+   * @param appendedMessage - message if there is a fee
+   */
   private void withdrawFromSavings(
       String currentDate,
       double outgoingMoney,
@@ -379,6 +409,7 @@ public class TellerCreditController extends Controller {
   }
 
 
+  //Constructor for TellerCreditController
   public TellerCreditController(
       Stage currentStage,
       LoginController loginController,

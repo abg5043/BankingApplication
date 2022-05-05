@@ -12,6 +12,9 @@ import javafx.stage.Stage;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Controller for screen that lets manager create CDs
+ */
 public class ManagerCreateCdController extends Controller {
 
     @FXML
@@ -32,11 +35,15 @@ public class ManagerCreateCdController extends Controller {
     @FXML
     private Label welcomeLabel;
 
+    /**
+     * Button that lets manager create CDs
+     */
     @FXML
     void createCDClicked(ActionEvent event) {
         String customerSSN = ssnField.getText();
 
         try {
+            //checks that fields that need to be numbers are numbers
             double balance = Double.parseDouble(accBal.getText());
             int yearsUntilComplete = Integer.parseInt(dueDate.getText());
             double interest = Double.parseDouble(currentInterest.getText());
@@ -58,6 +65,7 @@ public class ManagerCreateCdController extends Controller {
                         !getLoginController().hasValidCDAccount(customerSSN  + "_s") &&
                         !getLoginController().hasValidSavingsAccount(customerSSN + "_s")
                     ) {
+                        //create new CD
                         Savings newCD = new Savings(
                             customerSSN + "_s",
                             balance,
@@ -121,6 +129,8 @@ public class ManagerCreateCdController extends Controller {
             a.show();
         }
     }
+
+    //constructor
     public ManagerCreateCdController(Stage currentStage, LoginController loginController, ManagerOpeningController managerOpeningController) {
         super(currentStage, loginController, managerOpeningController);
         setCurrentViewFile("manager-create-cd.fxml");

@@ -5,6 +5,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
+/**
+ * Class representing a confirmation screen
+ */
 public class ConfirmationController extends Controller {
 
     @FXML

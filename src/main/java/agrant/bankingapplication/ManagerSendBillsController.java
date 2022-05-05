@@ -11,6 +11,9 @@ import javafx.stage.Stage;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Controller for manager's send bill screen
+ */
 public class ManagerSendBillsController extends Controller {
 
   @FXML
@@ -65,6 +68,9 @@ public class ManagerSendBillsController extends Controller {
   @FXML
   private TableColumn<Loans, Integer> monthLeftCol;
 
+  /**
+   * Button that let's teller send a bill
+   */
   @FXML
   void sendBillClicked(ActionEvent event) {
     String billedAcc = accountNumber.getText();
@@ -115,6 +121,7 @@ public class ManagerSendBillsController extends Controller {
   }
 
 
+  //Constructor for ManagerSendBillsController
   public ManagerSendBillsController(Stage currentStage, LoginController loginController, ManagerOpeningController managerOpeningController) {
     super(currentStage, loginController, managerOpeningController);
     setCurrentViewFile("manager-send-bills.fxml");
@@ -129,6 +136,7 @@ public class ManagerSendBillsController extends Controller {
   private void initialize() {
     this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
 
+    //set table columns
     accountNumberCol.setCellValueFactory(new PropertyValueFactory<Loans, String>("accountId"));
     currentBalanceCol.setCellValueFactory(new PropertyValueFactory<Loans, Double>("currentBalance"));
     interestRateCol.setCellValueFactory(new PropertyValueFactory<Loans, Double>("interestRate"));
@@ -141,11 +149,7 @@ public class ManagerSendBillsController extends Controller {
     creditLimitCol.setCellValueFactory(new PropertyValueFactory<Loans, Integer>("creditLimit"));
     monthLeftCol.setCellValueFactory(new PropertyValueFactory<Loans, Integer>("monthsLeft"));
 
-
-
     //bind list into the table
     creditData.setItems(FXCollections.observableArrayList(getLoginController().getLoansData()));
-
   }
-
 }

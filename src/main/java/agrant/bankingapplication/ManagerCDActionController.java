@@ -7,6 +7,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
+/**
+ * Controller for manager menu to handle CDs
+ */
 public class ManagerCDActionController extends Controller {
 
     @FXML
@@ -21,6 +24,9 @@ public class ManagerCDActionController extends Controller {
     @FXML
     private Label welcomeLabel;
 
+    /**
+     * Button that brings manager to screen to create CDs
+     */
     @FXML
     void createCDClicked(ActionEvent event) {
         ManagerCreateCdController createCdController = new ManagerCreateCdController(
@@ -33,6 +39,9 @@ public class ManagerCDActionController extends Controller {
         createCdController.showStage();
     }
 
+    /**
+     * Button that brings manager to screen to send rollover notices
+     */
     @FXML
     void sendNoticeClicked(ActionEvent event) {
 
@@ -46,6 +55,7 @@ public class ManagerCDActionController extends Controller {
         rolloverCdController.showStage();
     }
 
+    //constructor
     public ManagerCDActionController(Stage currentStage, LoginController loginController, ManagerOpeningController managerOpeningController) {
         super(currentStage, loginController, managerOpeningController);
         setCurrentViewFile("manager-cd-action.fxml");

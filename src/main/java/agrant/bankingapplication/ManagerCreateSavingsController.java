@@ -12,6 +12,9 @@ import javafx.stage.Stage;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Controller for screen where manager can create a savings account
+ */
 public class ManagerCreateSavingsController extends Controller {
 
     @FXML
@@ -29,12 +32,15 @@ public class ManagerCreateSavingsController extends Controller {
     @FXML
     private Label welcomeLabel;
 
-
+    /**
+     * Button that lets manager create savings account
+     */
     @FXML
     void savingsClicked(ActionEvent event) {
         String customerSSN = ssnField.getText();
 
         try {
+            //checks that all user-entered data is properly formatted
             double balance = Double.parseDouble(startingBalanceField.getText());
             double interestRate = Double.parseDouble(interestRateField.getText());
 
@@ -52,6 +58,7 @@ public class ManagerCreateSavingsController extends Controller {
                         !getLoginController().hasValidSavingsAccount(customerSSN + "_s") ||
                         !getLoginController().hasValidCDAccount(customerSSN + "_s")
                     ) {
+                        //Create new savings account
                         Savings newSavings = new Savings(
                             customerSSN + "_s",
                             balance,
@@ -94,8 +101,6 @@ public class ManagerCreateSavingsController extends Controller {
                     // show the dialog
                     a.show();
                 }
-
-
             } else {
                 // create an alert
                 Alert a = new Alert(Alert.AlertType.WARNING);
@@ -106,7 +111,6 @@ public class ManagerCreateSavingsController extends Controller {
                 // show the dialog
                 a.show();
             }
-
         } catch(NumberFormatException e) {
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setTitle("Savings Not Created");
@@ -118,6 +122,7 @@ public class ManagerCreateSavingsController extends Controller {
         }
     }
 
+    //Constructor for class
     public ManagerCreateSavingsController(
         Stage currentStage,
         LoginController loginController,
@@ -136,6 +141,4 @@ public class ManagerCreateSavingsController extends Controller {
     private void initialize() {
         this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
     }
-
-
 }

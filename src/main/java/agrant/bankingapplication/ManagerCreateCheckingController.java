@@ -12,6 +12,9 @@ import javafx.stage.Stage;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Controller for screen where manager can create a checking account
+ */
 public class ManagerCreateCheckingController extends Controller {
 
     @FXML
@@ -26,11 +29,15 @@ public class ManagerCreateCheckingController extends Controller {
     @FXML
     private Label welcomeLabel;
 
+    /**
+     * Button that lets manager create a checking account
+     */
     @FXML
     void checkingClicked(ActionEvent event) {
         String SSN = acctIDField.getText();
 
         try {
+            //checks that starting balance was actually a number
             double balance = Double.parseDouble(startingBalanceField.getText());
 
             //get the current date
@@ -42,12 +49,14 @@ public class ManagerCreateCheckingController extends Controller {
             if(
                 SSN.length() == 9
             ) {
+                //starting balance determines account type
                 String accType;
                 if (balance >= 1000 ) {
                     accType = "Gold";
                 } else {
                     accType = "Regular";
                 }
+
                 //check if the SSN matches a valid user
                 if (getLoginController().isValidUser(SSN) ) {
                     //check if the user doesn't already have a checking account
@@ -121,6 +130,7 @@ public class ManagerCreateCheckingController extends Controller {
         }
     }
 
+    //Constructor
     public ManagerCreateCheckingController(
         Stage currentStage,
         LoginController loginController,

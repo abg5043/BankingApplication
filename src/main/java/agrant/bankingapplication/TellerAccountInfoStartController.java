@@ -8,6 +8,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+/**
+ * Controller for screen where teller enters account info
+ */
 public class TellerAccountInfoStartController extends Controller {
 
     @FXML
@@ -21,11 +24,15 @@ public class TellerAccountInfoStartController extends Controller {
 
     private String currentAccountID;
 
+    /**
+     * Button that takes teller to account info screen
+     */
     @FXML
     void infoClicked(ActionEvent event) {
 
         this.currentAccountID = accountField.getText();
 
+        //check if the account ID is valid
         if( currentAccountID.length() == 11 &&
             (getLoginController().hasValidSavingsAccount(currentAccountID) ||
                 getLoginController().hasValidCheckingAccount(currentAccountID) ||
@@ -55,6 +62,7 @@ public class TellerAccountInfoStartController extends Controller {
         }
     }
 
+    //constructor for TellerAccountInfoStartController
     public TellerAccountInfoStartController(
         Stage currentStage,
         LoginController loginController,

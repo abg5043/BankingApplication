@@ -13,6 +13,7 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+
 public class CustomerCCPurchaseController extends Controller {
 
     @FXML
@@ -45,7 +46,7 @@ public class CustomerCCPurchaseController extends Controller {
                 String formattedPaidAmt = formatter.format(paidAmt);
 
                 //Check that purchase doesn't exceed limit
-                if(getLoginController().findLoanByID(accID).makeCCPurchase(paidAmt, date)){
+                if(getLoginController().findLoanByID(accID).makeCCPurchase(paidAmt)){
 
                     //Create transaction object
                     Transactions newTrans1 = new Transactions(

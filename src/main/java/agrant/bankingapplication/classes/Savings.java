@@ -6,6 +6,9 @@ import javafx.scene.control.Alert;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Class for savings accounts
+ */
 public class Savings {
     @CsvBindByName(column = "account_id")
     private String accountId;
@@ -21,13 +24,24 @@ public class Savings {
 
     @CsvBindByName(column = "due_date") private String dueDate;
 
-    public Savings(String accountId, double account_balance, double interestRate, String accountOpenDate, String dueDate){
+    /**
+     * Constructor for savings accounts
+     *
+     * @param accountId - account ID
+     * @param accountBalance - balance of account
+     * @param interestRate - interest rate for account (not decimal)
+     * @param accountOpenDate - date account was open
+     * @param dueDate - due date if this is a CD ("n/a" if not)
+     */
+    public Savings(String accountId, double accountBalance, double interestRate, String accountOpenDate, String dueDate){
         this.accountId = accountId;
-        this.accountBalance = account_balance;
+        this.accountBalance = accountBalance;
         this.interestRate = interestRate;
         this.accountOpenDate = accountOpenDate;
         this.dueDate = dueDate;
     }
+
+    //blank constructor for OpenCSV
     public Savings(){
     }
 
@@ -66,10 +80,21 @@ public class Savings {
         this.dueDate = dueDate;
     }
 
+    /**
+     * method for depositing cash
+     *
+     * @param cashAmount - amount cash
+     */
     public void deposit(double cashAmount) {
         this.accountBalance += cashAmount;
     }
 
+    /**
+     * method for withdrawing money
+     *
+     * @param cashAmount - amount to withdraw
+     * @return - true or false depending on if this is successful
+     */
     public Boolean withdraw(double cashAmount) {
         DateTimeFormatter newFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 

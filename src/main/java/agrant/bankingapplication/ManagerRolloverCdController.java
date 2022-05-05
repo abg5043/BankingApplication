@@ -11,6 +11,9 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
+/**
+ * Controller for manager's screen where they can send rollover notices for CDs
+ */
 public class ManagerRolloverCdController extends Controller {
 
     @FXML
@@ -40,8 +43,12 @@ public class ManagerRolloverCdController extends Controller {
     @FXML
     private Label welcomeLabel;
 
+    //List of all of the bank's CDs
     private final ArrayList<Savings> cdList;
 
+    /**
+     * Button that let's manager send a rollover notice
+     */
     @FXML
     void sendNoticeClicked(ActionEvent event) {
         String billedAcc = accountNumber.getText();
@@ -70,19 +77,21 @@ public class ManagerRolloverCdController extends Controller {
         }
     }
 
+    //Constructor for ManagerRolloverCdController
     public ManagerRolloverCdController(Stage currentStage, LoginController loginController, ManagerOpeningController managerOpeningController) {
         super(currentStage, loginController, managerOpeningController);
         setCurrentViewFile("manager-rollover-cd.fxml");
         setCurrentViewTitle("Send Rollover Notices");
         setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
 
-        //get only cds
+        //get only cds from list of all savings
         this.cdList = new ArrayList<>();
         for(Savings savings : getLoginController().getSavingsData()) {
             if (!savings.getDueDate().equals("n/a")) {
                 cdList.add(savings);
             }
         }
+        //set table columns
         accountNumberCol.setCellValueFactory(new PropertyValueFactory<Savings, String>("accountId"));
         balanceCol.setCellValueFactory(new PropertyValueFactory<Savings, Double>("accountBalance"));
         interestRateCol.setCellValueFactory(new PropertyValueFactory<Savings, Double>("interestRate"));
@@ -100,5 +109,4 @@ public class ManagerRolloverCdController extends Controller {
     private void initialize() {
         this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
     }
-
 }

@@ -2,6 +2,9 @@ package agrant.bankingapplication.classes;
 
 import com.opencsv.bean.CsvBindByName;
 
+/**
+ * A class that represents a check
+ */
 public class Checks {
     @CsvBindByName(column = "origin_account_id")
     private String originAccountID;
@@ -22,6 +25,16 @@ public class Checks {
     private String memo;
 
 
+    /**
+     * Check constructor
+     *
+     * @param originAccountID - where money is coming from
+     * @param amountCash - amount of money check is for
+     * @param checkNumber - check number
+     * @param date - date of check
+     * @param destinationAccountID - where money is going
+     * @param memo - what check is for
+     */
     public Checks(String originAccountID, double amountCash, String checkNumber, String date, String destinationAccountID, String memo){
         this.originAccountID = originAccountID;
         this.amountCash = amountCash;
@@ -31,6 +44,7 @@ public class Checks {
         this.memo = memo;
     }
 
+    //blank constructor for OpenCSV
     public Checks(){}
 
     //______________Getters_____________

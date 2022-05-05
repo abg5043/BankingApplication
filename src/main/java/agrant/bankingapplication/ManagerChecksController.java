@@ -15,6 +15,9 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Controller for screen where manager can stop or process checks
+ */
 public class ManagerChecksController extends Controller {
 
   @FXML
@@ -57,6 +60,9 @@ public class ManagerChecksController extends Controller {
   private TextField destAcctField;
 
 
+  /**
+   * Button that lets manager process checks
+   */
   @FXML
   void processClicked(ActionEvent event) {
     //get current date
@@ -247,6 +253,9 @@ public class ManagerChecksController extends Controller {
 
   }
 
+  /**
+   * Button that lets manager stop checks
+   */
   @FXML
   void stopClicked(ActionEvent event) {
     //get current date
@@ -424,6 +433,7 @@ public class ManagerChecksController extends Controller {
 
   }
 
+  //constructor
   public ManagerChecksController(
       Stage currentStage,
       LoginController loginController,
@@ -443,6 +453,7 @@ public class ManagerChecksController extends Controller {
   private void initialize() {
     this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
 
+    //sets table columns
     destAcctNumCol.setCellValueFactory(new PropertyValueFactory<Checks, String>("destinationAccountID"));
     originAcctNumCol.setCellValueFactory(new PropertyValueFactory<Checks, String>("originAccountID"));
     amountCashCol.setCellValueFactory(new PropertyValueFactory<Checks, Double>("amountCash"));

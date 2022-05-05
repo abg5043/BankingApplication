@@ -2,6 +2,9 @@ package agrant.bankingapplication.classes;
 
 import com.opencsv.bean.CsvBindByName;
 
+/**
+ * Object representing a transaction
+ */
 public class Transactions {
     @CsvBindByName(column = "account_id")
     private String accountID;
@@ -15,6 +18,14 @@ public class Transactions {
     @CsvBindByName(column = "date")
     private String date;
 
+    /**
+     * Constructor for transactions
+     *
+     * @param accountID - account ID
+     * @param transactionType - type of transaction
+     * @param memo - what transaction was
+     * @param date - date of transaction
+     */
     public Transactions(String accountID, String transactionType, String memo, String date) {
         this.accountID = accountID;
         this.transactionType = transactionType;
@@ -22,6 +33,7 @@ public class Transactions {
         this.date = date;
     }
 
+    //empty constructor for OpenCSV
     public Transactions() {
     }
 

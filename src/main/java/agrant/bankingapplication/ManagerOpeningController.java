@@ -7,6 +7,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
+/**
+ * Controller for the opening menu for the manager
+ */
 public class ManagerOpeningController extends Controller {
 
   @FXML
@@ -33,6 +36,9 @@ public class ManagerOpeningController extends Controller {
   @FXML
   private Label welcomeLabel;
 
+  /**
+   * Button that takes manager to send bill screen
+   */
   @FXML
   void billsClicked(ActionEvent event) {
 
@@ -47,6 +53,9 @@ public class ManagerOpeningController extends Controller {
 
   }
 
+  /**
+   * Button that takes manager to screen where they can create a user
+   */
   @FXML
   void userClicked(ActionEvent event) {
 
@@ -61,7 +70,9 @@ public class ManagerOpeningController extends Controller {
 
   }
 
-
+  /**
+   * Button that takes manager to screen where they can manage loans
+   */
   @FXML
   void loanClicked(ActionEvent event) {
     ManagerLoansController managerLoansController = new ManagerLoansController(
@@ -74,6 +85,9 @@ public class ManagerOpeningController extends Controller {
 
   }
 
+  /**
+   * Button that takes manager to screen where they can manage CDs
+   */
   @FXML
   void manageCDClicked(ActionEvent event) {
     ManagerCDActionController cdActionController = new ManagerCDActionController(
@@ -85,6 +99,9 @@ public class ManagerOpeningController extends Controller {
     cdActionController.showStage();
   }
 
+  /**
+   * Button that takes manager to screen where they can manage checking accounts
+   */
   @FXML
   void checkingClicked(ActionEvent event) {
     ManagerCheckingController managerCheckingController = new ManagerCheckingController(
@@ -95,9 +112,11 @@ public class ManagerOpeningController extends Controller {
 
     // Show the new stage/window
     managerCheckingController.showStage();
-
   }
 
+  /**
+   * Button that takes manager to teller opening screen
+   */
   @FXML
   void tellerClicked(ActionEvent event) {
 
@@ -112,7 +131,7 @@ public class ManagerOpeningController extends Controller {
 
   }
 
-
+  //constructor
   public ManagerOpeningController(Stage currentStage, LoginController loginController) {
     super(currentStage, loginController, loginController);
     setCurrentViewFile("manager-opening-view.fxml");

@@ -8,6 +8,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
+/**
+ * Controller for screen where manager can manage loans
+ */
 public class ManagerLoansController extends Controller{
 
     @FXML
@@ -58,6 +61,9 @@ public class ManagerLoansController extends Controller{
     @FXML
     private Label welcomeLabel;
 
+    /**
+     * Button that let's manager approve loans
+     */
     @FXML
     void approveClicked(ActionEvent event) {
         String loanAcc = accountNumber.getText();
@@ -113,6 +119,9 @@ public class ManagerLoansController extends Controller{
         }
     }
 
+    /**
+     * Button that lets manager deny loans
+     */
     @FXML
     void denyClicked(ActionEvent event) {
         String loanAcc = accountNumber.getText();
@@ -150,6 +159,7 @@ public class ManagerLoansController extends Controller{
         }
     }
 
+    //constructor
     public ManagerLoansController(
         Stage currentStage,
         LoginController loginController,
@@ -168,6 +178,7 @@ public class ManagerLoansController extends Controller{
     private void initialize() {
         this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
 
+        //set table columns
         accountNumberCol.setCellValueFactory(new PropertyValueFactory<Loans, String>("accountId"));
         currentBalanceCol.setCellValueFactory(new PropertyValueFactory<Loans, Double>("currentBalance"));
         interestRateCol.setCellValueFactory(new PropertyValueFactory<Loans, Double>("interestRate"));

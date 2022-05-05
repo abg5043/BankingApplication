@@ -9,6 +9,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+/**
+ * A class representing a loan
+ */
 public class Loans {
     @CsvBindByName(column = "account_id")
     private String accountId;
@@ -43,6 +46,20 @@ public class Loans {
     @CsvBindByName(column = "months_left")
     private int monthsLeft;
 
+    /**
+     * Loan constructor
+     *
+     * @param ID - account ID
+     * @param currentBalance - balance of loan
+     * @param interestRate - interest rate (not in decimals)
+     * @param nextPaymentDueDate - due date of next payment
+     * @param currentPaymentDue - How much money is currently due
+     * @param lastPaymentMade - date of last payment
+     * @param missedPaymentFlag - if customer missed a payment (0 or 1)
+     * @param loanType - Credit, Mortgage-15, Short-term (5 year loan), or Mortgage-30
+     * @param creditLimit - credit limit of customer (-1 if not applicable)
+     * @param monthsLeft - months left on loan (-1 if not applicable)
+     */
     public Loans(
         String ID,
         double currentBalance,
@@ -67,6 +84,7 @@ public class Loans {
         this.creditLimit = creditLimit;
         this.monthsLeft = monthsLeft;
     }
+    //empty constructor for OpenCSV
     public Loans(){}
 
     //_________________Getters_______________
@@ -139,6 +157,12 @@ public class Loans {
         this.accountId = accountId;
     }
 
+    /**
+     * A method for making loan payments
+     *
+     * @param payAmt - amount of money
+     * @return - true or false if payment is successful
+     */
     public boolean makeLoanPayment(double payAmt){
         if(this.loanType.equals("Mortgage-15") ||
                 this.loanType.equals("Short-Term") ||
@@ -154,8 +178,10 @@ public class Loans {
             String formattedCurrentDate = formatters.format(today);
             String formattedNextDue = formatters.format(nextDue);
 
+            //Check if we are overpaying
             if((this.currentBalance - payAmt) >= 0) {
                 this.currentBalance = Math.round((this.currentBalance - payAmt) * 100.0) / 100.0;
+                //check if this counts as the monthly payment
                 if(payAmt >= this.currentPaymentAmount) {
                     this.nextPaymentDueDate = formattedNextDue;
                 }
@@ -182,7 +208,13 @@ public class Loans {
         }
     }
 
-    public boolean makeCCPurchase(double payAmt, LocalDate date){
+    /**
+     * Method for making one-time credit card purchases
+     *
+     * @param payAmt - money going towards card
+     * @return
+     */
+    public boolean makeCCPurchase(double payAmt){
 
         if(this.loanType.equals("Credit")){
             //Check that purchase doesn't exceed limit
@@ -204,6 +236,12 @@ public class Loans {
         }
     }
 
+    /**
+     * Method for making a one-time card payment
+     *
+     * @param payAmt - cash paid
+     * @return - true or false depending on if it is successful
+     */
     public boolean ccOnetimePay(double payAmt){
         if(this.loanType.equals("Credit")) {
             DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
@@ -213,6 +251,7 @@ public class Loans {
             LocalDate today = LocalDate.now();
             String todayString = formatters.format(today);
 
+            //check if we are overpaying
             if((this.currentBalance - payAmt) >= 0) {
                 this.currentBalance = Math.round((this.currentBalance - payAmt) * 100.0) / 100.0;
                 this.currentPaymentAmount = Math.round((this.currentBalance / 4) * 100.0) / 100.0;
@@ -233,10 +272,20 @@ public class Loans {
             }
         }else{
             //called by non-credit account
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setTitle("Unable to proceed.");
+            a.setHeaderText("Incorrect account type for makeLoanPayment function.");
+            a.setContentText("Error in payment. Please contact IT administrator.");
+            a.show();
             return false;
         }
     }
 
+    /**
+     * Method for making the required monthly payment on a loan
+     *
+     * @return - true or false depending on if it is successful
+     */
     public boolean makeMonthlyPayment() {
         DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
         //parse next payment due date to compare to current date
@@ -270,6 +319,11 @@ public class Loans {
                 return true;
             } else{
                 //Loan type is none of the above
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setTitle("Unable to proceed.");
+                a.setHeaderText("Incorrect account type for makeLoanPayment function.");
+                a.setContentText("Error in payment. Please contact IT administrator.");
+                a.show();
                 return false;
             }
         }else {

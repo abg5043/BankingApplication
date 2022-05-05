@@ -15,6 +15,9 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Class controlling the teller screen where they transfer money
+ */
 public class TellerTransferController extends Controller {
 
   @FXML
@@ -32,6 +35,9 @@ public class TellerTransferController extends Controller {
   @FXML
   private TextField moneyField;
 
+  /**
+   * Button to initiate transfer
+   */
   @FXML
   void transferClicked(ActionEvent event) {
     //get current date
@@ -40,6 +46,7 @@ public class TellerTransferController extends Controller {
     String currentDate = date.format(formatters);
 
     try {
+      //check that doubles are formatted properly
       double transferredMoney = Double.parseDouble(moneyField.getText());
       String fromID = transferFromField.getText();
       String toID = transferToField.getText();
@@ -53,15 +60,15 @@ public class TellerTransferController extends Controller {
         //check that from account is valid
         if (
             getLoginController().hasValidSavingsAccount(fromID) ||
-            getLoginController().hasValidCheckingAccount(fromID) ||
-            getLoginController().hasValidCDAccount(fromID)
+                getLoginController().hasValidCheckingAccount(fromID) ||
+                getLoginController().hasValidCDAccount(fromID)
         ) {
           //check the type of from account
           if (fromID.startsWith("_s", 9)) {
             //We are transferring from a savings, check that the other is a checking
             if (getLoginController().hasValidCheckingAccount(toID)) {
               Savings originSavings;
-              if(getLoginController().findSavingsByID(fromID) != null) {
+              if (getLoginController().findSavingsByID(fromID) != null) {
                 //this is a savings
                 originSavings = getLoginController().findSavingsByID(fromID);
               } else {
@@ -72,7 +79,7 @@ public class TellerTransferController extends Controller {
               //Withdraw first. This only runs if there is enough money
               if (originSavings.withdraw(transferredMoney)) {
                 //deposit next; only runs if deposit is less than fee
-                if(toChecking.oneTimeDeposit(transferredMoney, getLoginController())) {
+                if (toChecking.oneTimeDeposit(transferredMoney, getLoginController())) {
                   //Create two transaction objects
                   Transactions newTrans1 = new Transactions(
                       fromID,
@@ -95,7 +102,7 @@ public class TellerTransferController extends Controller {
                   //write the data
                   getLoginController().writeBankData();
 
-                  if(originSavings.isCD() && LocalDate.parse(originSavings.getDueDate(), formatters).isAfter(LocalDate.now())) {
+                  if (originSavings.isCD() && LocalDate.parse(originSavings.getDueDate(), formatters).isAfter(LocalDate.now())) {
                     //this was an early withdrawal
                     // create a confirmation screen
                     ConfirmationController confirmationController = new ConfirmationController(
@@ -132,9 +139,6 @@ public class TellerTransferController extends Controller {
                   // show the dialog
                   a.show();
                 }
-
-
-
               }
             } else {
               // create an alert
@@ -194,15 +198,15 @@ public class TellerTransferController extends Controller {
 
                 confirmationController.showStage();
               } else {
-                  //we do not have enough money
-                  // create an alert
-                  Alert a = new Alert(Alert.AlertType.WARNING);
-                  a.setTitle("Money Not Transferred");
-                  a.setHeaderText("Not enough money in checking.");
-                  a.setContentText("Please ensure you have enough money in checking.");
+                //we do not have enough money
+                // create an alert
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setTitle("Money Not Transferred");
+                a.setHeaderText("Not enough money in checking.");
+                a.setContentText("Please ensure you have enough money in checking.");
 
-                  // show the dialog
-                  a.show();
+                // show the dialog
+                a.show();
               }
             } else {
               // create an alert
@@ -249,9 +253,9 @@ public class TellerTransferController extends Controller {
     }
   }
 
-  private void transferMoney(Checking checking, Savings savings) {
-  }
-
+  /**
+   * Constructor for controller
+   */
   public TellerTransferController(
       Stage currentStage,
       LoginController loginController,

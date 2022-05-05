@@ -7,6 +7,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
+/**
+ * Controller for main checking/savings menu for manager
+ */
 public class ManagerCheckingController extends Controller {
 
     @FXML
@@ -30,6 +33,9 @@ public class ManagerCheckingController extends Controller {
     @FXML
     private Label welcomeLabel;
 
+    /**
+     * Button that brings manager to screen to create checks
+     */
     @FXML
     void checksClicked(ActionEvent event) {
         ManagerChecksController controller = new ManagerChecksController(
@@ -42,6 +48,9 @@ public class ManagerCheckingController extends Controller {
         controller.showStage();
     }
 
+    /**
+     * Button that brings manager to screen to create checking accounts
+     */
     @FXML
     void checkingClicked(ActionEvent event) {
         ManagerCreateCheckingController managerCreateCheckingController = new ManagerCreateCheckingController(
@@ -54,6 +63,9 @@ public class ManagerCheckingController extends Controller {
         managerCreateCheckingController.showStage();
     }
 
+    /**
+     * Button that brings manager to screen to link checking and savings accounts
+     */
     @FXML
     void linkAccountsClicked(ActionEvent event) {
         ManagerLinkAccountsController managerLinkAccountsController = new ManagerLinkAccountsController(
@@ -66,7 +78,9 @@ public class ManagerCheckingController extends Controller {
         managerLinkAccountsController.showStage();
     }
 
-
+    /**
+     * Button that brings manager to screen to create savings accounts
+     */
     @FXML
     void savingsClicked(ActionEvent event) {
         ManagerCreateSavingsController managerCreateSavingsController = new ManagerCreateSavingsController(
@@ -79,6 +93,9 @@ public class ManagerCheckingController extends Controller {
         managerCreateSavingsController.showStage();
     }
 
+    /**
+     * Button that brings manager to screen to set interest rates for accounts
+     */
     @FXML
     void setInterestClicked(ActionEvent event) {
         ManagerInterestController managerInterestController = new ManagerInterestController(
@@ -91,6 +108,7 @@ public class ManagerCheckingController extends Controller {
         managerInterestController.showStage();
     }
 
+    //constructor
     public ManagerCheckingController(
         Stage currentStage,
         LoginController loginController,

@@ -7,6 +7,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
+/**
+ * Controller for the opening view for tellers
+ */
 public class TellerOpeningController extends Controller {
 
   @FXML
@@ -14,7 +17,6 @@ public class TellerOpeningController extends Controller {
 
   @FXML
   private Button creditAccountButton;
-
 
   @FXML
   private TextArea mainTextBox;
@@ -26,6 +28,9 @@ public class TellerOpeningController extends Controller {
   private Label welcomeLabel;
 
 
+  /**
+   * Button that takes teller to account info screen
+   */
   @FXML
   void accountClicked(ActionEvent event) {
     TellerAccountInfoStartController controller = new TellerAccountInfoStartController(
@@ -37,6 +42,9 @@ public class TellerOpeningController extends Controller {
     controller.showStage();
   }
 
+  /**
+   * Button that takes teller to the credit/debit screen
+   */
   @FXML
   void creditAccountClicked(ActionEvent event) {
     TellerCreditController controller = new TellerCreditController(
@@ -48,6 +56,9 @@ public class TellerOpeningController extends Controller {
     controller.showStage();
   }
 
+  /**
+   * Button that takes teller to transfer money screen
+   */
   @FXML
   void transferClicked(ActionEvent event) {
     TellerTransferController tellerTransferController = new TellerTransferController(
@@ -59,7 +70,7 @@ public class TellerOpeningController extends Controller {
     tellerTransferController.showStage();
   }
 
-
+  //Constructor for TellerOpeningController
   public TellerOpeningController(Stage currentStage, LoginController loginController) {
     super(currentStage, loginController, loginController);
     setCurrentViewFile("teller-opening-view.fxml");

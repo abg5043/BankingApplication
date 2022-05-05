@@ -10,109 +10,116 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+/**
+ * Controller for screen where manager can link checking and savings accounts
+ */
 public class ManagerLinkAccountsController extends Controller {
 
-    @FXML
-    private TextField checkingField;
+  @FXML
+  private TextField checkingField;
 
-    @FXML
-    private Button linkButton;
+  @FXML
+  private Button linkButton;
 
-    @FXML
-    private TextField savingsField;
+  @FXML
+  private TextField savingsField;
 
-    @FXML
-    private Label welcomeLabel;
+  @FXML
+  private Label welcomeLabel;
 
-    @FXML
-    void linkClicked(ActionEvent event) {
-        String checkingID = checkingField.getText();
-        String savingsID = savingsField.getText();
+  /**
+   * Button that lets manager link two accounts (checking and savings)
+   */
+  @FXML
+  void linkClicked(ActionEvent event) {
+    String checkingID = checkingField.getText();
+    String savingsID = savingsField.getText();
 
-        //Check that the text is not blank and matches an account
-        if(
-            checkingID.length() == 11 &&
+    //Check that the text is not blank and matches an account
+    if (
+        checkingID.length() == 11 &&
             savingsID.length() == 11 &&
             getLoginController().hasValidCheckingAccount(checkingID) &&
             getLoginController().hasValidSavingsAccount(savingsID)
-        ) {
-
-            //find the checking account
-            Checking modifiedChecking = getLoginController().findCheckingByID(checkingID);
-
-            //check if there is already a linked account
-            if (modifiedChecking.getBackupAccountId().equals("n/a")) {
-                //modify the checking account accountID
-                modifiedChecking.setBackupAccountId(savingsID);
-
-                //if account is gold, also modify the savings rate
-                if(modifiedChecking.getAccountType().equals("Gold")) {
-                    Savings linkedSavings;
-                    //find the savings account
-                    if(savingsID.startsWith("_s", 9)) {
-                        //this is a normal savings
-                        linkedSavings = getLoginController().findSavingsByID(savingsID);
-                    } else {
-                        //this is a CD
-                        linkedSavings = getLoginController().findCDByID(savingsID);
-                    }
-                    //use the savings account to set the interest rate of the checking
-                    modifiedChecking.setInterest(String.valueOf(0.5 * linkedSavings.getInterestRate()));
-                }
-
-                //write to CSV
-                getLoginController().writeBankData();
-
-                // create a confirmation screen
-                ConfirmationController confirmationController = new ConfirmationController(
-                    getCurrentStage(),
-                    getLoginController(),
-                    getMainPage(),
-                    "Congratulations, you linked account " +checkingID + " with account " + savingsID + "."
-                );
-
-                confirmationController.showStage();
-            } else {
-                //there is a linked account
-                // create an alert
-                Alert a = new Alert(Alert.AlertType.WARNING);
-                a.setTitle("Accounts Not Linked");
-                a.setHeaderText("Already linked account");
-                a.setContentText("This checking account already has a linked savings");
-
-                // show the dialog
-                a.show();
-            }
-        } else {
-            //text is blank or does not match an account
-            // create an alert
-            Alert a = new Alert(Alert.AlertType.WARNING);
-            a.setTitle("Accounts Not Linked");
-            a.setHeaderText("Invalid account ID");
-            a.setContentText("Please ensure you enter valid account IDs. " +
-                "\n\nRemember that CDs can't be backup savings!");
-
-            // show the dialog
-            a.show();
-        }
-    }
-
-    public ManagerLinkAccountsController(
-        Stage currentStage,
-        LoginController loginController,
-        ManagerOpeningController managerOpeningController
     ) {
-        super(currentStage, loginController, managerOpeningController);
-        setCurrentViewFile("manager-link-accounts.fxml");
-        setCurrentViewTitle("Link Two Accounts");
-        setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
-    }
 
-    /**
-     * The initialize() method allows you set setup your scene, adding actions, configuring nodes, etc.
-     */
-    @FXML
-    private void initialize() {
-        this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
+      //find the checking account
+      Checking modifiedChecking = getLoginController().findCheckingByID(checkingID);
+
+      //check if there is already a linked account
+      if (modifiedChecking.getBackupAccountId().equals("n/a")) {
+        //modify the checking account accountID
+        modifiedChecking.setBackupAccountId(savingsID);
+
+        //if account is gold, also modify the savings rate
+        if (modifiedChecking.getAccountType().equals("Gold")) {
+          Savings linkedSavings;
+          //find the savings account
+          if (savingsID.startsWith("_s", 9)) {
+            //this is a normal savings
+            linkedSavings = getLoginController().findSavingsByID(savingsID);
+          } else {
+            //this is a CD
+            linkedSavings = getLoginController().findCDByID(savingsID);
+          }
+          //use the savings account to set the interest rate of the checking
+          modifiedChecking.setInterest(String.valueOf(0.5 * linkedSavings.getInterestRate()));
+        }
+
+        //write to CSV
+        getLoginController().writeBankData();
+
+        // create a confirmation screen
+        ConfirmationController confirmationController = new ConfirmationController(
+            getCurrentStage(),
+            getLoginController(),
+            getMainPage(),
+            "Congratulations, you linked account " + checkingID + " with account " + savingsID + "."
+        );
+
+        confirmationController.showStage();
+      } else {
+        //there is a linked account
+        // create an alert
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        a.setTitle("Accounts Not Linked");
+        a.setHeaderText("Already linked account");
+        a.setContentText("This checking account already has a linked savings");
+
+        // show the dialog
+        a.show();
+      }
+    } else {
+      //text is blank or does not match an account
+      // create an alert
+      Alert a = new Alert(Alert.AlertType.WARNING);
+      a.setTitle("Accounts Not Linked");
+      a.setHeaderText("Invalid account ID");
+      a.setContentText("Please ensure you enter valid account IDs. " +
+          "\n\nRemember that CDs can't be backup savings!");
+
+      // show the dialog
+      a.show();
     }
+  }
+
+  //constructor
+  public ManagerLinkAccountsController(
+      Stage currentStage,
+      LoginController loginController,
+      ManagerOpeningController managerOpeningController
+  ) {
+    super(currentStage, loginController, managerOpeningController);
+    setCurrentViewFile("manager-link-accounts.fxml");
+    setCurrentViewTitle("Link Two Accounts");
+    setNewScene(this, getCurrentViewFile(), getCurrentViewTitle());
+  }
+
+  /**
+   * The initialize() method allows you set setup your scene, adding actions, configuring nodes, etc.
+   */
+  @FXML
+  private void initialize() {
+    this.welcomeLabel.setText("Hello, " + getLoginController().getCurrentUser().getFirstName() + "!");
+  }
 }
