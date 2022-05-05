@@ -13,6 +13,9 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Controller for screen where customer can deposit checks
+ */
 public class CustomerDepositCheckController extends Controller {
 
     @FXML
@@ -30,10 +33,12 @@ public class CustomerDepositCheckController extends Controller {
     @FXML
     private Label welcomeLabel;
 
-
     @FXML
     private TextField memoField;
 
+    /**
+     * Button that lets customer deposit check
+     */
     @FXML
     void depositClicked(ActionEvent event) {
         //get current date
@@ -51,6 +56,7 @@ public class CustomerDepositCheckController extends Controller {
             originAcctID.length() == 11
         ) {
             try {
+                //check that numeric fields are numbers
                 int checkNum = Integer.parseInt(checkNumField.getText());
                 double amountCash = Double.parseDouble(moneyField.getText());
                 String customerCheckAccID = String.format("%s_c", getLoginController().getCurrentUser().getSSN());
@@ -135,6 +141,7 @@ public class CustomerDepositCheckController extends Controller {
         }
     }
 
+    //constructor
     public CustomerDepositCheckController(
         Stage currentStage,
         LoginController loginController,

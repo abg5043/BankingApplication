@@ -14,6 +14,9 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Controller for screen where customers can send checks
+ */
 public class CustomerSendCheckController extends Controller {
 
     @FXML
@@ -34,7 +37,9 @@ public class CustomerSendCheckController extends Controller {
     @FXML
     private Label welcomeLabel;
 
-
+    /**
+     * Button that lets customer send check
+     */
     @FXML
     void sendClicked(ActionEvent event) {
         //get current date
@@ -52,6 +57,7 @@ public class CustomerSendCheckController extends Controller {
             destAccID.length() == 11
         ) {
             try {
+                //check that formatting is good for numeric fields
                 int checkNum = Integer.parseInt(checkNumField.getText());
                 double amountCash = Double.parseDouble(moneyField.getText());
                 String customerCheckAccID = String.format("%s_c", getLoginController().getCurrentUser().getSSN());
@@ -137,6 +143,7 @@ public class CustomerSendCheckController extends Controller {
 
     }
 
+    //constructor
     public CustomerSendCheckController(
         Stage currentStage,
         LoginController loginController,

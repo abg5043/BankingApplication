@@ -4,6 +4,11 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import java.io.IOException;
 
+/**
+ * Main driver for banking application
+ *
+ * @since May 2022
+ */
 public class Main extends Application {
 
   @Override

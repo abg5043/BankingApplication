@@ -10,6 +10,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
+/**
+ * Controller for screen where customer enters pin number
+ */
 public class CustomerPINCheckController extends Controller {
     //True if Checking clicked, False if Savings clicked
     boolean isChecking;
@@ -26,11 +29,16 @@ public class CustomerPINCheckController extends Controller {
     @FXML
     private PasswordField pinPasswordField;
 
+    /**
+     * Button that checks if pin is correct
+     */
     @FXML
     void enterClicked(ActionEvent event) {
         Alert a;
         try {
+            //checks that pin is number
             String inputPIN = String.valueOf(Integer.parseInt(this.pinPasswordField.getText()));
+            //checks if pin is 4 digits long
             if (inputPIN.length() != 4) {
                 a = new Alert(AlertType.WARNING);
                 a.setTitle("PIN Unsuccessful");
@@ -38,7 +46,9 @@ public class CustomerPINCheckController extends Controller {
                 a.setContentText("Please enter 4-Digit Numeric PIN.");
                 a.show();
             } else if (inputPIN.equals(this.getLoginController().getCurrentUser().getPin())) {
+                //pin is 4 digits and matches the current user's pin
                 if (this.isChecking) {
+                    //if we are going to a checking account, we start that screen
                     CustomerCheckingController customerCheckingController = new CustomerCheckingController(
                             this.getCurrentStage(),
                             this.getLoginController(),
@@ -46,6 +56,7 @@ public class CustomerPINCheckController extends Controller {
                     );
                     customerCheckingController.showStage();
                 } else if (!this.isChecking) {
+                    //if we aren't going to checking, we are going to savings account; start that screen
                     CustomerSavingsController customerSavingsController = new CustomerSavingsController(
                             this.getCurrentStage(),
                             this.getLoginController(),
@@ -70,6 +81,7 @@ public class CustomerPINCheckController extends Controller {
 
     }
 
+    //constructor
     public CustomerPINCheckController(Stage currentStage, LoginController loginController, CustomerOpeningController customerOpeningController, Boolean accType) {
         super(currentStage, loginController, customerOpeningController);
         this.setCurrentViewFile("customer-pin-check.fxml");

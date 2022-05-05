@@ -1,8 +1,5 @@
 package agrant.bankingapplication;
 
-import agrant.bankingapplication.classes.Checking;
-import agrant.bankingapplication.classes.Loans;
-import agrant.bankingapplication.classes.Savings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -11,6 +8,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
+/**
+ * Controller for screen where customer can choose which loan they want to work on
+ */
 public class CustomerLoanAccountController extends Controller {
     private boolean isMortgage;
     @FXML
@@ -31,6 +31,9 @@ public class CustomerLoanAccountController extends Controller {
     @FXML
     private Label welcomeLabel;
 
+    /**
+     * Button that lets customer to new loan screen
+     */
     @FXML
     void newLoanClicked(ActionEvent event) {
         //get loan and checking account IDs
@@ -39,7 +42,9 @@ public class CustomerLoanAccountController extends Controller {
 
         //Check if user has a valid checking account
         if(getLoginController().hasValidCheckingAccount(checkAccID)) {
+            //check if user has a loan application or account
             if (!getLoginController().hasValidLoanApplication(accID) && !getLoginController().hasValidLoanAccount(accID)) {
+                //Open new loan screen
                 CustomerNewLoanController customerNewLoanController = new CustomerNewLoanController(
                         this.getCurrentStage(),
                         this.getLoginController(),
@@ -63,11 +68,16 @@ public class CustomerLoanAccountController extends Controller {
         }
     }
 
+
+    /**
+     * Button that lets customer go to a screen to manage their mortgage
+     */
     @FXML
     void mortgageClicked(ActionEvent event) {
         //get account ID
         String accID = String.format("%s_l", getLoginController().getCurrentUser().getSSN());
 
+        //check that customer has a valid mortgage
         if(getLoginController().hasValidLoanAccount(accID) &&
             (getLoginController().findLoanByID(accID).getLoanType().equals("Mortgage-15") ||
                 getLoginController().findLoanByID(accID).getLoanType().equals("Mortgage-30")
@@ -91,11 +101,15 @@ public class CustomerLoanAccountController extends Controller {
     }
 
 
+    /**
+     * Button that lets customer go to a screen to manage their short-term loan
+     */
     @FXML
     void shortTermClicked(ActionEvent event) {
         //get account ID
         String accID = String.format("%s_l", getLoginController().getCurrentUser().getSSN());
 
+        //check that customer has a short-term loan
         if(getLoginController().hasValidLoanAccount(accID) &&
                 getLoginController().findLoanByID(accID).getLoanType().equals("Short-Term")){
         isMortgage = false;
@@ -115,13 +129,16 @@ public class CustomerLoanAccountController extends Controller {
         }
     }
 
+    /**
+     * Button that lets customer go to a screen to manage their credit card
+     */
     @FXML
     void creditCardClicked(ActionEvent event) {
         //get account ID
         String accID = String.format("%s_l", getLoginController().getCurrentUser().getSSN());
         String checkAccID = String.format("%s_c", getLoginController().getCurrentUser().getSSN());
 
-        //Check if user has a valid loan already
+        //Check if user has a valid credit card
         if(getLoginController().hasValidLoanAccount(accID)){
             if(getLoginController().findLoanByID(accID).getLoanType().equals("Credit")) {
                 CustomerLoanCreditCardController customerLoanCreditCardController = new CustomerLoanCreditCardController(
@@ -146,6 +163,7 @@ public class CustomerLoanAccountController extends Controller {
         }
     }
 
+    //constructor
     public CustomerLoanAccountController(Stage currentStage, LoginController loginController, CustomerOpeningController customerOpeningController) {
         super(currentStage, loginController, customerOpeningController);
         this.setCurrentViewFile("customer-loan-account.fxml");

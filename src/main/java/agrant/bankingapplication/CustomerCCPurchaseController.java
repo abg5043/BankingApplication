@@ -13,7 +13,9 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-
+/**
+ * Controller for screen where customer can purchase goods with their credit card
+ */
 public class CustomerCCPurchaseController extends Controller {
 
     @FXML
@@ -28,6 +30,9 @@ public class CustomerCCPurchaseController extends Controller {
     @FXML
     private TextField moneyField;
 
+    /**
+     * Button that allows customer to make a purchase
+     */
     @FXML
     void makePurchaseClicked(ActionEvent event) {
         //get current date
@@ -35,8 +40,10 @@ public class CustomerCCPurchaseController extends Controller {
         DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
         String currentDate = date.format(formatters);
 
+        //check formatting
         if(!memoField.getText().isEmpty() && !moneyField.getText().isEmpty()) {
             try {
+                //check numeric fields are numbers
                 double paidAmt = Double.parseDouble(moneyField.getText());
                 String memo = memoField.getText();
                 String accID = String.format("%s_l", getLoginController().getCurrentUser().getSSN());
@@ -104,6 +111,7 @@ public class CustomerCCPurchaseController extends Controller {
         }
     }
 
+    //constructor
     public CustomerCCPurchaseController(
             Stage currentStage,
             LoginController loginController,

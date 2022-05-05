@@ -13,6 +13,9 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Controller for screen where customer can manage their credit card account
+ */
 public class CustomerLoanCreditCardController extends Controller {
     @FXML
     private Button makePurchaseButton;
@@ -35,11 +38,16 @@ public class CustomerLoanCreditCardController extends Controller {
     @FXML
     private Label welcomeLabel;
 
+
+    /**
+     * Button that lets customer create a new puchase
+     */
     @FXML
     void makePurchaseClicked(ActionEvent event) {
         //get account ID
         String accID = String.format("%s_l", getLoginController().getCurrentUser().getSSN());
 
+        //brings them to the purchase screen
         CustomerCCPurchaseController customerCCPurchaseController = new CustomerCCPurchaseController(
                 this.getCurrentStage(),
                 this.getLoginController(),
@@ -49,6 +57,10 @@ public class CustomerLoanCreditCardController extends Controller {
         customerCCPurchaseController.showStage();
     }
 
+
+    /**
+     * Button that lets customer pay their credit card off entierely
+     */
     @FXML
     void payInFullClicked(ActionEvent event) {
 
@@ -78,6 +90,7 @@ public class CustomerLoanCreditCardController extends Controller {
                             formatters
                         );
 
+                        //find current loan object
                         Loans loan = getLoginController().findLoanByID(accID);
                         double payAmt = loan.getCurrentBalance();
 
@@ -106,6 +119,10 @@ public class CustomerLoanCreditCardController extends Controller {
         });
     }
 
+
+    /**
+     * Button that lets customer pay off credit card a little bit
+     */
     @FXML
     void oneTimePayClicked(ActionEvent event) {
         //get account ID
@@ -121,12 +138,14 @@ public class CustomerLoanCreditCardController extends Controller {
                     LocalDate date = LocalDate.now();
                     DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
                     String currentDate = date.format(formatters);
+
                     //parse next payment due date to compare to current date
                     LocalDate dueDate = LocalDate.parse(
                         getLoginController().findLoanByID(accID).getNextPaymentDueDate(),
                         formatters
                     );
 
+                    //find current loan object
                     Loans loan = getLoginController().findLoanByID(accID);
                     double payAmt = Double.parseDouble(moneyField.getText());
 
@@ -162,9 +181,23 @@ public class CustomerLoanCreditCardController extends Controller {
         }
     }
 
+    /**
+     * Method for making CC payment
+     *
+     * @param loan - current loan object
+     * @param payAmt - amount to pay
+     * @param accID - cc account id
+     * @param checkAccID - checking account ID for user
+     * @param dueDate - due date for current payment
+     * @param date - LocalDate current date
+     * @param currentDate - formatted current date
+     * @param formattedPayAmt - currency representation of payment amount
+     * @param formatter - formatter for currency
+     */
     private void payCC(Loans loan, double payAmt, String accID, String checkAccID, LocalDate dueDate, LocalDate date, String currentDate, String formattedPayAmt, NumberFormat formatter) {
         //proceed if loan type matches the button the user clicked
         if(loan.getLoanType().equals("Credit")){
+            //check that user has a valid checking account
             if(getLoginController().hasValidCheckingAccount(checkAccID)) {
 
                 //check if the payment amount is more than the loan amount
@@ -335,7 +368,6 @@ public class CustomerLoanCreditCardController extends Controller {
 
                                     confirmationController.showStage();
                                 }
-
                             }
 
                         } else {
@@ -380,11 +412,17 @@ public class CustomerLoanCreditCardController extends Controller {
         this.accountInfoArea.setText(findAccountInfo(text));
     }
 
-    private String findAccountInfo(String text) {
+    /**
+     * Method for finding account info
+     *
+     * @param accID - account ID
+     * @return - return account's toString
+     */
+    private String findAccountInfo(String accID) {
         String returnString = "Error: No Account found";
 
         for(Loans loans : getLoginController().getLoansData()) {
-            if(loans.getAccountId().equals(text)) {
+            if(loans.getAccountId().equals(accID)) {
                 returnString = loans.toString();
                 break;
             }
@@ -392,6 +430,7 @@ public class CustomerLoanCreditCardController extends Controller {
         return returnString;
     }
 
+    //constructor
     public CustomerLoanCreditCardController(
         Stage currentStage,
         LoginController loginController,

@@ -13,6 +13,9 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Controller for longer-term loan screens like mortgages and short-term loans
+ */
 public class CustomerLoanAccountTermController extends Controller {
     private final boolean isMortgage;
 
@@ -34,6 +37,9 @@ public class CustomerLoanAccountTermController extends Controller {
     @FXML
     private Label welcomeLabel;
 
+    /**
+     * Button that lets customer make payment on loan
+     */
     @FXML
     void makePaymentClicked(ActionEvent event) {
         //get account ID
@@ -55,6 +61,7 @@ public class CustomerLoanAccountTermController extends Controller {
                         formatters
                     );
 
+                    //find current loan object
                     Loans loan = getLoginController().findLoanByID(accID);
 
                     double payAmt = Double.parseDouble(paymentAmountField.getText());
@@ -281,6 +288,9 @@ public class CustomerLoanAccountTermController extends Controller {
         }
     }
 
+    /**
+     * Button that lets customer make their monthly payment on their loan
+     */
     @FXML
     void monthlyPaymentClicked(ActionEvent event) {
         //get account ID
@@ -531,11 +541,17 @@ public class CustomerLoanAccountTermController extends Controller {
         this.accountInfoArea.setText(findAccountInfo(text));
     }
 
-    private String findAccountInfo(String text) {
+    /**
+     * Method for finding account info
+     *
+     * @param accID - accountID for loan
+     * @return - toString for that loan
+     */
+    private String findAccountInfo(String accID) {
         String returnString = "Error: No Account found";
 
         for(Loans loans : getLoginController().getLoansData()) {
-            if(loans.getAccountId().equals(text)) {
+            if(loans.getAccountId().equals(accID)) {
                 returnString = loans.toString();
                 break;
             }
@@ -543,6 +559,7 @@ public class CustomerLoanAccountTermController extends Controller {
         return returnString;
     }
 
+    //constructor
     public CustomerLoanAccountTermController(
         Stage currentStage,
         LoginController loginController,

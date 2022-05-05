@@ -19,6 +19,12 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 
+/**
+ * Main controller for banking application.
+ *
+ * LoginController reads in all data and encapsulates that data for all other controllers. This controller
+ * is therefore passed to every subsequent controller so they all have access to the same data.
+ */
 public class LoginController extends Controller {
   // Create logger instance
   public static final Logger LOG = LogManager.getLogger(LoginController.class);
@@ -55,6 +61,9 @@ public class LoginController extends Controller {
   private ArrayList<Checks> pendingChecks;
   private ArrayList<Transactions> transactionLog;
 
+  /**
+   * Button that let's user exit program
+   */
   @Override
   @FXML
   void exitClicked(ActionEvent event) {
@@ -62,19 +71,25 @@ public class LoginController extends Controller {
     System.exit(0);
   }
 
+  /**
+   * Button that brings user to customer opening screen
+   */
   @FXML
   void customerClicked(ActionEvent event) {
     LOG.trace("Inside customerClicked method");
     String username = userNameField.getText();
     String pass = passwordField.getText();
 
+    //check if login is valid
     if (loginIsValid(username, pass)) {
       LOG.info("Login was valid");
 
+      //load the bank data from CSV files
       loadBankData();
       LOG.info("Bank data loaded");
 
       //embedded so that we can differentiate alerts. This will only cause a user type alert now
+      //Check that user is a customer
       if (currentUser.getCustomer()) {
         LOG.info("User was customer");
         // Create the second controller, which loads its own FXML file. We can pass arguments to this controller.
@@ -89,23 +104,30 @@ public class LoginController extends Controller {
         customerOpeningController.showStage();
       } else {
         LOG.info("User was not customer");
+        //alert user that they are not a customer
         createUserTypeAlert("customer");
       }
     }
   }
 
+  /**
+   * Button that brings user to teller opening screen
+   */
   @FXML
   void tellerClicked(ActionEvent event) {
     LOG.trace("Inside tellerClicked method");
     String username = userNameField.getText();
     String pass = passwordField.getText();
 
+    //check that login is valid
     if (loginIsValid(username, pass)) {
       LOG.info("login was valid");
+      //load data from CSV
       loadBankData();
       LOG.info("Bank data loaded");
 
       //embedded so that we can differentiate alerts. This will only cause a user type alert now
+      //Check that user is a teller
       if (currentUser.getTeller()) {
         LOG.info("User was teller");
         // Create the second controller, which loads its own FXML file. We can pass arguments to this controller.
@@ -120,12 +142,16 @@ public class LoginController extends Controller {
         tellerOpeningController.showStage();
       } else {
         LOG.info("User was not teller");
+        //User was not teller
         createUserTypeAlert("teller");
       }
 
     }
   }
 
+  /**
+   * Button that brings user to manager opening screen
+   */
   @FXML
   void managerClicked(ActionEvent event) {
     LOG.trace("Inside managerClicked method");
@@ -133,14 +159,16 @@ public class LoginController extends Controller {
     String username = userNameField.getText();
     String pass = passwordField.getText();
 
+    //check login validity
     if (loginIsValid(username, pass)) {
       LOG.info("Login was valid");
 
+      //load the bank data
       loadBankData();
       LOG.info("Bank data was loaded");
 
-
       //embedded so that we can differentiate alerts. This will only cause a user type alert now
+      //check that user is manager
       if (currentUser.getManager()) {
         LOG.info("User is manager");
 
@@ -157,7 +185,7 @@ public class LoginController extends Controller {
         managerOpeningController.showStage();
       } else {
         LOG.info("User is not manager");
-
+        //alert user that they are not a manager
         createUserTypeAlert("manager");
       }
     }
@@ -240,7 +268,7 @@ public class LoginController extends Controller {
 
   }
 
-  /*
+  /**
    * Validates login credentials
    */
   private boolean loginIsValid(String username, String pass) {
@@ -257,6 +285,7 @@ public class LoginController extends Controller {
     Boolean isValid = currentUser != null;
     LOG.info("isValid is " + isValid);
 
+    //if password is not valid
     if (!isValid) {
       // create an alert
       Alert a = new Alert(Alert.AlertType.WARNING);

@@ -12,10 +12,11 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.Temporal;
 
+/**
+ * Controller for screen where customer can create a new loan
+ */
 public class CustomerNewLoanController extends Controller {
-    private boolean isMortgage;
     ObservableList<Integer> mortgageChoices = FXCollections.observableArrayList(15, 30);
 
     @FXML
@@ -39,18 +40,24 @@ public class CustomerNewLoanController extends Controller {
     @FXML
     private Label welcomeLabel;
 
+    /**
+     * Button that lets customer create a new mortgage application
+     */
     @FXML
     void newMortgageClicked(ActionEvent event) {
         String accID = String.format("%s_l", this.getLoginController().getCurrentUser().getSSN());
 
+        //check that the customer doesn't have a loan yet
         if(this.getLoginController().findLoanByID(accID) == null){
             try{
+                //check that numeric fields are numbers
                 double payAmt = Double.parseDouble(paymentAmountField.getText());
 
                 //this formats the money amount into currency
                 NumberFormat formatter = NumberFormat.getCurrencyInstance();
                 String formattedPayAmt = formatter.format(payAmt);
 
+                //apply for the loan
                 applyForLoan(accID, "Mortgage", payAmt);
 
             }catch(NumberFormatException nfe){
@@ -70,14 +77,20 @@ public class CustomerNewLoanController extends Controller {
         }
     }
 
+    /**
+     * Button that lets customer apply for a new short-term loan
+     */
     @FXML
     void newShortTermClicked(ActionEvent event) {
         String accID = String.format("%s_l", this.getLoginController().getCurrentUser().getSSN());
 
+        //check that they don't already have a short-term loan
         if(this.getLoginController().findLoanByID(accID) == null){
             try{
+                //check that numeric fields are numbers
                 double payAmt = Double.parseDouble(paymentAmountField.getText());
 
+                //make sure that they want a loan more than 0 dollars
                 if(payAmt > 0) {
                     //this formats the money amount into currency
                     NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -109,6 +122,9 @@ public class CustomerNewLoanController extends Controller {
         }
     }
 
+    /**
+     * Button that lets customer create a new credit card application
+     */
     @FXML
     void newCreditClicked(ActionEvent event) {
         String accID = String.format("%s_l", this.getLoginController().getCurrentUser().getSSN());
@@ -148,6 +164,13 @@ public class CustomerNewLoanController extends Controller {
         }
     }
 
+    /**
+     * Method for applying for a loan
+     *
+     * @param accID - customer's account ID
+     * @param loanType - loan type
+     * @param loanAmount - starting balance for loan
+     */
     public void applyForLoan(String accID, String loanType, double loanAmount){
         //get current date
         LocalDate currentDate = LocalDate.now();
@@ -155,6 +178,7 @@ public class CustomerNewLoanController extends Controller {
         LocalDate nextPayment = currentDate;
 
         try {
+            //check numeric fields are numbers
             if (loanType.equals("Mortgage") || loanType.equals("Short-Term")) {
                 if (loanType.equals("Mortgage")) {
                     //Get selected loan term
@@ -171,13 +195,17 @@ public class CustomerNewLoanController extends Controller {
                 //Get months between current date and due date
                 int monthsLeft = Period.between(currentDate, dueDate).getYears() * 12;
 
+                //get dates
                 DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
                 String formattedCurrentDate = currentDate.format(formatters);
                 String formattedDueDate = dueDate.format(formatters);
                 String formattedNextPaymentDate = nextPayment.format(formatters);
+
+                //Interest rates are set here
                 double interestRate = 0.017;
                 String formattedInterest = String.format("%.2f",(interestRate * 100));
 
+                //calculate next payment amount
                 double nextPaymentAmt = ((loanAmount/monthsLeft) + ((loanAmount/2.0) * (monthsLeft/12.0) * interestRate))/2.0;
                 nextPaymentAmt = Math.round(nextPaymentAmt * 100.0) / 100.0;
 
@@ -203,11 +231,13 @@ public class CustomerNewLoanController extends Controller {
                 //Credit account
                 nextPayment = currentDate.plusMonths(1);
 
+                //get dates
                 DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
                 String formattedCurrentDate = currentDate.format(formatters);
                 String formattedDueDate = dueDate.format(formatters);
                 String formattedNextPaymentDate = nextPayment.format(formatters);
 
+                //Set interest rate here
                 NumberFormat numberFormatter = NumberFormat.getCurrencyInstance();
                 double interestRate = 1.7;
 
@@ -239,6 +269,7 @@ public class CustomerNewLoanController extends Controller {
         }
     }
 
+    //constructor
     public CustomerNewLoanController(
         Stage currentStage,
         LoginController loginController,
