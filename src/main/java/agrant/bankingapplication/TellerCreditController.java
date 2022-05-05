@@ -115,7 +115,7 @@ public class TellerCreditController extends Controller {
     Transactions newTrans = new Transactions(
         accID,
         "deposit",
-        "Deposited " + formattedIncomingMoney + " into account.",
+        "Deposited " + formattedIncomingMoney + " into account " + accID + ".",
         currentDate
     );
 
@@ -179,7 +179,7 @@ public class TellerCreditController extends Controller {
             Transactions newTrans = new Transactions(
                 accID,
                 "withdraw",
-                "Withdrew " + formattedOutgoingMoney + " from accounts" + targetedChecking.getAccountId(),
+                "Withdrew " + formattedOutgoingMoney + " from account " + targetedChecking.getAccountId(),
                 currentDate
             );
 

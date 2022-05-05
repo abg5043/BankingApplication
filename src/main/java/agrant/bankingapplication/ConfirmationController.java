@@ -13,7 +13,7 @@ public class ConfirmationController extends Controller {
     @FXML
     private Label welcomeLabel;
 
-    private String confirmationMessage;
+    private final String confirmationMessage;
 
     public ConfirmationController(
         Stage currentStage,

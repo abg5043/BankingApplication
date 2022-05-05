@@ -95,11 +95,18 @@ public class Checking {
                 this.currentBalance += (cashAmount - 0.5);
                 if(this.currentBalance >= 1000) {
                     this.accountType = "Gold";
-                    //check if there is backup savings
-                    Savings linkedSavings = loginController.findSavingsByID(backupAccountId);
-                    if(linkedSavings != null) {
+                    //check if there is backup savings or CD
+                    Savings customerSavings;
+                    if(loginController.findSavingsByID(this.getAccountId().substring(0,9) + "_s") != null) {
+                        //there is a savings
+                        customerSavings = loginController.findSavingsByID(this.getAccountId().substring(0,9) + "_s");
+                    } else {
+                        //check if there is a cd
+                        customerSavings = loginController.findCDByID(this.getAccountId().substring(0,9) + "_s");
+                    }
+                    if(customerSavings != null) {
                         //linked savings, so interest is calculated
-                        double rate = 0.5 * linkedSavings.getInterestRate();
+                        double rate = 0.5 * customerSavings.getInterestRate();
                         rate = Math.round(rate *100.0)/100.0;
                         this.interest = String.valueOf(rate);
                     } else {
@@ -151,11 +158,19 @@ public class Checking {
                 this.currentBalance += (cashAmount - 0.75);
                 if(this.currentBalance >= 1000) {
                     this.accountType = "Gold";
-                    //check if there is backup savings
-                    Savings linkedSavings = loginController.findSavingsByID(this.backupAccountId);
-                    if(linkedSavings != null) {
+                    //check if there is savings or CD
+                    Savings customerSavings;
+                    if(loginController.findSavingsByID(this.getAccountId().substring(0,9) + "_s") != null) {
+                        //there is a savings
+                        customerSavings = loginController.findSavingsByID(this.getAccountId().substring(0,9) + "_s");
+                    } else {
+                        //check if there is a cd
+                        customerSavings = loginController.findCDByID(this.getAccountId().substring(0,9) + "_s");
+                    }
+
+                    if(customerSavings != null) {
                         //linked savings, so interest is calculated
-                        double rate = 0.5 * linkedSavings.getInterestRate();
+                        double rate = 0.5 * customerSavings.getInterestRate();
                         rate = Math.round(rate *100.0)/100.0;
                         this.interest = String.valueOf(rate);
                     } else {

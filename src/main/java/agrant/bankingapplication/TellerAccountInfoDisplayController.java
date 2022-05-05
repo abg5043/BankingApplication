@@ -41,9 +41,9 @@ public class TellerAccountInfoDisplayController extends Controller {
     @FXML
     private Label welcomeLabel;
 
-    private String currentAccountID;
+    private final String currentAccountID;
     private String accountInfo;
-    private ArrayList<Transactions> prunedTransactionLog;
+    private final ArrayList<Transactions> prunedTransactionLog;
 
 
     public TellerAccountInfoDisplayController (

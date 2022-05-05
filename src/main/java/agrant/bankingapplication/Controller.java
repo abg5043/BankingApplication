@@ -14,9 +14,9 @@ public class Controller {
   // holds this program's Stage
   private Stage currentStage;
   // holds a reference to the system home page
-  private LoginController loginController;
+  private final LoginController loginController;
   // holds a reference to the current user type's home page
-  private Controller mainPage;
+  private final Controller mainPage;
   // holds the view's title
   private String currentViewTitle;
   // holds a reference to the current view file

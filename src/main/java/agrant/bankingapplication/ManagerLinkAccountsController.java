@@ -49,7 +49,7 @@ public class ManagerLinkAccountsController extends Controller {
                 if(modifiedChecking.getAccountType().equals("Gold")) {
                     Savings linkedSavings;
                     //find the savings account
-                    if(savingsID.substring(9,11).equals("_s")) {
+                    if(savingsID.startsWith("_s", 9)) {
                         //this is a normal savings
                         linkedSavings = getLoginController().findSavingsByID(savingsID);
                     } else {

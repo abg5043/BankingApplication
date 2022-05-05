@@ -1,6 +1,7 @@
 package agrant.bankingapplication.classes;
 
 import com.opencsv.bean.CsvBindByName;
+import javafx.scene.control.Alert;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -141,49 +142,64 @@ public class Loans {
     public boolean makeLoanPayment(double payAmt){
         if(this.loanType.equals("Mortgage-15") ||
                 this.loanType.equals("Short-Term") ||
-                this.loanType.equals("Mortgage-15")
+                this.loanType.equals("Mortgage-30")
         ) {
             //get current date
             DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
             //parse next payment due date to compare to current date
+            LocalDate today = LocalDate.now();
             LocalDate dueDate = LocalDate.parse(this.nextPaymentDueDate, formatters);
             LocalDate nextDue = LocalDate.parse(this.nextPaymentDueDate, formatters).plusMonths(1);
             String formattedDueDate = formatters.format(dueDate);
+            String formattedCurrentDate = formatters.format(today);
             String formattedNextDue = formatters.format(nextDue);
 
             if((this.currentBalance - payAmt) >= 0) {
                 this.currentBalance = Math.round((this.currentBalance - payAmt) * 100.0) / 100.0;
-                this.nextPaymentDueDate = formattedNextDue;
-                this.lastPaymentMade = formattedDueDate;
+                if(payAmt >= this.currentPaymentAmount) {
+                    this.nextPaymentDueDate = formattedNextDue;
+                }
+                this.lastPaymentMade = formattedCurrentDate;
 
                 return true;
             }else{
                 //Would result in overpayment
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setTitle("Unable to proceed.");
+                a.setHeaderText("Attempted to overpay.");
+                a.setContentText("Please don't pay more than your loan is worth.");
+                a.show();
                 return false;
             }
         }else{
             //Incorrect account type
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setTitle("Unable to proceed.");
+            a.setHeaderText("Incorrect account type for makeLoanPayment function.");
+            a.setContentText("Error in payment. Please contact IT administrator.");
+            a.show();
             return false;
         }
     }
 
     public boolean makeCCPurchase(double payAmt, LocalDate date){
-        LocalDate dueDate = date.plusMonths(1);
-        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-        String formattedDueDate = dueDate.format(formatters);
 
         if(this.loanType.equals("Credit")){
             //Check that purchase doesn't exceed limit
             if((this.currentBalance + payAmt) <= this.creditLimit){
                 this.currentBalance = Math.round((this.currentBalance + payAmt) * 100.0) / 100.0;
                 this.currentPaymentAmount = Math.round((this.currentBalance / 4) * 100.0) / 100.0;
-
-                this.nextPaymentDueDate = formattedDueDate;
                 return true;
             }else{
                 return false;
             }
         }else{
+            //Incorrect account type
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setTitle("Unable to proceed.");
+            a.setHeaderText("Incorrect account type for makeLoanPayment function.");
+            a.setContentText("Error in payment. Please contact IT administrator.");
+            a.show();
             return false;
         }
     }
@@ -194,15 +210,25 @@ public class Loans {
             //parse next payment due date
             LocalDate dueDate = LocalDate.parse(this.nextPaymentDueDate, formatters);
             String formattedDueDate = formatters.format(dueDate);
+            LocalDate today = LocalDate.now();
+            String todayString = formatters.format(today);
 
             if((this.currentBalance - payAmt) >= 0) {
                 this.currentBalance = Math.round((this.currentBalance - payAmt) * 100.0) / 100.0;
                 this.currentPaymentAmount = Math.round((this.currentBalance / 4) * 100.0) / 100.0;
-                this.lastPaymentMade = formattedDueDate;
+                this.lastPaymentMade = todayString;
+                if(payAmt >= this.currentPaymentAmount) {
+                    this.nextPaymentDueDate = formattedDueDate;
+                }
 
                 return true;
             }else{
                 //Would result in overpayment
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setTitle("Unable to proceed.");
+                a.setHeaderText("Attempted to overpay.");
+                a.setContentText("Please don't pay more than your loan is worth.");
+                a.show();
                 return false;
             }
         }else{
@@ -218,6 +244,9 @@ public class Loans {
         String formattedDueDate = formatters.format(dueDate);
         //Set next due date to a month from now
         String formattedNextDueDate = formatters.format(dueDate.plusMonths(1));
+        //find current date
+        LocalDate today = LocalDate.now();
+        String todayString = formatters.format(today);
 
         //Ensure monthly payment doesn't over-pay
         if (this.currentBalance - this.currentPaymentAmount >= 0) {
@@ -228,14 +257,14 @@ public class Loans {
             ){
                 this.currentBalance -= this.currentPaymentAmount;
                 this.monthsLeft--;
-                this.lastPaymentMade = formattedDueDate;
+                this.lastPaymentMade = todayString;
                 this.nextPaymentDueDate = formattedNextDueDate;
 
                 return true;
             } else if (this.loanType.equals("Credit")) {
                 this.currentBalance = Math.round((this.currentBalance - this.currentPaymentAmount) * 100.0) / 100.0;
                 this.currentPaymentAmount = Math.round((this.currentBalance / 4) * 100.0) / 100.0;
-                this.lastPaymentMade = formattedDueDate;
+                this.lastPaymentMade = todayString;
                 this.nextPaymentDueDate = formattedNextDueDate;
 
                 return true;
@@ -243,7 +272,15 @@ public class Loans {
                 //Loan type is none of the above
                 return false;
             }
-        }else return false;
+        }else {
+            //tried to overpay
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setTitle("Unable to proceed.");
+            a.setHeaderText("Attempted to overpay.");
+            a.setContentText("Please don't pay more than your loan is worth.");
+            a.show();
+            return false;
+        }
     }
 
     /**

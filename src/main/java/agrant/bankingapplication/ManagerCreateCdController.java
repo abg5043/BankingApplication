@@ -55,7 +55,7 @@ public class ManagerCreateCdController extends Controller {
                 if (getLoginController().isValidUser(customerSSN)) {
                     //check that user does not already have savings or CD
                     if (
-                        !getLoginController().hasValidCDAccount(customerSSN  + "_s") ||
+                        !getLoginController().hasValidCDAccount(customerSSN  + "_s") &&
                         !getLoginController().hasValidSavingsAccount(customerSSN + "_s")
                     ) {
                         Savings newCD = new Savings(

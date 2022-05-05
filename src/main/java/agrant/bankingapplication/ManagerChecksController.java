@@ -108,31 +108,17 @@ public class ManagerChecksController extends Controller {
               //We frown on overdrafts with checks. So check the checking balance alone
               if (originCheckingAcct.getCurrentBalance() < withdrawAmt) {
                 /*
-                 * there is not enough money. Stop payment.
+                 * there is not enough money. Don't process checks.
                  * (We used to charge fees, but we got rid of them!)
                  */
-                Transactions newTrans = new Transactions(
-                    originAcctFieldText,
-                    "stop payment",
-                    "Check number " + checkNumberText + " had payment stopped for not enough money in account.",
-                    currentDate
-                );
-
-                //add transaction to log
-                getLoginController().getTransactionLog().add(newTrans);
-
-                //transaction is done. remove check from arraylist
-                getLoginController().getPendingChecks().remove(processingCheck);
-
-                //write the data
-                getLoginController().writeBankData();
-
                 // create a confirmation screen
                 ConfirmationController confirmationController = new ConfirmationController(
                     getCurrentStage(),
                     getLoginController(),
                     getMainPage(),
-                    "Sorry, not enough money in origin account. Check number " + checkNumberText + " had its payment stopped."
+                    "Sorry, not enough money in origin account. Please contact account " +
+                        originCheckingAcct.getAccountId() + " about check number " + checkNumberText +
+                        " before proceeding."
                 );
 
                 confirmationController.showStage();

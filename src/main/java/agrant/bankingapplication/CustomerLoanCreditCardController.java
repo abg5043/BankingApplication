@@ -79,24 +79,15 @@ public class CustomerLoanCreditCardController extends Controller {
                         );
 
                         Loans loan = getLoginController().findLoanByID(accID);
-                        double payAmt = loan.getCurrentPaymentAmount();
+                        double payAmt = loan.getCurrentBalance();
 
-                        //Ensure account has enough money after potential late fee
-                        if((getLoginController().findCheckingByID(checkAccID).getCurrentBalance() >= (payAmt + 75))){
+                        //this formats the money amount into currency
+                        NumberFormat formatter = NumberFormat.getCurrencyInstance();
+                        String formattedPayAmt = formatter.format(payAmt);
 
-                            //this formats the money amount into currency
-                            NumberFormat formatter = NumberFormat.getCurrencyInstance();
-                            String formattedPayAmt = formatter.format(payAmt);
+                        //Pay loan
+                        payCC(loan, payAmt, accID, checkAccID, dueDate, date, currentDate, formattedPayAmt, formatter);
 
-                            //Pay loan
-                            payCC(loan, payAmt, accID, checkAccID, dueDate, date, currentDate, formattedPayAmt, formatter);
-                        }else{
-                            Alert a = new Alert(Alert.AlertType.WARNING);
-                            a.setTitle("Unable to Make Payment.");
-                            a.setHeaderText("Account balance too low");
-                            a.setContentText("Please add more money into checking to pay in full.");
-                            a.show();
-                        }
                     }catch(NumberFormatException nfe){
                         Alert a = new Alert(Alert.AlertType.WARNING);
                         a.setTitle("Payment Not Processed");
@@ -123,46 +114,45 @@ public class CustomerLoanCreditCardController extends Controller {
 
         //Check if user has a valid loan already
         if(getLoginController().hasValidLoanAccount(accID)) {
-            try{
-                //get current date
-                LocalDate date = LocalDate.now();
-                DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-                String currentDate = date.format(formatters);
-                //parse next payment due date to compare to current date
-                LocalDate dueDate = LocalDate.parse(
-                    getLoginController().findLoanByID(accID).getNextPaymentDueDate(),
-                    formatters
-                );
+            //check if user has a valid checking account to pay from
+            if(getLoginController().hasValidCheckingAccount(accID.substring(0,9) + "_c")) {
+                try{
+                    //get current date
+                    LocalDate date = LocalDate.now();
+                    DateTimeFormatter formatters = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+                    String currentDate = date.format(formatters);
+                    //parse next payment due date to compare to current date
+                    LocalDate dueDate = LocalDate.parse(
+                        getLoginController().findLoanByID(accID).getNextPaymentDueDate(),
+                        formatters
+                    );
 
-                Loans loan = getLoginController().findLoanByID(accID);
-                double payAmt = Double.parseDouble(moneyField.getText());
+                    Loans loan = getLoginController().findLoanByID(accID);
+                    double payAmt = Double.parseDouble(moneyField.getText());
 
-                //this formats the money amount into currency
-                NumberFormat formatter = NumberFormat.getCurrencyInstance();
-                String formattedPayAmt = formatter.format(payAmt);
+                    //this formats the money amount into currency
+                    NumberFormat formatter = NumberFormat.getCurrencyInstance();
+                    String formattedPayAmt = formatter.format(payAmt);
 
-                //Pay loan
-                payCC(loan, payAmt, accID, checkAccID, dueDate, date, currentDate, formattedPayAmt, formatter);
+                    //Pay loan
+                    payCC(loan, payAmt, accID, checkAccID, dueDate, date, currentDate, formattedPayAmt, formatter);
 
-                //Create transaction object
-                Transactions newTrans = new Transactions(
-                        accID,
-                        "payment",
-                        "Deposited " + formattedPayAmt + " into account.",
-                        currentDate
-                );
-
-                //add transaction to log
-                getLoginController().getTransactionLog().add(newTrans);
-                //write the data
-                getLoginController().writeBankData();
-            }catch(NumberFormatException nfe){
+                }catch(NumberFormatException nfe){
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.setTitle("Payment Not Processed");
+                    a.setHeaderText("Invalid formatting");
+                    a.setContentText("Please ensure you use numbers in numeric fields.");
+                    a.show();
+                }
+            } else {
+                //does not have valid checking
                 Alert a = new Alert(Alert.AlertType.WARNING);
                 a.setTitle("Payment Not Processed");
-                a.setHeaderText("Invalid formatting");
-                a.setContentText("Please ensure you use numbers in numeric fields.");
+                a.setHeaderText("No checking account");
+                a.setContentText("Please ensure you have a valid checking account to pay with.");
                 a.show();
             }
+
         }else{
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setTitle("Unable to proceed.");
@@ -191,10 +181,12 @@ public class CustomerLoanCreditCardController extends Controller {
 
                     //Check that the checking has enough money
                     if (fromChecking.getCurrentBalance() - payAmt >= 0) {
-                        //We have enough! Withdraw first.
-                        fromChecking.oneTimeWithdraw(payAmt);
-                        //deposit next
+                        //We have enough!
+                        //deposit first
                         if (loan.ccOnetimePay(payAmt)) {
+                            //Withdraw next.
+                            fromChecking.oneTimeWithdraw(payAmt);
+
                             //update payment date
                             loan.setLastPaymentMade(currentDate);
 
@@ -218,8 +210,6 @@ public class CustomerLoanCreditCardController extends Controller {
                             getLoginController().getTransactionLog().add(newTrans2);
 
                             if (loan.getCurrentBalance() == 0) {
-                                getLoginController().getLoansData().remove(getLoginController().findLoanByID(accID));
-
                                 //write the data
                                 getLoginController().writeBankData();
 
@@ -264,88 +254,88 @@ public class CustomerLoanCreditCardController extends Controller {
                          * has enough to cover the rest
                          */
                         if (
-                                !fromChecking.getBackupAccountId().equals("n/a") &&
-                                        (overdraftAmount <= getLoginController().findSavingsByID(fromChecking.getBackupAccountId()).getAccountBalance())
+                            !fromChecking.getBackupAccountId().equals("n/a") &&
+                            (overdraftAmount <= getLoginController().findSavingsByID(fromChecking.getBackupAccountId()).getAccountBalance())
                         ) {
                             Savings backUpSavings = getLoginController().findSavingsByID(fromChecking.getBackupAccountId());
 
-                            //Withdraw from checking and savings
-                            fromChecking.setCurrentBalance(0);
-                            fromChecking.setInterest("n/a");
-                            fromChecking.setAccountType("Regular");
-                            backUpSavings.withdraw(overdraftAmount);
-                            fromChecking.setOverdrafts(fromChecking.getOverdrafts() + 1);
 
-                            //deposit into cc
-                            loan.ccOnetimePay(payAmt);
+                            //deposit into cc if we aren't overpaying
+                            if(loan.ccOnetimePay(payAmt)) {
+                                //Withdraw from checking and savings
+                                fromChecking.setCurrentBalance(0);
+                                fromChecking.setInterest("n/a");
+                                fromChecking.setAccountType("Regular");
+                                backUpSavings.withdraw(overdraftAmount);
+                                fromChecking.setOverdrafts(fromChecking.getOverdrafts() + 1);
 
-                            //update payment date
-                            loan.setLastPaymentMade(currentDate);
+                                //update payment date
+                                loan.setLastPaymentMade(currentDate);
 
-                            String formattedChecking = formatter.format(originalCheckingBalance);
-                            String formattedOverdraft = formatter.format(overdraftAmount);
+                                String formattedChecking = formatter.format(originalCheckingBalance);
+                                String formattedOverdraft = formatter.format(overdraftAmount);
 
 
-                            //Create three transaction objects
-                            Transactions newTrans1 = new Transactions(
+                                //Create three transaction objects
+                                Transactions newTrans1 = new Transactions(
                                     fromChecking.getAccountId(),
                                     "withdraw",
                                     "Withdrew " + formattedChecking + " from account " + fromChecking.getAccountId() + ".",
                                     currentDate
-                            );
+                                );
 
-                            Transactions newTrans2 = new Transactions(
+                                Transactions newTrans2 = new Transactions(
                                     backUpSavings.getAccountId(),
                                     "withdraw",
                                     "Withdrew " + formattedOverdraft + " from account " + backUpSavings.getAccountId() + ".",
                                     currentDate
-                            );
+                                );
 
-                            Transactions newTrans3 = new Transactions(
+                                Transactions newTrans3 = new Transactions(
                                     accID,
                                     "payment",
                                     "Made payment of " + payAmt + ".",
                                     currentDate
-                            );
+                                );
 
-                            //add transaction to log
-                            getLoginController().getTransactionLog().add(newTrans1);
-                            getLoginController().getTransactionLog().add(newTrans2);
-                            getLoginController().getTransactionLog().add(newTrans3);
+                                //add transaction to log
+                                getLoginController().getTransactionLog().add(newTrans1);
+                                getLoginController().getTransactionLog().add(newTrans2);
+                                getLoginController().getTransactionLog().add(newTrans3);
 
 
-                            if (loan.getCurrentBalance() == 0) {
-                                getLoginController().getLoansData().remove(getLoginController().findLoanByID(accID));
+                                if (loan.getCurrentBalance() == 0) {
+                                    //write the data
+                                    getLoginController().writeBankData();
 
-                                //write the data
-                                getLoginController().writeBankData();
-
-                                // create a confirmation screen
-                                ConfirmationController confirmationController = new ConfirmationController(
+                                    // create a confirmation screen
+                                    ConfirmationController confirmationController = new ConfirmationController(
                                         getCurrentStage(),
                                         getLoginController(),
                                         getMainPage(),
                                         "Congratulations, you paid " + formattedPayAmt +
-                                                " from account number " + checkAccID + " loan " +
-                                                accID + " and you have fully paid off your loan! Congrats!"
-                                );
+                                            " from account number " + checkAccID + " loan " +
+                                            accID + " and you have fully paid off your loan! Congrats!"
+                                    );
 
-                                confirmationController.showStage();
-                            } else {
-                                //write the data
-                                getLoginController().writeBankData();
+                                    confirmationController.showStage();
+                                } else {
+                                    //write the data
+                                    getLoginController().writeBankData();
 
-                                // create a confirmation screen
-                                ConfirmationController confirmationController = new ConfirmationController(
+                                    // create a confirmation screen
+                                    ConfirmationController confirmationController = new ConfirmationController(
                                         getCurrentStage(),
                                         getLoginController(),
                                         getMainPage(),
                                         "Congratulations, you paid " + formattedPayAmt +
-                                                " from account number " + checkAccID + " loan " +
-                                                accID + "."
-                                );
+                                            " from account number " + checkAccID + " loan " +
+                                            accID + "."
+                                    );
 
-                                confirmationController.showStage();
+                                    confirmationController.showStage();
+                                }
+
                             }
 
                         } else {

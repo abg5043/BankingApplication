@@ -79,47 +79,62 @@ public class ManagerCreateUserController extends Controller {
             password.length() > 0 &&
             pin.length() == 4
         ) {
+            //check if user already exists
             if(!getLoginController().isValidUser(ssn)) {
-                Boolean manager = role.equals("m");
-                Boolean teller = role.equals("t");
-                Boolean customer = role.equals("c");
+                //check if username is in use
+                if(!getLoginController().userNameInUse(username)) {
+                    Boolean manager = role.equals("m");
+                    Boolean teller = role.equals("t");
+                    Boolean customer = role.equals("c");
 
-                //Create user
-                User newUser = new User(
-                    username,
-                    password,
-                    ssn,
-                    address,
-                    city,
-                    state,
-                    zip,
-                    manager,
-                    customer,
-                    teller,
-                    fName,
-                    lName,
-                    pin
-                );
+                    //Create user
+                    User newUser = new User(
+                        username,
+                        password,
+                        ssn,
+                        address,
+                        city,
+                        state,
+                        zip,
+                        manager,
+                        customer,
+                        teller,
+                        fName,
+                        lName,
+                        pin
+                    );
 
-                //update user data
-                getLoginController().getUsersData().add(newUser);
+                    //update user data
+                    getLoginController().getUsersData().add(newUser);
 
-                //write the data
-                getLoginController().writeBankData();
+                    //write the data
+                    getLoginController().writeBankData();
 
-                // create a confirmation screen
-                ConfirmationController confirmationController = new ConfirmationController(
-                    getCurrentStage(),
-                    getLoginController(),
-                    getMainPage(),
-                    "Congratulations! You created a new user!"
-                );
+                    // create a confirmation screen
+                    ConfirmationController confirmationController = new ConfirmationController(
+                        getCurrentStage(),
+                        getLoginController(),
+                        getMainPage(),
+                        "Congratulations! You created a new user!"
+                    );
 
-                confirmationController.showStage();
+                    confirmationController.showStage();
+                } else {
+                    //username exists
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.setTitle("User not created");
+                    a.setHeaderText("Username in use");
+                    a.setContentText("Please use a different username.");
+
+                    // show the dialog
+                    a.show();
+                }
+
             } else {
+                //user already exists
                 // create an alert
                 Alert a = new Alert(Alert.AlertType.WARNING);
-                a.setTitle("User note created");
+                a.setTitle("User not created");
                 a.setHeaderText("User already exists");
                 a.setContentText("Please check SSN and try again.");
 

@@ -569,4 +569,13 @@ public class LoginController extends Controller {
     }
     return null;
   }
+
+  public boolean userNameInUse(String username) {
+    for(User user : usersData) {
+      if(user.getUser().equals(username)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

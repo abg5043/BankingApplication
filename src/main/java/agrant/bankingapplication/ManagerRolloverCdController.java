@@ -40,7 +40,7 @@ public class ManagerRolloverCdController extends Controller {
     @FXML
     private Label welcomeLabel;
 
-    private ArrayList<Savings> cdList;
+    private final ArrayList<Savings> cdList;
 
     @FXML
     void sendNoticeClicked(ActionEvent event) {

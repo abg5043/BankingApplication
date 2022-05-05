@@ -57,7 +57,7 @@ public class TellerTransferController extends Controller {
             getLoginController().hasValidCDAccount(fromID)
         ) {
           //check the type of from account
-          if (fromID.substring(9, 11).equals("_s")) {
+          if (fromID.startsWith("_s", 9)) {
             //We are transferring from a savings, check that the other is a checking
             if (getLoginController().hasValidCheckingAccount(toID)) {
               Savings originSavings;
